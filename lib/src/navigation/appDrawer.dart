@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../common/util.dart';
+import '../common/translations.dart';
+import '../common/colors.dart';
 
 class AppDrawer extends StatelessWidget {
 
@@ -11,13 +13,13 @@ class AppDrawer extends StatelessWidget {
       children: <Widget>[
         Icon(
           icon,
-          color: colorFromHex("#0a8d71"),
+          color: AppColors.greenPointMild
         ),
         Padding(
           padding: EdgeInsets.only(top: 3, left: 16.0),
           child: Text(text,
             style: TextStyle(
-              color: colorFromHex("#001914"),
+              color: AppColors.blackGreen,
               fontSize: 18
             ),
           ),
@@ -48,7 +50,49 @@ class AppDrawer extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     height: 100,
-                    child: Text('크리스천의 평범한 삶'),
+                    child: Row(
+                      children: [
+                        Text(Translations.of(context).trans('app_title1'), 
+                          style: TextStyle(
+                            color: AppColors.blackGreen,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(Translations.of(context).trans('app_title2'),
+                          style: TextStyle(
+                            color: AppColors.greenPoint,
+                            fontSize: 18
+                          ),
+                        ),
+                        Text(Translations.of(context).trans('app_title3'),
+                          style: TextStyle(
+                            color: AppColors.blackGreen,
+                            fontSize: 20
+                          ) ,
+                        ),
+                        Text(Translations.of(context).trans('app_title4'),
+                          style: TextStyle(
+                            color: AppColors.greenPoint,
+                            fontSize: 18
+                          ),
+                        ),
+                        Text(Translations.of(context).trans('app_title5'),
+                          style: TextStyle(
+                            color: AppColors.blackGreen,
+                            fontSize: 20
+                          ) ,
+                        ),
+                        Text(Translations.of(context).trans('app_title6'),
+                          style: TextStyle(
+                            color: AppColors.greenPoint,
+                            fontSize: 18
+                          ),
+                        ),
+                      ],
+                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                    ),
+                    //child: Text(Translations.of(context).trans('app_title')),
                     padding: EdgeInsets.only(top:60, left:20),
                   ),
                   
@@ -58,7 +102,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   _createDrawerItem(
                     icon: Icons.location_searching,
-                    text: '목표설정',
+                    text: Translations.of(context).trans('menu_goal_setting'),
                     onTap: () => {
                       //Navigator.pop(context)
                       Navigator.pushReplacementNamed(context, '/goalSetting')
@@ -66,39 +110,40 @@ class AppDrawer extends StatelessWidget {
                   ),
                   _createDrawerItem(
                     icon: FontAwesomeIcons.bible,
-                    text: '성경통독',
+                    text: Translations.of(context).trans('menu_reading_bible'),
                     onTap: () => {
                       Navigator.pushReplacementNamed(context, '/readingBible')
                     }
                   ),
                   _createDrawerItem(
                     icon: FontAwesomeIcons.pen,
-                    text: '묵상기록',
+                    text: Translations.of(context).trans('menu_qt_record'),
                     onTap: () => {
                       Navigator.pushReplacementNamed(context, '/qtRecord')
                     }
                   ),
                   _createDrawerItem(
                     icon: FontAwesomeIcons.heart,
-                    text: '감사일기',
+                    text: Translations.of(context).trans('menu_thank_diary'),
                     onTap: () => {
                       Navigator.pushReplacementNamed(context, '/thankDiary')
                     }
                   ),
                   _createDrawerItem(
                     icon: Icons.calendar_today,
-                    text: '달력보기',
+                    text: Translations.of(context).trans('menu_calendar'),
                     onTap: () => {
                       Navigator.pushReplacementNamed(context, '/calendar')
                     }
                   ),
                   _createDrawerItem(
                     icon: Icons.settings,
-                    text: '환경설정',
+                    text: Translations.of(context).trans('menu_settings'),
                     onTap: () => {
                       Navigator.pushReplacementNamed(context, '/settings')
                     }
                   ),
+                  
                 ],
               ),
             ),

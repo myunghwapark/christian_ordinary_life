@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'src/navigation/appDrawer.dart';
+import 'src/common/translations.dart';
 
 import 'src/screens/goalSetting.dart';
 import 'src/screens/readingBible.dart';
@@ -44,6 +46,31 @@ class MyApp extends StatelessWidget {
         '/calendar': (context) => Calendar(),
         '/settings': (context) => Settings(),
       },
+      supportedLocales: [  
+        const Locale('en', 'US'),  
+        const Locale('ko', 'KR')  
+      ],  
+      localizationsDelegates: [
+        const TranslationsDelegate(),  
+        GlobalMaterialLocalizations.delegate,  
+        GlobalWidgetsLocalizations.delegate  
+      ],  
+      localeResolutionCallback: (Locale locale, Iterable<Locale> supportedLocales) {  
+        if (locale == null) {
+          debugPrint("*language locale is null!!!");
+          return supportedLocales.first;
+        }
+
+        for (Locale supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale.languageCode) {
+            debugPrint("*language ok for launageCode $supportedLocale");
+            return supportedLocale;
+          }
+        }
+
+        debugPrint("*language to fallback ${supportedLocales.first}");
+        return supportedLocales.first; 
+      },  
     );
   }
 }
@@ -59,16 +86,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
