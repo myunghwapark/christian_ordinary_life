@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../common/util.dart';
 import '../common/translations.dart';
 import '../common/colors.dart';
 
 class AppDrawer extends StatelessWidget {
-
 
   Widget _createDrawerItem({IconData icon, String text, GestureTapCallback onTap}) {
   return ListTile(
@@ -48,53 +46,59 @@ class AppDrawer extends StatelessWidget {
               body: ListView(
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  Container(
-                    height: 100,
-                    child: Row(
-                      children: [
-                        Text(Translations.of(context).trans('app_title1'), 
-                          style: TextStyle(
-                            color: AppColors.blackGreen,
-                            fontSize: 20,
+                  GestureDetector(
+                    child: Container(
+                      height: 100,
+                      child: Row(
+                        children: [
+                          Text(Translations.of(context).trans('app_title1'), 
+                            style: TextStyle(
+                              color: AppColors.blackGreen,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        Text(Translations.of(context).trans('app_title2'),
-                          style: TextStyle(
-                            color: AppColors.greenPoint,
-                            fontSize: 18
+                          Text(Translations.of(context).trans('app_title2'),
+                            style: TextStyle(
+                              color: AppColors.greenPoint,
+                              fontSize: 18
+                            ),
                           ),
-                        ),
-                        Text(Translations.of(context).trans('app_title3'),
-                          style: TextStyle(
-                            color: AppColors.blackGreen,
-                            fontSize: 20
-                          ) ,
-                        ),
-                        Text(Translations.of(context).trans('app_title4'),
-                          style: TextStyle(
-                            color: AppColors.greenPoint,
-                            fontSize: 18
+                          Text(Translations.of(context).trans('app_title3'),
+                            style: TextStyle(
+                              color: AppColors.blackGreen,
+                              fontSize: 20
+                            ) ,
                           ),
-                        ),
-                        Text(Translations.of(context).trans('app_title5'),
-                          style: TextStyle(
-                            color: AppColors.blackGreen,
-                            fontSize: 20
-                          ) ,
-                        ),
-                        Text(Translations.of(context).trans('app_title6'),
-                          style: TextStyle(
-                            color: AppColors.greenPoint,
-                            fontSize: 18
+                          Text(Translations.of(context).trans('app_title4'),
+                            style: TextStyle(
+                              color: AppColors.greenPoint,
+                              fontSize: 18
+                            ),
                           ),
-                        ),
-                      ],
-                      textBaseline: TextBaseline.alphabetic,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                          Text(Translations.of(context).trans('app_title5'),
+                            style: TextStyle(
+                              color: AppColors.blackGreen,
+                              fontSize: 20
+                            ) ,
+                          ),
+                          Text(Translations.of(context).trans('app_title6'),
+                            style: TextStyle(
+                              color: AppColors.greenPoint,
+                              fontSize: 18
+                            ),
+                          ),
+                        ],
+                        textBaseline: TextBaseline.alphabetic,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                      ),
+                      padding: EdgeInsets.only(top:60, left:20),
+                      
                     ),
-                    //child: Text(Translations.of(context).trans('app_title')),
-                    padding: EdgeInsets.only(top:60, left:20),
+                    onTap: () => {
+                      Navigator.pushReplacementNamed(context, '/')
+                    }
                   ),
+                  
                   
                   Divider(
                     color: Colors.white,

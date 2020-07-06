@@ -6,6 +6,8 @@ class AppColors {
   static Color greenPoint = HexColor('#06614e');
   static Color greenPointMild = HexColor('#0a8d71');
   static Color blackGreen = HexColor('#001914');
+  static Color marine = HexColor('#2bcbba');
+  static Color lightGray = HexColor('#bababa');
 }
 
 class HexColor extends Color {

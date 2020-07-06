@@ -9,14 +9,16 @@ class Translations {
   
   final Locale locale;  
   
-  static Translations of(BuildContext context) {  
+  static Translations of(BuildContext context) { 
     return Localizations.of<Translations>(context, Translations);  
   }  
   
   Map<String, String> _sentences;  
+  Map<String, String> _pharaseSentences;  
   
   Future<bool> load() async {
-    String data = await rootBundle.loadString('assets/locale/${this.locale.languageCode}.json'); // 경로 유의
+    String data = await rootBundle.loadString('assets/locale/${this.locale.languageCode}.json');
+
     Map<String, dynamic> _result = json.decode(data);
 
     this._sentences = new Map();
@@ -24,12 +26,31 @@ class Translations {
       this._sentences[key] = value.toString();
     });
 
+    String phraseData = await rootBundle.loadString('assets/locale/phrase_${this.locale.languageCode}.json');
+
+    Map<String, dynamic> _pharaseResult = json.decode(phraseData);
+
+    this._pharaseSentences = new Map();
+    _pharaseResult.forEach((String key, dynamic value) {
+      this._pharaseSentences[key] = value.toString();
+    });
+
     return true;
   }
+
+
   
   String trans(String key) {  
     return this._sentences[key];  
   }  
+  
+  String pharaseTrans(String key) {  
+    return this._pharaseSentences[key];  
+  }  
+
+  String localeLaunguageCode() {
+    return this.locale.languageCode;
+  }
 }
 
 class TranslationsDelegate extends LocalizationsDelegate<Translations> {  
