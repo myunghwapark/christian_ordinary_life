@@ -71,7 +71,11 @@ flutter:
   fonts:
     - family: 12LotteMartHappy
       fonts:
+        - asset: assets/fonts/12LotteMartHappyLight.ttf
+          weight: 300
         - asset: assets/fonts/12LotteMartHappyMedium.ttf
+          weight: 700
+
 
 
   #  - family: SimpleLineIcons

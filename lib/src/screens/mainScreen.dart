@@ -26,6 +26,8 @@ class MainScreen extends StatelessWidget {
               style: TextStyle(
                 color: AppColors.marine,
                 fontSize: 38,
+                fontFamily: '12LotteMartHappy',
+                fontWeight: FontWeight.w300,
               ),
             ),
           )
@@ -59,13 +61,15 @@ class MainScreen extends StatelessWidget {
                       Text(
                         getTodayYear(context),
                         style: TextStyle(
+                            fontFamily: '12LotteMartHappy',
+                            fontWeight: FontWeight.w800,
                             fontSize:20,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       Text(
                         getTodayFormat(context),
                         style: TextStyle(
+                            fontFamily: '12LotteMartHappy',
                             fontSize:30,
                           ),
                       ),
@@ -100,7 +104,12 @@ class MainScreen extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(Translations.of(context).pharaseTrans('mark_9_23'))
+                      Text(
+                        Translations.of(context).pharaseTrans('mark_9_23'),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        ),
+                      )
                     ]
                   )
                   ,

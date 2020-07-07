@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Christian Ordinary Life',
       theme: ThemeData(
-        fontFamily: '12LotteMartHappy',
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(title: ''),
