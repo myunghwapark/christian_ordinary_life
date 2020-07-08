@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../common/translations.dart';
 import '../common/colors.dart';
 import '../common/util.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
+  @override
+  MainScreenState createState() => MainScreenState();
+}
+
+class MainScreenState extends State<MainScreen>{
 
   Widget _createMainItems({String item, String text, GestureTapCallback onTap}) {
     return ListTile(

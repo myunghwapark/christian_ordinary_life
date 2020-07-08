@@ -8,10 +8,17 @@
     "app_title6": "ife",
     "menu_goal_setting": "Goal Setting",
     "menu_reading_bible": "Reading Bible",
-    "menu_qt_record": "Record QT",
+    "menu_qt_record": "QT Records",
     "menu_thank_diary": "Diary of Thanks",
     "menu_calendar": "Calendar",
     "menu_settings": "Settings",
     "qt": "QT",
-    "pray": "Praying"
+    "pray": "Praying",
+    "title_goal_setting": "Please, set your goal.",
+    "save": "SAVE",
+    "cancel": "CANCEL",
+    "daily_qt": "Daily Devotion",
+    "daily_praying": "Praying Daily",
+    "daily_bible": "Daily Bible Reading",
+    "daily_thank": "Daily Thanks Diary"
 }
