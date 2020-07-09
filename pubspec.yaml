@@ -35,6 +35,7 @@ dependencies:
   font_awesome_flutter: 8.7.0
   feather_icons_flutter: ">=4.7.4"
   intl: ^0.16.1
+  flutter_cupertino_date_picker: ^1.0.26+2
 
 dev_dependencies:
   flutter_test:

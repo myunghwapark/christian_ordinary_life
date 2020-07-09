@@ -13,6 +13,7 @@ class AppColors {
   static Color mint = HexColor('#66e098');
   static Color lightOrange = HexColor('#f1c96e');
   static Color lightPink = HexColor('#f88185');
+  static Color moss = HexColor('#018181');
   
 }
 

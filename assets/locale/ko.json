@@ -20,5 +20,10 @@
     "daily_qt": "매일 묵상",
     "daily_praying": "매일 기도",
     "daily_bible": "매일 성경통독",
-    "daily_thank": "매일 감사일기"
+    "daily_thank": "매일 감사일기",
+    "qt_notice_setting_title": "묵상시간 알람설정",
+    "qt_notice_setting_ment": "묵상시간을 알려드릴까요?",
+    "yes": "네",
+    "no": "아니오",
+    "qt_time": "묵상시간"
 }

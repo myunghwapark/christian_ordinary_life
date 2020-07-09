@@ -20,5 +20,10 @@
     "daily_qt": "Daily Devotion",
     "daily_praying": "Praying Daily",
     "daily_bible": "Daily Bible Reading",
-    "daily_thank": "Daily Thanks Diary"
+    "daily_thank": "Daily Thanks Diary",
+    "qt_notice_setting_title": "Mediation time alarm setting",
+    "qt_notice_setting_ment": "Do you want to set a meditation time alarm?",
+    "yes": "Yes",
+    "no": "No",
+    "qt_time": "QT Time"
 }

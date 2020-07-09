@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../common/translations.dart';
 import '../common/colors.dart';
+import 'goalSettingDetail.dart';
+import '../component/appBarComponent.dart';
 
 class GoalSetting extends StatefulWidget {
   @override
@@ -38,7 +40,13 @@ class GoalSettingState extends State<GoalSetting> {
         flex: 1,
         child: InkWell(
           onTap: () => {
-            debugPrint(target)
+            debugPrint(target),
+            if(target == 'qt') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GoalSettingDetail())
+              )
+            }
           },
           child: Container(
             color: bgColor,
@@ -89,38 +97,23 @@ class GoalSettingState extends State<GoalSetting> {
   _save() {
 
   }
+
+  _goToMain() {
+    Navigator.pushReplacementNamed(context, '/');
+  }
+
+  Widget actionIcon() {
+    return FlatButton(
+      child: Text(Translations.of(context).trans('save')),
+      onPressed: _save,
+      textColor: AppColors.greenPoint,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text(
-                Translations.of(context).trans('title_goal_setting'),
-                style: TextStyle(
-                  color: AppColors.darkGray,
-                  fontWeight: FontWeight.bold,
-                ),
-            ),
-            backgroundColor: Colors.white,
-            
-            iconTheme: new IconThemeData(
-              color: AppColors.lightGray,
-            ),
-            
-            leading: new IconButton(
-              icon: new Icon(Icons.arrow_back_ios),
-              onPressed: () => {
-                Navigator.pushReplacementNamed(context, '/')
-              },
-            ),
-            
-            actions: <Widget>[
-              FlatButton(
-                child: Text(Translations.of(context).trans('save')),
-                onPressed: _save,
-                textColor: AppColors.greenPoint,
-              )
-            ],
-        ),
+        appBar: appBarComponent(context, Translations.of(context).trans('qt_notice_setting_title'), _goToMain, actionIcon()),
         body: Column(
             children: [
               _createGoal('qt', Translations.of(context).trans('daily_qt'), AppColors.blueSky, _qtVar),
