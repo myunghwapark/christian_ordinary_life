@@ -24,3 +24,27 @@ String getTodayYear(BuildContext context) {
   }
   return DateFormat.y().format(now);
 }
+
+
+List timepickerChanged(List timeArray) {
+  
+    int hour = timeArray[0], minute = timeArray[1];
+    List<String> timeStrings = new List<String>(2);
+
+    if(hour < 10) {
+      timeStrings[0] = '0'+hour.toString();
+    }
+    else {
+      timeStrings[0] = hour.toString();
+    }
+
+    if(minute < 10) {
+      timeStrings[1] = '0'+minute.toString();
+    }
+    else {
+      timeStrings[1] = minute.toString();
+    }
+
+    return timeStrings;
+  
+}

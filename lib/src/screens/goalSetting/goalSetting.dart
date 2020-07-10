@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../common/translations.dart';
-import '../common/colors.dart';
-import 'goalSettingDetail.dart';
-import '../component/appBarComponent.dart';
+import '../../common/translations.dart';
+import '../../common/colors.dart';
+import 'goalSettingQT.dart';
+import 'goalSettingBible.dart';
+import 'goalSettingPraying.dart';
+import '../../component/appBarComponent.dart';
 
 class GoalSetting extends StatefulWidget {
   @override
@@ -34,6 +36,29 @@ class GoalSettingState extends State<GoalSetting> {
     }
   }
 
+  _goToSettingDetail(String target) {
+    switch(target) {
+      case 'qt': 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GoalSettingQT())
+        );
+        break;
+      case 'praying': 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GoalSettingPraying())
+        );
+        break;
+      case 'bible': 
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GoalSettingBible())
+        );
+        break;
+    }
+  }
+
   Widget _createGoal(String target, String title, Color bgColor, bool checkboxVar){
     return Flexible(
         fit: FlexFit.tight,
@@ -41,12 +66,8 @@ class GoalSettingState extends State<GoalSetting> {
         child: InkWell(
           onTap: () => {
             debugPrint(target),
-            if(target == 'qt') {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GoalSettingDetail())
-              )
-            }
+            _goToSettingDetail(target)
+            
           },
           child: Container(
             color: bgColor,

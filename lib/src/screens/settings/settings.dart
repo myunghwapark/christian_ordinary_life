@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../navigation/appDrawer.dart';
+import '../../navigation/appDrawer.dart';
 
 class Settings extends StatelessWidget {
 

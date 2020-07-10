@@ -5,12 +5,12 @@ import 'src/common/translations.dart';
 import 'src/common/colors.dart';
 
 import 'src/screens/mainScreen.dart';
-import 'src/screens/goalSetting.dart';
-import 'src/screens/readingBible.dart';
-import 'src/screens/qtRecord.dart';
-import 'src/screens/thankDiary.dart';
+import 'src/screens/goalSetting/goalSetting.dart';
+import 'src/screens/readingBible/readingBible.dart';
+import 'src/screens/qtRecord/qtRecord.dart';
+import 'src/screens/qtRecord/thankDiary/thankDiary.dart';
 import 'src/screens/calendar.dart';
-import 'src/screens/settings.dart';
+import 'src/screens/settings/settings.dart';
 
 void main() {
   runApp(MyApp());

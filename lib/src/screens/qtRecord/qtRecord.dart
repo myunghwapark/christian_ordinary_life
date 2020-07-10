@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../navigation/appDrawer.dart';
+import '../../navigation/appDrawer.dart';
 
-class ThankDiary extends StatelessWidget {
+class QTRecord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text("ThankDiary"),
+            title: Text("QTRecord"),
             ),
         drawer: AppDrawer(),
         body: Center(
-            child: Text("ThankDiary")
+            child: Text("QTRecord")
         )
     );
   }
