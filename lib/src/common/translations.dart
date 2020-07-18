@@ -14,9 +14,11 @@ class Translations {
   }  
   
   Map<String, String> _sentences;  
+  Map<String, dynamic> _bible;  
   Map<String, String> _pharaseSentences;  
   
   Future<bool> load() async {
+    // App
     String data = await rootBundle.loadString('assets/locale/${this.locale.languageCode}.json');
 
     Map<String, dynamic> _result = json.decode(data);
@@ -26,13 +28,24 @@ class Translations {
       this._sentences[key] = value.toString();
     });
 
+    // Bible
+    String bibleData = await rootBundle.loadString('assets/locale/bible_${this.locale.languageCode}.json');
+
+    Map<String, dynamic> _bibleResult = json.decode(bibleData);
+
+    this._bible = new Map();
+    _bibleResult.forEach((String key, dynamic value) {
+      this._bible[key] = value;
+    });
+
+    // Phrase
     String phraseData = await rootBundle.loadString('assets/locale/phrase_${this.locale.languageCode}.json');
 
     Map<String, dynamic> _pharaseResult = json.decode(phraseData);
 
     this._pharaseSentences = new Map();
     _pharaseResult.forEach((String key, dynamic value) {
-      this._pharaseSentences[key] = value.toString();
+      this._pharaseSentences[key] = value;
     });
 
     return true;
@@ -43,6 +56,14 @@ class Translations {
   String trans(String key) {  
     return this._sentences[key];  
   }  
+  
+  Map bible(String key) {  
+    return this._bible[key];  
+  }  
+
+  Map bibles() {
+    return this._bible;
+  }
   
   String pharaseTrans(String key) {  
     return this._pharaseSentences[key];  

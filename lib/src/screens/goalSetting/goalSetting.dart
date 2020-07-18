@@ -14,49 +14,45 @@ class GoalSetting extends StatefulWidget {
 
 class GoalSettingState extends State<GoalSetting> {
 
-  bool _qtVar = false;
-  bool _prayingVar = false;
-  bool _readingBible = false;
-  bool _writingDiary = false;
+  var _checkVars = {
+    'qt' : false,
+    'praying' : false,
+    'bible' : false,
+    'diary' : false,
+};
 
-  _setState(String title, bool value) {
-    switch(title) {
-      case 'qt':
-        _qtVar = value;
-        break;
-      case 'praying':
-        _prayingVar = value;
-        break;
-      case 'bible':
-        _readingBible = value;
-        break;
-      case 'diary':
-        _writingDiary = value;
-        break;
-    }
-  }
+  _goToSettingDetail(String title, bool value) {
+    setState(() {
+      _checkVars[title] = value;
 
-  _goToSettingDetail(String target) {
-    switch(target) {
+      switch(title) {
       case 'qt': 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GoalSettingQT())
-        );
+        if(value == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GoalSettingQT())
+          );
+        }
         break;
       case 'praying': 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GoalSettingPraying())
-        );
+        if(value == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GoalSettingPraying())
+          );
+        }
         break;
       case 'bible': 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => GoalSettingBible())
-        );
+        if(value == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GoalSettingBible())
+          );
+        }
         break;
-    }
+      }
+    });
+    
   }
 
   Widget _createGoal(String target, String title, Color bgColor, bool checkboxVar){
@@ -65,9 +61,7 @@ class GoalSettingState extends State<GoalSetting> {
         flex: 1,
         child: InkWell(
           onTap: () => {
-            debugPrint(target),
-            _goToSettingDetail(target)
-            
+            _goToSettingDetail(target, !_checkVars[target])
           },
           child: Container(
             color: bgColor,
@@ -82,9 +76,7 @@ class GoalSettingState extends State<GoalSetting> {
                   child: Checkbox(
                     value: checkboxVar, 
                     onChanged: (bool newValue) => {
-                      setState((){
-                        _setState(target, newValue);
-                      })
+                      _goToSettingDetail(target, newValue)
                     },
                     activeColor: AppColors.darkGray,
                   ),
@@ -137,10 +129,10 @@ class GoalSettingState extends State<GoalSetting> {
         appBar: appBarComponent(context, Translations.of(context).trans('qt_notice_setting_title'), _goToMain, actionIcon()),
         body: Column(
             children: [
-              _createGoal('qt', Translations.of(context).trans('daily_qt'), AppColors.blueSky, _qtVar),
-              _createGoal('praying', Translations.of(context).trans('daily_praying'), AppColors.mint, _prayingVar),
-              _createGoal('bible', Translations.of(context).trans('daily_bible'), AppColors.lightOrange, _readingBible),
-              _createGoal('diary', Translations.of(context).trans('daily_thank'), AppColors.lightPink, _writingDiary),
+              _createGoal('qt', Translations.of(context).trans('daily_qt'), AppColors.blueSky, _checkVars['qt']),
+              _createGoal('praying', Translations.of(context).trans('daily_praying'), AppColors.mint, _checkVars['praying']),
+              _createGoal('bible', Translations.of(context).trans('daily_bible'), AppColors.lightOrange, _checkVars['bible']),
+              _createGoal('diary', Translations.of(context).trans('daily_thank'), AppColors.lightPink, _checkVars['diary']),
             ]
           )
       );

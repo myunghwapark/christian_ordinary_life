@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import '../../common/translations.dart';
 import '../../component/appBarComponent.dart';
+import 'goalBibleCustom1.dart';
 
 class GoalSettingBible extends StatefulWidget {
   @override
@@ -11,20 +12,16 @@ class GoalSettingBible extends StatefulWidget {
 class GoalSettingBibleState extends State<GoalSettingBible> {
 
   int _selected = 0;
-  bool visibleVar = true;
-
 
   void _onRadioChanged(int value) {
     setState((){
       _selected = value;
-      if(value == 0) {
-        visibleVar = true;
+      if(value == 3) {
+        goalBibleCustom1(context, 
+          () async {
+            Navigator.pop(context);
+          });
       }
-      else {
-        visibleVar = false;
-      }
-
-      _actionIcon();
     });
 
     print('Value = $value');
@@ -60,27 +57,10 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
             
   }
 
-  void _next() {
-
-  }
-
-  Widget _actionIcon() {
-    if(_selected == 3) {
-      return FlatButton(
-        child: Text(Translations.of(context).trans('next')),
-        onPressed: _next,
-        textColor: AppColors.greenPoint,
-      );
-    }
-    else {
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarComponent(context, Translations.of(context).trans('bible_reading_plan'), null, _actionIcon()),
+      appBar: appBarComponent(context, Translations.of(context).trans('bible_reading_plan'), null, null),
       body: Container(
         color: AppColors.lightOrange,
         padding: EdgeInsets.all(20),
@@ -97,4 +77,5 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
       ),
     );
   }
+  
 }

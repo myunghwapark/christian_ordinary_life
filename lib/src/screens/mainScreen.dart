@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../common/translations.dart';
 import '../common/colors.dart';
 import '../common/util.dart';
@@ -10,7 +11,14 @@ class MainScreen extends StatefulWidget {
 
 class MainScreenState extends State<MainScreen>{
 
-  Widget _createMainItems({String item, String text, GestureTapCallback onTap}) {
+    var _checkVars = {
+      'qt' : false,
+      'praying' : false,
+      'bible' : false,
+      'thank' : false,
+    };
+
+  Widget _createMainItems({String item, String text}) {
     return ListTile(
       title: Row(
         children: (<Widget>
@@ -18,8 +26,8 @@ class MainScreenState extends State<MainScreen>{
           Padding(
             padding: EdgeInsets.only(left: 16.0, bottom: 15),
             child: Icon(
-              Icons.check_circle_outline,
-              color: AppColors.marine,
+              _checkVars[item] == true ? FontAwesomeIcons.checkCircle : FontAwesomeIcons.circle,
+              color: _checkVars[item] == true ? AppColors.marine : AppColors.lightGray,
               size: 35,
             )
           ),
@@ -28,7 +36,7 @@ class MainScreenState extends State<MainScreen>{
             child: Text(
               text,
               style: TextStyle(
-                color: AppColors.marine,
+                color: _checkVars[item] == true ? AppColors.marine : AppColors.lightGray,
                 fontSize: 38,
                 fontFamily: '12LotteMartHappy',
                 fontWeight: FontWeight.w300,
@@ -36,8 +44,13 @@ class MainScreenState extends State<MainScreen>{
             ),
           )
         ]),
+      
       ),
-      onTap: onTap,
+      onTap: () {
+        setState((){
+          _checkVars[item] = !_checkVars[item];
+        });
+      }
     );
   }
 
@@ -46,13 +59,17 @@ class MainScreenState extends State<MainScreen>{
     return Container(
       child: Row(
         children: [
-          Icon(
-            Icons.arrow_back_ios,
-            color: AppColors.lightGray,
-            size: 35,
+          GestureDetector(
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: AppColors.lightGray,
+              size: 35,
+            ),
+            onTap: () {
+               print('left button');
+            },
           ),
           Expanded(
-            
             child:Column(
               children: [
                 // Date
@@ -86,18 +103,10 @@ class MainScreenState extends State<MainScreen>{
                   fit: FlexFit.tight,
                   child: ListView(
                     children: <Widget>[
-                      _createMainItems(item: 'qt', text: Translations.of(context).trans('qt'), onTap: () => {
-
-                      }),
-                      _createMainItems(item: 'pray', text: Translations.of(context).trans('pray'), onTap: () => {
-
-                      }),
-                      _createMainItems(item: 'bible', text: Translations.of(context).trans('menu_reading_bible'), onTap: () => {
-
-                      }),
-                      _createMainItems(item: 'thank', text: Translations.of(context).trans('menu_thank_diary'), onTap: () => {
-
-                      }),
+                      _createMainItems(item: 'qt', text: Translations.of(context).trans('qt')),
+                      _createMainItems(item: 'praying', text: Translations.of(context).trans('pray')),
+                      _createMainItems(item: 'bible', text: Translations.of(context).trans('menu_reading_bible')),
+                      _createMainItems(item: 'thank', text: Translations.of(context).trans('menu_thank_diary')),
                     ],
                   ),
                   flex: 2,
@@ -122,10 +131,15 @@ class MainScreenState extends State<MainScreen>{
               ]
             )
           ),
-          Icon(
-            Icons.arrow_forward_ios,
-            color: AppColors.lightGray,
-            size: 35,
+          GestureDetector(
+            child: Icon(
+              Icons.arrow_forward_ios,
+              color: AppColors.lightGray,
+              size: 35,
+            ),
+            onTap: () {
+               print('right button');
+            },
           ),
         ],
       ),

@@ -42,5 +42,12 @@
     "bible_plan_year_1_ment": "It takes about 20 minutes a day and can read the entire Bible once a year.",
     "bible_plan_year_2_ment": "It takes about 40 minutes a day and can read the entire Bible twice a year.",
     "bible_plan_whole_90days_ment": "An intensive Bible reading plan that walks through the entire Bible in 90 days.",
-    "bible_plan_custom_ment": "Please read the desired part within the desired period."
+    "bible_plan_custom_ment": "Please read the desired part within the desired period.",
+    "bible_selection": "Bible selection",
+    "bible_selection_ment": "Reading will proceed in the order selected.",
+    "old_testament": "Old Testament",
+    "new_testament": "New Testament",
+    "entire_old_testament_selection": "Entire Old Testament Selection",
+    "entire_new_testament_selection": "Entire New Testament Selection"
+    
 }

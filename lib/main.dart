@@ -90,9 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Center(
-              child: MainScreen(),
-            ),
           ),
           Positioned(
             child: AppBar(
@@ -105,6 +102,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               
             ),
+          ),
+          Positioned(
+            child: MainScreen(),
           )
         ],
       ),

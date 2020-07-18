@@ -43,5 +43,12 @@
     "bible_plan_year_1_ment": "하루 20분 정도 소요되며 1년에 성경 전체를 1번 완독할 수 있습니다.",
     "bible_plan_year_2_ment": "하루 40분 정도 소요되며 1년에 성경 전체를 2번 완독할 수 있습니다.",
     "bible_plan_whole_90days_ment": "90 일 동안 성경 전체를 훑어 보는 집중적 인 성경 읽기 계획입니다.",
-    "bible_plan_custom_ment": "원하는 부분을 원하시는 기간 내에 읽으세요."
+    "bible_plan_custom_ment": "원하는 부분을 원하시는 기간 내에 읽으세요.",
+    "bible_selection": "성경 선택",
+    "bible_selection_ment": "선택된 순서대로 통독이 진행됩니다.",
+    "old_testament": "구약",
+    "new_testament": "신약",
+    "entire_old_testament_selection": "구약전체 선택",
+    "entire_new_testament_selection": "신약전체 선택"
+    
 }

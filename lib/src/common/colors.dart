@@ -8,7 +8,10 @@ class AppColors {
   static Color blackGreen = HexColor('#001914');
   static Color marine = HexColor('#2bcbba');
   static Color lightGray = HexColor('#bababa');
+  static Color moreLightGray = HexColor('#d6d6d6');
   static Color darkGray = HexColor('#545454');
+  static Color lightBlack = HexColor('#2a2a2a');
+  static Color black = HexColor('#000000');
   static Color blueSky = HexColor('#56d2d2');
   static Color mint = HexColor('#66e098');
   static Color lightOrange = HexColor('#f1c96e');
