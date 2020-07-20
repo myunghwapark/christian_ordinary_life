@@ -8,7 +8,7 @@ import 'src/screens/mainScreen.dart';
 import 'src/screens/goalSetting/goalSetting.dart';
 import 'src/screens/readingBible/readingBible.dart';
 import 'src/screens/qtRecord/qtRecord.dart';
-import 'src/screens/qtRecord/thankDiary/thankDiary.dart';
+import 'src/screens/thankDiary/thankDiary.dart';
 import 'src/screens/calendar.dart';
 import 'src/screens/settings/settings.dart';
 
@@ -35,16 +35,14 @@ class MyApp extends StatelessWidget {
         '/calendar': (context) => Calendar(),
         '/settings': (context) => Settings(),
       },
-      supportedLocales: [  
-        const Locale('en', 'US'),  
-        const Locale('ko', 'KR')  
-      ],  
+      supportedLocales: [const Locale('en', 'US'), const Locale('ko', 'KR')],
       localizationsDelegates: [
-        const TranslationsDelegate(),  
-        GlobalMaterialLocalizations.delegate,  
-        GlobalWidgetsLocalizations.delegate  
-      ],  
-      localeResolutionCallback: (Locale locale, Iterable<Locale> supportedLocales) {  
+        const TranslationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate
+      ],
+      localeResolutionCallback:
+          (Locale locale, Iterable<Locale> supportedLocales) {
         if (locale == null) {
           debugPrint("*language locale is null!!!");
           return supportedLocales.first;
@@ -58,15 +56,14 @@ class MyApp extends StatelessWidget {
         }
 
         debugPrint("*language to fallback ${supportedLocales.first}");
-        return supportedLocales.first; 
-      },  
+        return supportedLocales.first;
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
 
   final String title;
 
@@ -75,12 +72,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      
       body: Stack(
         children: <Widget>[
           Container(
@@ -100,7 +94,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: AppColors.marine,
                 size: 40,
               ),
-              
             ),
           ),
           Positioned(

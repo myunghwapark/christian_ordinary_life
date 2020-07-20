@@ -11,105 +11,84 @@ class GoalSetting extends StatefulWidget {
   GoalSettingState createState() => GoalSettingState();
 }
 
-
 class GoalSettingState extends State<GoalSetting> {
-
   var _checkVars = {
-    'qt' : false,
-    'praying' : false,
-    'bible' : false,
-    'diary' : false,
-};
+    'qt': false,
+    'praying': false,
+    'bible': false,
+    'diary': false,
+  };
 
   _goToSettingDetail(String title, bool value) {
     setState(() {
       _checkVars[title] = value;
 
-      switch(title) {
-      case 'qt': 
-        if(value == true) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => GoalSettingQT())
-          );
-        }
-        break;
-      case 'praying': 
-        if(value == true) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => GoalSettingPraying())
-          );
-        }
-        break;
-      case 'bible': 
-        if(value == true) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => GoalSettingBible())
-          );
-        }
-        break;
+      switch (title) {
+        case 'qt':
+          if (value == true) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GoalSettingQT()));
+          }
+          break;
+        case 'praying':
+          if (value == true) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GoalSettingPraying()));
+          }
+          break;
+        case 'bible':
+          if (value == true) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => GoalSettingBible()));
+          }
+          break;
       }
     });
-    
   }
 
-  Widget _createGoal(String target, String title, Color bgColor, bool checkboxVar){
+  Widget _createGoal(
+      String target, String title, Color bgColor, bool checkboxVar) {
     return Flexible(
         fit: FlexFit.tight,
         flex: 1,
         child: InkWell(
-          onTap: () => {
-            _goToSettingDetail(target, !_checkVars[target])
-          },
-          child: Container(
-            color: bgColor,
-            padding: EdgeInsets.all(20),
-            child: Row(
-              
-              children: [
-                Theme(
-                  data: ThemeData(
-                    unselectedWidgetColor: Colors.white
+            onTap: () => {_goToSettingDetail(target, !_checkVars[target])},
+            child: Container(
+              color: bgColor,
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Theme(
+                    data: ThemeData(unselectedWidgetColor: Colors.white),
+                    child: Checkbox(
+                      value: checkboxVar,
+                      onChanged: (bool newValue) =>
+                          {_goToSettingDetail(target, newValue)},
+                      activeColor: AppColors.darkGray,
+                    ),
                   ),
-                  child: Checkbox(
-                    value: checkboxVar, 
-                    onChanged: (bool newValue) => {
-                      _goToSettingDetail(target, newValue)
-                    },
-                    activeColor: AppColors.darkGray,
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(top: 3),
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 35,
-                        color: Colors.white,
-                      ),
+                  Expanded(
+                      child: Container(
+                          padding: EdgeInsets.only(top: 3),
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 35,
+                              color: Colors.white,
+                            ),
+                          ))),
+                  if (target != 'diary')
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
                     )
-                  )
-                ),
-                if(target != 'diary') Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white,
-                )
-              ],
-              mainAxisAlignment: MainAxisAlignment.center,
-            ),
-          )
-        )
-        
-      );
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              ),
+            )));
   }
 
-
-  _save() {
-
-  }
+  _save() {}
 
   _goToMain() {
     Navigator.pushReplacementNamed(context, '/');
@@ -126,15 +105,23 @@ class GoalSettingState extends State<GoalSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: appBarComponent(context, Translations.of(context).trans('qt_notice_setting_title'), _goToMain, actionIcon()),
-        body: Column(
-            children: [
-              _createGoal('qt', Translations.of(context).trans('daily_qt'), AppColors.blueSky, _checkVars['qt']),
-              _createGoal('praying', Translations.of(context).trans('daily_praying'), AppColors.mint, _checkVars['praying']),
-              _createGoal('bible', Translations.of(context).trans('daily_bible'), AppColors.lightOrange, _checkVars['bible']),
-              _createGoal('diary', Translations.of(context).trans('daily_thank'), AppColors.lightPink, _checkVars['diary']),
-            ]
-          )
-      );
+        appBar: appBarBack(
+            context,
+            Translations.of(context).trans('qt_notice_setting_title'),
+            _goToMain,
+            actionIcon()),
+        body: Column(children: [
+          _createGoal('qt', Translations.of(context).trans('daily_qt'),
+              AppColors.blueSky, _checkVars['qt']),
+          _createGoal(
+              'praying',
+              Translations.of(context).trans('daily_praying'),
+              AppColors.mint,
+              _checkVars['praying']),
+          _createGoal('bible', Translations.of(context).trans('daily_bible'),
+              AppColors.lightOrange, _checkVars['bible']),
+          _createGoal('diary', Translations.of(context).trans('daily_thank'),
+              AppColors.pastelPink, _checkVars['diary']),
+        ]));
   }
 }

@@ -4,19 +4,19 @@ import '../../component/appBarComponent.dart';
 import '../../common/translations.dart';
 import '../../common/colors.dart';
 
-class Settings extends StatefulWidget {
+class ThankDiary extends StatefulWidget {
   @override
-  SettingsState createState() => SettingsState();
+  ThankDiaryState createState() => ThankDiaryState();
 }
 
-class SettingsState extends State<Settings> {
+class ThankDiaryState extends State<ThankDiary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.lightBgGray,
+        backgroundColor: AppColors.lightPinks,
         appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_settings'), null),
+            context, Translations.of(context).trans('menu_qt_record'), null),
         drawer: AppDrawer(),
-        body: Center(child: Text("Settings")));
+        body: Center(child: Text("ThankDiary")));
   }
 }
