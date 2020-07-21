@@ -14,6 +14,7 @@ class AppColors {
   static Color blueSky = HexColor('#56d2d2');
   static Color lightSky = HexColor('#dff4f4');
   static Color marine = HexColor('#2bcbba');
+  static Color sky = HexColor('#3fcece');
 
   static Color lightOrange = HexColor('#f1c96e');
 

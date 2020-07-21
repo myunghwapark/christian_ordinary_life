@@ -102,7 +102,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
                         )),
                     InkWell(
                       child: Container(
-                        width: 70,
+                        width: 85,
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           border: Border.all(color: AppColors.darkGray),

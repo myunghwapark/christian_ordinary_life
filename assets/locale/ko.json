@@ -50,6 +50,16 @@
     "old_testament": "구약",
     "new_testament": "신약",
     "entire_old_testament_selection": "구약전체 선택",
-    "entire_new_testament_selection": "신약전체 선택"
+    "entire_new_testament_selection": "신약전체 선택",
+    "common": "일반",
+    "backup_restoration": "백업 및 복구",
+    "info": "정보",
+    "usage_guide": "사용안내",
+    "privacy_policy": "개인정보보호정책",
+    "sending_data_by_email": "데이터 이메일 전송",
+    "data_restoration": "데이터 복원",
+    "bug_report": "버그 리포트",
+    "writing_review": "리뷰작성하기",
+    "donation": "후원하기"
     
 }
