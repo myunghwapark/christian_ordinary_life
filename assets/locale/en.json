@@ -14,6 +14,7 @@
     "menu_settings": "Settings",
     "qt": "QT",
     "pray": "Praying",
+    "write": "Write",
     "title_goal_setting": "Please, set your goal.",
     "save": "SAVE",
     "cancel": "CANCEL",
@@ -60,6 +61,10 @@
     "data_restoration": "Data restoration",
     "bug_report": "Bug report",
     "writing_review": "Writing a review",
-    "donation": "Donation"
+    "donation": "Donation",
+    "title_hint": "Please, enter the title.",
+    "qt_hint": "Please enter your meditation.",
+    "select_date": "Select Date",
+    "apply": "Apply"
     
 }

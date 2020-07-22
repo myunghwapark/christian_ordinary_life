@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:flutter/material.dart';
 import '../../navigation/appDrawer.dart';
 import '../../component/appBarComponent.dart';
@@ -13,6 +14,19 @@ class QTRecordState extends State<QTRecord> {
   TextEditingController editingController = TextEditingController();
   final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
   var items = List<String>();
+
+  void _goQtRecordWrite() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => QtRecordWrite()));
+  }
+
+  Widget actionIcon() {
+    return FlatButton(
+      child: Text(Translations.of(context).trans('write')),
+      onPressed: _goQtRecordWrite,
+      textColor: AppColors.greenPoint,
+    );
+  }
 
   @override
   initState() {
@@ -47,8 +61,8 @@ class QTRecordState extends State<QTRecord> {
 
     return Scaffold(
         backgroundColor: AppColors.lightSky,
-        appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_qt_record'), null),
+        appBar: appBarComponent(context,
+            Translations.of(context).trans('menu_qt_record'), actionIcon()),
         drawer: AppDrawer(),
         body: Container(
             child: Column(children: <Widget>[

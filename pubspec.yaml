@@ -33,6 +33,7 @@ dependencies:
   
   settings_ui: ^0.3.0
   flutter_calendar_carousel: ^1.4.12
+  table_calendar: ^2.2.3
   
   cupertino_icons: ^0.1.3
   font_awesome_flutter: 8.7.0

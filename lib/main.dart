@@ -9,7 +9,7 @@ import 'src/screens/goalSetting/goalSetting.dart';
 import 'src/screens/readingBible/readingBible.dart';
 import 'src/screens/qtRecord/qtRecordList.dart';
 import 'src/screens/thankDiary/thankDiaryList.dart';
-import 'src/screens/calendar.dart';
+import 'src/screens/processCalendar.dart';
 import 'src/screens/settings/settings.dart';
 
 void main() {

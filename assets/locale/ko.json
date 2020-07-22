@@ -14,6 +14,7 @@
     "menu_settings": "환경설정",
     "qt": "묵상",
     "pray": "기도",
+    "write": "쓰기",
     "title_goal_setting": "목표를 설정해주세요.",
     "save": "저장",
     "cancel": "취소",
@@ -60,6 +61,10 @@
     "data_restoration": "데이터 복원",
     "bug_report": "버그 리포트",
     "writing_review": "리뷰작성하기",
-    "donation": "후원하기"
+    "donation": "후원하기",
+    "title_hint": "제목을 입력해주세요.",
+    "qt_hint": "묵상 내용을 입력해주세요.",
+    "select_date": "날짜 선택",
+    "apply": "적용"
     
 }
