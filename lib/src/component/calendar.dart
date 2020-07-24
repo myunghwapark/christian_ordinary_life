@@ -5,12 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
+  final DateTime selectedDate;
+  const Calendar(this.selectedDate);
+
   @override
   CalendarState createState() => CalendarState();
 }
 
 class CalendarState extends State<Calendar> {
   CalendarController _calendarController;
+  DateTime returnDate;
 
   @override
   void initState() {
@@ -24,7 +28,9 @@ class CalendarState extends State<Calendar> {
     super.dispose();
   }
 
-  void _apply() {}
+  void _apply() {
+    Navigator.pop(context, returnDate);
+  }
 
   Widget actionIcon() {
     return FlatButton(
@@ -34,22 +40,21 @@ class CalendarState extends State<Calendar> {
     );
   }
 
+  void _onDaySelected(DateTime day, List events) {
+    returnDate = day;
+  }
+
   @override
   Widget build(BuildContext context) {
+    returnDate = widget.selectedDate;
+
     return Scaffold(
       appBar: appBarComponent(
           context, Translations.of(context).trans('select_date'), actionIcon()),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
           _buildTableCalendar(),
-          // _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          //_buildButtons(),
-          const SizedBox(height: 8.0),
-          //Expanded(child: _buildEventList()),
         ],
       ),
     );
@@ -58,13 +63,14 @@ class CalendarState extends State<Calendar> {
   // Simple TableCalendar configuration (using Styles)
   Widget _buildTableCalendar() {
     return TableCalendar(
+      initialSelectedDay: widget.selectedDate,
       calendarController: _calendarController,
       //events: _events,
       //holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.monday,
+      startingDayOfWeek: StartingDayOfWeek.sunday,
       calendarStyle: CalendarStyle(
         selectedColor: Colors.deepOrange[400],
-        todayColor: Colors.deepOrange[200],
+        //todayColor: Colors.deepOrange[200],
         markersColor: Colors.brown[700],
         outsideDaysVisible: false,
       ),
@@ -78,7 +84,8 @@ class CalendarState extends State<Calendar> {
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
-      //onDaySelected: _onDaySelected,
+
+      onDaySelected: _onDaySelected,
       //onVisibleDaysChanged: _onVisibleDaysChanged,
       //onCalendarCreated: _onCalendarCreated,
     );

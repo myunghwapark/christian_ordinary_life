@@ -171,10 +171,16 @@ class DBHelper {
     return res;
   }
 
-  Future<List<QT>> getAllQTRecord() async {
+  Future<List<QT>> getAllQTRecord(String keyword) async {
     final db = await database;
-    var res =
-        await db.rawQuery('SELECT * FROM $tableQtRecord ORDER BY date DESC');
+    var query = '';
+    if (keyword == null) {
+      query = 'SELECT * FROM $tableQtRecord ORDER BY date DESC';
+    } else {
+      query =
+          "SELECT * FROM $tableQtRecord WHERE title LIKE '%$keyword%' OR content LIKE '%$keyword%' ORDER BY date DESC";
+    }
+    var res = await db.rawQuery(query);
     List<QT> list = res.isNotEmpty
         ? res
             .map((c) => QT(

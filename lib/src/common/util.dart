@@ -32,15 +32,17 @@ String getTodayYear(BuildContext context) {
 
 /*
   return type: String
+  ex) 2022년 7월 22일 수요일 or Wednesday, July 22 2020
+*/
+String getDateofWeek(BuildContext context, DateTime now) {
+  return DateFormat.yMMMMEEEEd().format(now);
+}
+
+/*
+  return type: String
   ex) 2022년 7월 22일 or 2020
 */
-String getTodayDate(BuildContext context) {
-  var now = new DateTime.now();
-  /* if (Translations.of(context).localeLaunguageCode() == 'ko') {
-    Intl.defaultLocale = 'ko_KR';
-  } else {
-    Intl.defaultLocale = 'en_US';
-  } */
+String getDate(BuildContext context, DateTime now) {
   return DateFormat.yMMMMd().format(now);
 }
 
@@ -61,4 +63,33 @@ List timepickerChanged(List timeArray) {
   }
 
   return timeStrings;
+}
+
+showAlertDialog(BuildContext context, String alertText) async {
+  String result = await showDialog(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        //title: Text('AlertDialog Demo'),
+        content: Text(alertText),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.pop(context, "ok");
+            },
+          ),
+          FlatButton(
+            child: Text('Cancel'),
+            onPressed: () {
+              Navigator.pop(context, "cancel");
+            },
+          ),
+        ],
+      );
+    },
+  );
+
+  return result;
 }

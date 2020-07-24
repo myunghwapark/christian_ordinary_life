@@ -17,6 +17,7 @@
     "write": "Write",
     "title_goal_setting": "Please, set your goal.",
     "save": "SAVE",
+    "edit": "EDIT",
     "cancel": "CANCEL",
     "next": "NEXT",
     "search": "Search",
@@ -64,7 +65,10 @@
     "donation": "Donation",
     "title_hint": "Please, enter the title.",
     "qt_hint": "Please enter your meditation.",
+    "qt_bible_hint": "Please enter the bible you meditated.",
     "select_date": "Select Date",
-    "apply": "Apply"
+    "apply": "Apply",
+    "no_data": "There is no written article.",
+    "delete_confirm": "Do you want to delete the article?"
     
 }

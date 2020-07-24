@@ -1,3 +1,7 @@
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/database/dbHelper.dart';
+import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
+import 'package:christian_ordinary_life/src/model/QT.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:flutter/material.dart';
 import '../../navigation/appDrawer.dart';
@@ -12,12 +16,18 @@ class QTRecord extends StatefulWidget {
 
 class QTRecordState extends State<QTRecord> {
   TextEditingController editingController = TextEditingController();
-  final duplicateItems = List<String>.generate(10000, (i) => "Item $i");
-  var items = List<String>();
+  final QtRecordBloc _qtRecordBloc = QtRecordBloc();
+  Widget _qtList;
+  String keyWord;
 
-  void _goQtRecordWrite() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => QtRecordWrite()));
+  Future<void> _goQtRecordWrite() async {
+    await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => QtRecordWrite(null)))
+        .then((value) {
+      setState(() {
+        _qtList = _getList(keyWord);
+      });
+    });
   }
 
   Widget actionIcon() {
@@ -28,37 +38,66 @@ class QTRecordState extends State<QTRecord> {
     );
   }
 
+  Widget _getList(String keyword) {
+    return FutureBuilder(
+        future: DBHelper().getAllQTRecord(keyword),
+        builder: (BuildContext context, AsyncSnapshot<List<QT>> snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    QT item = snapshot.data[index];
+                    return Dismissible(
+                      key: UniqueKey(),
+                      child: ListTile(
+                        title: Text(
+                          item.title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(),
+                        ),
+                        leading: Text(
+                          getDate(context, DateTime.parse(item.date)),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.lightGray,
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QtRecordWrite(item),
+                            ),
+                          ).then((value) {
+                            setState(() {
+                              _qtList = _getList(keyWord);
+                            });
+                          });
+                        },
+                      ),
+                    );
+                  },
+                )
+              : Center(
+                  child: Text(Translations.of(context).trans('no_data')),
+                );
+        });
+  }
+
   @override
   initState() {
-    items.addAll(duplicateItems);
+    _qtList = _getList(null);
     super.initState();
   }
 
   @override
-  Widget build(BuildContext context) {
-    void filterSearchResults(String query) {
-      List<String> dummySearchList = List<String>();
-      dummySearchList.addAll(duplicateItems);
-      if (query.isNotEmpty) {
-        List<String> dummyListData = List<String>();
-        dummySearchList.forEach((item) {
-          if (item.contains(query)) {
-            dummyListData.add(item);
-          }
-        });
-        setState(() {
-          items.clear();
-          items.addAll(dummyListData);
-        });
-        return;
-      } else {
-        setState(() {
-          items.clear();
-          items.addAll(duplicateItems);
-        });
-      }
-    }
+  void dispose() {
+    super.dispose();
+    _qtRecordBloc.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.lightSky,
         appBar: appBarComponent(context,
@@ -67,11 +106,15 @@ class QTRecordState extends State<QTRecord> {
         body: Container(
             child: Column(children: <Widget>[
           Container(
-            height: 60,
-            padding: const EdgeInsets.all(8.0),
+            height: 57,
+            padding:
+                const EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
             child: TextField(
-              onChanged: (value) {
-                filterSearchResults(value);
+              onSubmitted: (value) {
+                setState(() {
+                  keyWord = value;
+                  _qtList = _getList(value);
+                });
               },
               textAlignVertical: TextAlignVertical.center,
               controller: editingController,
@@ -91,15 +134,7 @@ class QTRecordState extends State<QTRecord> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('${items[index]}'),
-                );
-              },
-            ),
+            child: _qtList,
           )
         ])));
   }
