@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../navigation/appDrawer.dart';
 import '../../component/appBarComponent.dart';
 import '../../common/translations.dart';
-import '../../common/colors.dart';
 
 class ReadingBible extends StatefulWidget {
   @override

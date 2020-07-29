@@ -7,7 +7,6 @@ import '../model/Goal.dart';
 import '../model/QT.dart';
 import '../model/ThankDiary.dart';
 import '../model/BiblePlan.dart';
-import '../model/BiblePlanDetail.dart';
 
 final String tableThankDiary = 'THANK_DIARY';
 final String tableQtRecord = 'QT_RECORD';
@@ -178,7 +177,7 @@ class DBHelper {
       query = 'SELECT * FROM $tableQtRecord ORDER BY date DESC';
     } else {
       query =
-          "SELECT * FROM $tableQtRecord WHERE title LIKE '%$keyword%' OR content LIKE '%$keyword%' ORDER BY date DESC";
+          "SELECT * FROM $tableQtRecord WHERE title LIKE '%$keyword%' OR content LIKE '%$keyword%' OR bible LIKE '%$keyword%' ORDER BY date DESC";
     }
     var res = await db.rawQuery(query);
     List<QT> list = res.isNotEmpty

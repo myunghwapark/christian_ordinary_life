@@ -34,7 +34,8 @@ String getTodayYear(BuildContext context) {
   return type: String
   ex) 2022년 7월 22일 수요일 or Wednesday, July 22 2020
 */
-String getDateofWeek(BuildContext context, DateTime now) {
+String getDateOfWeek(BuildContext context, DateTime now) {
+  if (now == null) return '';
   return DateFormat.yMMMMEEEEd().format(now);
 }
 
@@ -43,6 +44,7 @@ String getDateofWeek(BuildContext context, DateTime now) {
   ex) 2022년 7월 22일 or 2020
 */
 String getDate(BuildContext context, DateTime now) {
+  if (now == null) return '';
   return DateFormat.yMMMMd().format(now);
 }
 

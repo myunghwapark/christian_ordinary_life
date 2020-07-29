@@ -69,6 +69,8 @@
     "select_date": "날짜 선택",
     "apply": "적용",
     "no_data": "작성하신 글이 없습니다.",
-    "delete_confirm": "이 글을 삭제하시겠습니까?."
+    "delete_confirm": "이 글을 삭제하시겠습니까?.",
+    "validate_title": "제목을 입력해주세요.",
+    "validate_content": "내용을 입력해주세요."
     
 }

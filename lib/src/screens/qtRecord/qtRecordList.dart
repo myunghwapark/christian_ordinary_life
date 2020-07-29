@@ -1,13 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:christian_ordinary_life/src/database/dbHelper.dart';
 import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordDetail.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
-import 'package:flutter/material.dart';
-import '../../navigation/appDrawer.dart';
-import '../../component/appBarComponent.dart';
-import '../../common/translations.dart';
-import '../../common/colors.dart';
+import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
 
 class QTRecord extends StatefulWidget {
   @override
@@ -19,6 +21,7 @@ class QTRecordState extends State<QTRecord> {
   final QtRecordBloc _qtRecordBloc = QtRecordBloc();
   Widget _qtList;
   String keyWord;
+  FocusNode _searchFieldNode = FocusNode();
 
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(context,
@@ -42,31 +45,58 @@ class QTRecordState extends State<QTRecord> {
     return FutureBuilder(
         future: DBHelper().getAllQTRecord(keyword),
         builder: (BuildContext context, AsyncSnapshot<List<QT>> snapshot) {
-          return snapshot.hasData
-              ? ListView.builder(
+          return (snapshot.hasData && snapshot.data.length != 0)
+              ? ListView.separated(
                   itemCount: snapshot.data.length,
+                  separatorBuilder: (context, index) {
+                    if (index == 0) return SizedBox.shrink();
+                    return const Divider();
+                  },
                   itemBuilder: (BuildContext context, int index) {
                     QT item = snapshot.data[index];
                     return Dismissible(
                       key: UniqueKey(),
-                      child: ListTile(
-                        title: Text(
-                          item.title,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(),
-                        ),
-                        leading: Text(
-                          getDate(context, DateTime.parse(item.date)),
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.lightGray,
-                        ),
+                      child: GestureDetector(
+                        child: Container(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                    padding: EdgeInsets.only(bottom: 5),
+                                    child: Text(
+                                      (item.bible != null
+                                              ? '[${item.bible}] '
+                                              : '') +
+                                          item.title,
+                                      style: TextStyle(
+                                          color: AppColors.black, fontSize: 18),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    )),
+                                Container(
+                                    padding: EdgeInsets.only(bottom: 5),
+                                    child: Text(
+                                      getDate(
+                                          context, DateTime.parse(item.date)),
+                                      style: TextStyle(
+                                          color: AppColors.greenPointMild),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                    )),
+                                Text(
+                                  item.content,
+                                  style: TextStyle(color: AppColors.darkGray),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                )
+                              ],
+                            )),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => QtRecordWrite(item),
+                              builder: (context) => QtRecordDetail(item),
                             ),
                           ).then((value) {
                             setState(() {
@@ -96,6 +126,13 @@ class QTRecordState extends State<QTRecord> {
     _qtRecordBloc.dispose();
   }
 
+  _submitted(value) {
+    setState(() {
+      keyWord = value;
+      _qtList = _getList(value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,38 +141,48 @@ class QTRecordState extends State<QTRecord> {
             Translations.of(context).trans('menu_qt_record'), actionIcon()),
         drawer: AppDrawer(),
         body: Container(
+            padding: EdgeInsets.all(10),
             child: Column(children: <Widget>[
-          Container(
-            height: 57,
-            padding:
-                const EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
-            child: TextField(
-              onSubmitted: (value) {
-                setState(() {
-                  keyWord = value;
-                  _qtList = _getList(value);
-                });
-              },
-              textAlignVertical: TextAlignVertical.center,
-              controller: editingController,
-              decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.marine, width: 2.0),
-                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+              //searchBox(context, AppColors.marine, _searchFieldNode, editingController, _submitted),
+              Container(
+                height: 57,
+                padding: EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
+                child: TextField(
+                  focusNode: _searchFieldNode,
+                  onSubmitted: (value) {
+                    setState(() {
+                      keyWord = value;
+                      _qtList = _getList(value);
+                    });
+                  },
+                  textAlignVertical: TextAlignVertical.center,
+                  controller: editingController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: AppColors.marine, width: 2.0),
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    ),
+                    contentPadding: EdgeInsets.all(8),
+                    labelText: Translations.of(context).trans('search'),
+                    hintText: Translations.of(context).trans('search'),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: _searchFieldNode.hasFocus
+                          ? Colors.blue
+                          : AppColors.marine,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                    ),
                   ),
-                  contentPadding: EdgeInsets.all(8),
-                  labelText: Translations.of(context).trans('search'),
-                  hintText: Translations.of(context).trans('search'),
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                  ),
-                  fillColor: AppColors.marine),
-            ),
-          ),
-          Expanded(
-            child: _qtList,
-          )
-        ])));
+                ),
+              ),
+              Expanded(
+                child: _qtList,
+              )
+            ])));
   }
 }
