@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:christian_ordinary_life/src/database/dbHelper.dart';
 import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
@@ -126,13 +125,6 @@ class QTRecordState extends State<QTRecord> {
     _qtRecordBloc.dispose();
   }
 
-  _submitted(value) {
-    setState(() {
-      keyWord = value;
-      _qtList = _getList(value);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +135,6 @@ class QTRecordState extends State<QTRecord> {
         body: Container(
             padding: EdgeInsets.all(10),
             child: Column(children: <Widget>[
-              //searchBox(context, AppColors.marine, _searchFieldNode, editingController, _submitted),
               Container(
                 height: 57,
                 padding: EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),

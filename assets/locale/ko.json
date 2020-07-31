@@ -12,6 +12,15 @@
     "menu_thank_diary": "감사일기",
     "menu_calendar": "달력보기",
     "menu_settings": "환경설정",
+    "login": "로그인",
+    "register": "회원가입",
+    "email": "이메일",
+    "password": "비밀번호",
+    "confirm_password": "비밀번호 재입력",
+    "name": "이름",
+    "keep_login": "로그인 상태유지",
+    "reset_password": "비밀번호 재설정",
+    "close": "닫기",
     "qt": "묵상",
     "pray": "기도",
     "write": "쓰기",
@@ -71,6 +80,13 @@
     "no_data": "작성하신 글이 없습니다.",
     "delete_confirm": "이 글을 삭제하시겠습니까?.",
     "validate_title": "제목을 입력해주세요.",
-    "validate_content": "내용을 입력해주세요."
+    "validate_content": "내용을 입력해주세요.",
+    "validate_empty_email": "이메일을 입력해주세요.",
+    "validate_wrong_email": "이메일을 바르게 입력해주세요.",
+    "validate_name": "이름을 입력해주세요.",
+    "validate_empty_password": "비밀번호를 입력해주세요.",
+    "validate_wrong_password": "비밀번호는 8자 이상 영문 대소문자, 숫자를 포함하며 다음의 특수문자 중 하나를 포함해야 합니다: !@#$%^&*~",
+    "validate_empty_password_confirm": "비밀번호를 한번 더 입력해주세요.",
+    "validate_not_match_password_confirm": "비밀번호가 일치하지 않습니다."
     
 }

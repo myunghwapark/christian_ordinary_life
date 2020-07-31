@@ -130,6 +130,115 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   @override
   Widget build(BuildContext context) {
     // final bottom = MediaQuery.of(context).viewInsets.bottom;
+    final _calendarButton = Container(
+        padding: EdgeInsets.only(right: 5),
+        child: IconButton(
+          icon: Icon(Icons.calendar_today),
+          color: AppColors.marine,
+          onPressed: _showCalendar,
+        ));
+
+    final _qtDate = Flexible(
+      fit: FlexFit.tight,
+      child: GestureDetector(
+        child: Text(
+          qtDateForm,
+          style: TextStyle(fontSize: 18),
+        ),
+        onTap: _showCalendar,
+      ),
+    );
+
+    final _deleteButton = Visibility(
+        visible: _trashVisibility,
+        child: Container(
+            padding: EdgeInsets.only(right: 5),
+            child: IconButton(
+              icon: Icon(FontAwesomeIcons.trash),
+              color: AppColors.lightGray,
+              onPressed: _delete,
+            )));
+
+    final _qtTitle = Container(
+      padding: EdgeInsets.all(12),
+      height: 90,
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[400], width: 2),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+            hintText: Translations.of(context).trans('title_hint'),
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            )),
+        controller: _titleController,
+        keyboardType: TextInputType.text,
+        maxLength: 80,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_title');
+          }
+          return null;
+        },
+      ),
+    );
+
+    final _qtBible = Container(
+      padding: EdgeInsets.all(12),
+      height: 90,
+      child: TextFormField(
+        textAlignVertical: TextAlignVertical.center,
+        decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[400], width: 2),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+            hintText: Translations.of(context).trans('qt_bible_hint'),
+            fillColor: Colors.white,
+            filled: true,
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            )),
+        controller: _bibleController,
+        keyboardType: TextInputType.text,
+        maxLength: 30,
+      ),
+    );
+
+    final _qtContent = Container(
+        padding: EdgeInsets.all(12),
+        child: TextFormField(
+          textAlignVertical: TextAlignVertical.top,
+          keyboardType: TextInputType.multiline,
+          minLines: 10,
+          maxLines: 100,
+          decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.blue[400], width: 2),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+              hintText: Translations.of(context).trans('qt_hint'),
+              fillColor: Colors.white,
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              )),
+          controller: _contentController,
+          maxLength: 1000,
+          focusNode: _focus,
+          validator: (value) {
+            if (value.isEmpty) {
+              return Translations.of(context).trans('validate_content');
+            }
+            return null;
+          },
+        ));
 
     return Scaffold(
         resizeToAvoidBottomInset: false,
@@ -138,121 +247,23 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         appBar: appBarComponent(context,
             Translations.of(context).trans('menu_qt_record'), actionIcon()),
         body: SingleChildScrollView(
-            //reverse: true,
             controller: _scroll,
             padding: EdgeInsets.all(10),
             child: Form(
                 key: _formKey,
-                //padding: EdgeInsets.only(bottom: bottom),
                 child: new Column(
                   children: <Widget>[
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Container(
-                            padding: EdgeInsets.only(right: 5),
-                            child: IconButton(
-                              icon: Icon(Icons.calendar_today),
-                              color: AppColors.marine,
-                              onPressed: _showCalendar,
-                            )),
-                        Flexible(
-                          fit: FlexFit.tight,
-                          child: GestureDetector(
-                            child: Text(
-                              qtDateForm,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            onTap: _showCalendar,
-                          ),
-                        ),
-                        Visibility(
-                            visible: _trashVisibility,
-                            child: Container(
-                                padding: EdgeInsets.only(right: 5),
-                                child: IconButton(
-                                  icon: Icon(FontAwesomeIcons.trash),
-                                  color: AppColors.lightGray,
-                                  onPressed: _delete,
-                                ))),
+                        _calendarButton,
+                        _qtDate,
+                        _deleteButton,
                       ],
                     ),
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      height: 90,
-                      child: TextFormField(
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                            hintText:
-                                Translations.of(context).trans('title_hint'),
-                            fillColor: Colors.white,
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: AppColors.marine, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                            )),
-                        controller: _titleController,
-                        keyboardType: TextInputType.text,
-                        maxLength: 80,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return Translations.of(context)
-                                .trans('validate_title');
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      height: 90,
-                      child: TextFormField(
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                            hintText:
-                                Translations.of(context).trans('qt_bible_hint'),
-                            fillColor: Colors.white,
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: AppColors.marine, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                            )),
-                        controller: _bibleController,
-                        keyboardType: TextInputType.text,
-                        maxLength: 30,
-                      ),
-                    ),
-                    Container(
-                        padding: EdgeInsets.all(12),
-                        child: TextFormField(
-                          textAlignVertical: TextAlignVertical.top,
-                          keyboardType: TextInputType.multiline,
-                          minLines: 10,
-                          maxLines: 100,
-                          decoration: InputDecoration(
-                              hintText:
-                                  Translations.of(context).trans('qt_hint'),
-                              fillColor: Colors.white,
-                              filled: true,
-                              border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                              )),
-                          controller: _contentController,
-                          maxLength: 1000,
-                          focusNode: _focus,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return Translations.of(context)
-                                  .trans('validate_content');
-                            }
-                            return null;
-                          },
-                        )),
+                    _qtTitle,
+                    _qtBible,
+                    _qtContent,
                     Padding(
                       padding: EdgeInsets.all(130),
                     )

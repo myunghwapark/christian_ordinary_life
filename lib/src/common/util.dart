@@ -95,3 +95,14 @@ showAlertDialog(BuildContext context, String alertText) async {
 
   return result;
 }
+
+bool validatePassword(String value) {
+  Pattern pattern =
+      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
+  RegExp regex = new RegExp(pattern);
+
+  if (!regex.hasMatch(value))
+    return false;
+  else
+    return true;
+}

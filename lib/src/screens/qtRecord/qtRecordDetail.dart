@@ -1,5 +1,4 @@
 import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/database/dbHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
@@ -36,12 +35,25 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
   @override
   void initState() {
-    detailQt = DBHelper().getQtRecord(widget.qt.qtRecordId);
+    //detailQt = DBHelper().getQtRecord(widget.qt.qtRecordId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final _qtTitle = Text(
+      getDateOfWeek(context, DateTime.parse(widget.qt.date)),
+      style: TextStyle(color: AppColors.darkGray),
+    );
+
+    final _qtBible = Text(
+      (widget.qt.bible != null ? '[${widget.qt.bible}] ' : '') +
+          widget.qt.title,
+      style: TextStyle(color: AppColors.black, fontSize: 18),
+    );
+
+    final _qtContent = Text(widget.qt.content);
+
     return Scaffold(
         backgroundColor: AppColors.lightSky,
         appBar: appBarComponent(context,
@@ -57,19 +69,12 @@ class QtRecordDetailState extends State<QtRecordDetail> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  getDateOfWeek(context, DateTime.parse(widget.qt.date)),
-                  style: TextStyle(color: AppColors.darkGray),
-                ),
-                Text(
-                  (widget.qt.bible != null ? '[${widget.qt.bible}] ' : '') +
-                      widget.qt.title,
-                  style: TextStyle(color: AppColors.black, fontSize: 18),
-                ),
+                _qtTitle,
+                _qtBible,
                 Divider(
                   color: AppColors.greenPoint,
                 ),
-                Text(widget.qt.content)
+                _qtContent
               ],
             ),
           ),

@@ -24,8 +24,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Christian Ordinary Life',
       theme: ThemeData(
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          inputDecorationTheme: InputDecorationTheme(
+            contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[400], width: 2),
+              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            ),
+          ),
+          errorColor: Colors.orange[600]),
       home: MyHomePage(title: ''),
       initialRoute: '/',
       routes: {

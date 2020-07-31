@@ -27,13 +27,17 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
   }
 
   void _getBible(BuildContext context) {
-    _oldTestament = Translations.of(context).bible('old_testament');
-    _oldTestament.forEach((key, value) => oldTestaments
-        .add(Bible(key, value['title'], value['chapters'], false)));
+    if (oldTestaments.length == 0) {
+      _oldTestament = Translations.of(context).bible('old_testament');
+      _oldTestament.forEach((key, value) => oldTestaments
+          .add(Bible(key, value['title'], value['chapters'], false)));
+    }
 
-    _newTestament = Translations.of(context).bible('new_testament');
-    _newTestament.forEach((key, value) => newTestaments
-        .add(Bible(key, value['title'], value['chapters'], false)));
+    if (newTestaments.length == 0) {
+      _newTestament = Translations.of(context).bible('new_testament');
+      _newTestament.forEach((key, value) => newTestaments
+          .add(Bible(key, value['title'], value['chapters'], false)));
+    }
   }
 
   void _setBibleOrder(Bible bible) {
@@ -95,88 +99,6 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
       },
     );
   }
-/* 
-List<Widget> _buildRowList() {
-  List<Widget> lines = [];
-  int count = 0;
-  List<Widget> placesForLine = [];
-  for(Bible bible in oldTestaments) {
-    if(count % 3 == 0) {
-      placesForLine = [];
-    }
-    placesForLine.add(_displayBibles(bible));
-    lines.add(Row(children: placesForLine));
-  }
-
-  return lines;
-} */
-
-  Widget selectBibleScreen(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.all(20),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: Text(
-              Translations.of(context).trans('bible_selection'),
-              style: TextStyle(
-                fontFamily: '12LotteMartHappy',
-                color: AppColors.darkGray,
-                fontSize: 20,
-              ),
-              textAlign: TextAlign.start,
-            ),
-          ),
-          Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text(
-                Translations.of(context).trans('bible_selection_ment'),
-                style: TextStyle(color: AppColors.darkGray, fontSize: 16),
-                textAlign: TextAlign.start,
-              )),
-          Text(
-            Translations.of(context).trans('old_testament'),
-            style: TextStyle(color: Colors.black, fontSize: 16),
-            textAlign: TextAlign.start,
-          ),
-          /* Column(
-          children: _buildRowList()
-        ), */
-
-          Container(
-              height: MediaQuery.of(context).copyWith().size.height / 3.3,
-              child: GridView.count(
-                crossAxisCount: 3,
-                childAspectRatio: 2.5,
-                shrinkWrap: true,
-                children: oldTestaments.map((Bible bible) {
-                  return Center(
-                    child: _displayBibles(bible),
-                  );
-                }).toList(),
-              )),
-          Container(
-            padding: EdgeInsets.only(top: 20),
-            child: Text(
-              Translations.of(context).trans('new_testament'),
-              style: TextStyle(color: Colors.black, fontSize: 16),
-              textAlign: TextAlign.start,
-            ),
-          ),
-          Container(
-              height: MediaQuery.of(context).copyWith().size.height / 3.3,
-              child: GridView.count(
-                crossAxisCount: 3,
-                childAspectRatio: 2.5,
-                shrinkWrap: true,
-                children: newTestaments.map((Bible bible) {
-                  return Center(
-                    child: _displayBibles(bible),
-                  );
-                }).toList(),
-              )),
-        ]));
-  }
 
   void _nextSetting() {}
 
@@ -191,13 +113,85 @@ List<Widget> _buildRowList() {
   @override
   Widget build(BuildContext context) {
     _getBible(context);
-    return Scaffold(
-      appBar: appBarBack(
-          context,
-          Translations.of(context).trans('bible_plan_custom'),
-          null,
-          actionIcon()),
-      body: Column(children: [selectBibleScreen(context)]),
+
+    final _bibleSelectionLabel = Padding(
+      padding: EdgeInsets.only(bottom: 8),
+      child: Text(
+        Translations.of(context).trans('bible_selection'),
+        style: TextStyle(
+          fontFamily: '12LotteMartHappy',
+          color: AppColors.darkGray,
+          fontSize: 20,
+        ),
+        textAlign: TextAlign.start,
+      ),
     );
+
+    final _subtitle = Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: Text(
+          Translations.of(context).trans('bible_selection_ment'),
+          style: TextStyle(color: AppColors.darkGray, fontSize: 16),
+          textAlign: TextAlign.start,
+        ));
+
+    final _oldTestamentTitle = Text(
+      Translations.of(context).trans('old_testament'),
+      style: TextStyle(color: Colors.black, fontSize: 16),
+      textAlign: TextAlign.start,
+    );
+
+    final _oldTestaments = GridView.count(
+      physics: ScrollPhysics(),
+      crossAxisCount: 3,
+      childAspectRatio: 2.5,
+      shrinkWrap: true,
+      children: oldTestaments.map((Bible bible) {
+        return Center(
+          child: _displayBibles(bible),
+        );
+      }).toList(),
+    );
+
+    final _newTestamentTitle = Container(
+      padding: EdgeInsets.only(top: 20),
+      child: Text(
+        Translations.of(context).trans('new_testament'),
+        style: TextStyle(color: Colors.black, fontSize: 16),
+        textAlign: TextAlign.start,
+      ),
+    );
+
+    final _newTestaments = GridView.count(
+      crossAxisCount: 3,
+      childAspectRatio: 2.5,
+      shrinkWrap: true,
+      children: newTestaments.map((Bible bible) {
+        return Center(
+          child: _displayBibles(bible),
+        );
+      }).toList(),
+    );
+
+    return Scaffold(
+        appBar: appBarBack(
+            context,
+            Translations.of(context).trans('bible_plan_custom'),
+            null,
+            actionIcon()),
+        body: Container(
+          height: MediaQuery.of(context).copyWith().size.height,
+          padding: EdgeInsets.all(20),
+          child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: <Widget>[
+                _bibleSelectionLabel,
+                _subtitle,
+                _oldTestamentTitle,
+                _oldTestaments,
+                _newTestamentTitle,
+                _newTestaments,
+              ]),
+        ));
   }
 }

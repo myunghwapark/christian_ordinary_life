@@ -12,6 +12,15 @@
     "menu_thank_diary": "Diary of Thanks",
     "menu_calendar": "Calendar",
     "menu_settings": "Settings",
+    "login": "Login",
+    "register": "Register",
+    "email": "E-mail",
+    "password": "Password",
+    "confirm_password": "Confirm password",
+    "name": "Name",
+    "keep_login": "Keep me logged in",
+    "reset_password": "Reset password",
+    "close": "Close",
     "qt": "QT",
     "pray": "Praying",
     "write": "Write",
@@ -71,6 +80,13 @@
     "no_data": "There is no written article.",
     "delete_confirm": "Do you want to delete the article?",
     "validate_title": "Please enter the title.",
-    "validate_content": "Please enter the content."
+    "validate_content": "Please enter the content.",
+    "validate_empty_email": "Please enter your email.",
+    "validate_wrong_email": "Please enter your email correctly.",
+    "validate_name": "Please enter your name.",
+    "validate_empty_password": "Please enter password.",
+    "validate_wrong_password": "Password must be at least 8 characters contain at least one uppercase letter at least one number and at least one of the following symbols: !@#$%^&*~",
+    "validate_empty_password_confirm": "Please enter password one more.",
+    "validate_not_match_password_confirm": "The password doesn't match."
     
 }

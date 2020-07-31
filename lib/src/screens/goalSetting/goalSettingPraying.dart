@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/component/customPicker.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
@@ -52,8 +53,6 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
         visibleVar = false;
       }
     });
-
-    print('Value = $value');
   }
 
   void _onTimepickerChanged(List timeArray) {
@@ -64,178 +63,146 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
     });
   }
 
+  void _showBottomSheet() async {
+    final result = await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext builder) {
+          return CustomPicker(
+            timeSelected: _timeSelected,
+            pickerType: 'time',
+          );
+        });
+    if (result != null) {
+      _timeSelected = result;
+      _setTimeType(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _init(context);
+
+    final _label = Container(
+        margin: EdgeInsets.only(top: 10, bottom: 10),
+        child: Text(
+          Translations.of(context).trans('purposeful_prayer_time'),
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: '12LotteMartHappy',
+            fontWeight: FontWeight.w300,
+          ),
+        ));
+
+    final _prayingTime = Flexible(
+        fit: FlexFit.tight,
+        child: TextField(
+            controller: _textController,
+            onSubmitted: _handleSubmitted,
+            keyboardType: TextInputType.number,
+            maxLength: 3,
+            decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue[400], width: 2),
+            ))));
+
+    final _prayingTimeOption = InkWell(
+      child: Container(
+        width: 85,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.darkGray),
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        ),
+        margin: EdgeInsets.only(left: 20),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+          Text(_timeType),
+          Icon(Icons.arrow_drop_down, color: AppColors.darkGray, size: 20)
+        ]),
+      ),
+      onTap: _showBottomSheet,
+    );
+
+    final _alramSetLabel = Container(
+        margin: EdgeInsets.only(top: 20, bottom: 10),
+        child: Text(
+          Translations.of(context).trans('pray_notice_setting_ment'),
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: '12LotteMartHappy',
+            fontWeight: FontWeight.w300,
+          ),
+        ));
+
+    final _radioYes = Row(
+      children: [
+        Radio(
+            value: 0,
+            groupValue: _selected,
+            onChanged: (int value) {
+              _onRadioChanged(value);
+            }),
+        Text(Translations.of(context).trans('yes'))
+      ],
+    );
+
+    final _qtTimeBox = timeBox(
+        context,
+        Translations.of(context).trans('praying_time'),
+        visibleVar,
+        _setHour,
+        _setMinute,
+        AppColors.mint,
+        () => {
+              // Time picker
+              showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext builder) {
+                    return Container(
+                        height:
+                            MediaQuery.of(context).copyWith().size.height / 2.5,
+                        child: TimePickerWidget(
+                            initDateTime: _setInitTime(),
+                            dateFormat: 'HH:mm',
+                            onConfirm: (time, timeArray) =>
+                                {_onTimepickerChanged(timeArray)}));
+                  })
+            });
+
+    final _radioNo = Row(
+      children: [
+        Radio(
+            value: 1,
+            groupValue: _selected,
+            onChanged: (int value) {
+              _onRadioChanged(value);
+            }),
+        Text(Translations.of(context).trans('no'))
+      ],
+    );
+
     return Scaffold(
+        backgroundColor: AppColors.mint,
         appBar: appBarBack(
             context,
             Translations.of(context).trans('pray_notice_setting_title'),
             null,
             null),
-        body: GestureDetector(
+        body: SingleChildScrollView(
+            child: GestureDetector(
           child: Container(
-            color: AppColors.mint,
             padding: EdgeInsets.all(20),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                      margin: EdgeInsets.only(top: 10, bottom: 10),
-                      child: Text(
-                        Translations.of(context)
-                            .trans('purposeful_prayer_time'),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: '12LotteMartHappy',
-                          fontWeight: FontWeight.w300,
-                        ),
-                      )),
-                  Row(children: [
-                    Flexible(
-                        fit: FlexFit.tight,
-                        child: TextField(
-                          controller: _textController,
-                          onSubmitted: _handleSubmitted,
-                          keyboardType: TextInputType.number,
-                          maxLength: 3,
-                        )),
-                    InkWell(
-                      child: Container(
-                        width: 85,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.darkGray),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        margin: EdgeInsets.only(left: 20),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(_timeType),
-                              Icon(Icons.arrow_drop_down,
-                                  color: AppColors.darkGray, size: 20)
-                            ]),
-                      ),
-                      onTap: () => {
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext builder) {
-                              return Scaffold(
-                                  appBar: AppBar(
-                                    title: Text(
-                                      Translations.of(context).trans('setting'),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                    backgroundColor: Colors.teal,
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        child: Text(
-                                          Translations.of(context)
-                                              .trans('done'),
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16),
-                                        ),
-                                        onPressed: () {
-                                          _setTimeType(context);
-                                          Navigator.pop(context);
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                  body: Container(
-                                      child: CupertinoPicker(
-                                    magnification: 1,
-                                    onSelectedItemChanged: (int value) {
-                                      _timeSelected = value;
-                                    },
-                                    itemExtent: 35,
-                                    looping: false,
-                                    children: <Widget>[
-                                      Text(
-                                        Translations.of(context).trans('hours'),
-                                        style: TextStyle(
-                                            color: AppColors.darkGray,
-                                            fontSize: 20),
-                                      ),
-                                      Text(
-                                        Translations.of(context)
-                                            .trans('minutes'),
-                                        style: TextStyle(
-                                            color: AppColors.darkGray,
-                                            fontSize: 20),
-                                      ),
-                                    ],
-                                  )));
-                            })
-                      },
-                    )
-                  ]),
-                  Container(
-                      margin: EdgeInsets.only(top: 10, bottom: 10),
-                      child: Text(
-                        Translations.of(context)
-                            .trans('pray_notice_setting_ment'),
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: '12LotteMartHappy',
-                          fontWeight: FontWeight.w300,
-                        ),
-                      )),
-                  Row(
-                    children: [
-                      Radio(
-                          value: 0,
-                          groupValue: _selected,
-                          onChanged: (int value) {
-                            _onRadioChanged(value);
-                          }),
-                      Text(Translations.of(context).trans('yes'))
-                    ],
-                  ),
-                  // QT Time Box
-                  timeBox(
-                      context,
-                      Translations.of(context).trans('praying_time'),
-                      visibleVar,
-                      _setHour,
-                      _setMinute,
-                      AppColors.mint,
-                      () => {
-                            // Time picker
-                            showModalBottomSheet(
-                                context: context,
-                                builder: (BuildContext builder) {
-                                  return Container(
-                                      height: MediaQuery.of(context)
-                                              .copyWith()
-                                              .size
-                                              .height /
-                                          2.5,
-                                      child: TimePickerWidget(
-                                          initDateTime: _setInitTime(),
-                                          dateFormat: 'HH:mm',
-                                          onConfirm: (time, timeArray) => {
-                                                _onTimepickerChanged(timeArray)
-                                              }));
-                                })
-                          }),
-                  // No text
-                  Row(
-                    children: [
-                      Radio(
-                          value: 1,
-                          groupValue: _selected,
-                          onChanged: (int value) {
-                            _onRadioChanged(value);
-                          }),
-                      Text(Translations.of(context).trans('no'))
-                    ],
-                  )
+                  _label,
+                  Row(children: [_prayingTime, _prayingTimeOption]),
+                  _alramSetLabel,
+                  _radioYes,
+                  _qtTimeBox,
+                  _radioNo
                 ]),
           ),
           onTap: () => {FocusScope.of(context).unfocus()},
-        ));
+        )));
   }
 }

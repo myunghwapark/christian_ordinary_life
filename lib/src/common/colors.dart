@@ -10,6 +10,8 @@ class AppColors {
   static Color mint = HexColor('#66e098');
   static Color lightMint = HexColor('#e4ffef');
   static Color moss = HexColor('#018181');
+  static Color gradientStart = HexColor('#43c6ac');
+  static Color gradientEnd = HexColor('#f8ffae');
 
   static Color blueSky = HexColor('#56d2d2');
   static Color lightSky = HexColor('#dff4f4');
