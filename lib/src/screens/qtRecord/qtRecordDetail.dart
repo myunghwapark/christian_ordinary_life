@@ -42,7 +42,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
   @override
   Widget build(BuildContext context) {
     final _qtTitle = Text(
-      getDateOfWeek(context, DateTime.parse(widget.qt.date)),
+      getDateOfWeek(DateTime.parse(widget.qt.date)),
       style: TextStyle(color: AppColors.darkGray),
     );
 

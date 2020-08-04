@@ -60,6 +60,7 @@ class LoginState extends State<Login> {
     final email = TextFormField(
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
+      maxLength: 20,
       validator: (value) {
         if (value.isEmpty) {
           return Translations.of(context).trans('validate_empty_email');
@@ -89,13 +90,12 @@ class LoginState extends State<Login> {
 
     final password = TextFormField(
       controller: passwordController,
+      maxLength: 20,
       autofocus: false,
       obscureText: true,
       validator: (value) {
         if (value.isEmpty) {
           return Translations.of(context).trans('validate_empty_password');
-        } else if (!validatePassword(value)) {
-          return Translations.of(context).trans('validate_wrong_password');
         }
         return null;
       },

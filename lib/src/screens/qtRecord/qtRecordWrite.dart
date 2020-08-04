@@ -87,7 +87,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     } else {
       _trashVisibility = false;
     }
-    qtDateForm = getDateOfWeek(context, qtDate);
+    qtDateForm = getDateOfWeek(qtDate);
 
     _scroll = new ScrollController();
     _focus.addListener(() {
@@ -112,7 +112,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   void _setDate(DateTime selectedDate) {
     setState(() {
       qtDate = selectedDate;
-      qtDateForm = getDateOfWeek(context, qtDate);
+      qtDateForm = getDateOfWeek(qtDate);
     });
   }
 

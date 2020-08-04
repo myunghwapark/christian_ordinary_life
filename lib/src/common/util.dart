@@ -34,7 +34,7 @@ String getTodayYear(BuildContext context) {
   return type: String
   ex) 2022년 7월 22일 수요일 or Wednesday, July 22 2020
 */
-String getDateOfWeek(BuildContext context, DateTime now) {
+String getDateOfWeek(DateTime now) {
   if (now == null) return '';
   return DateFormat.yMMMMEEEEd().format(now);
 }
@@ -43,9 +43,18 @@ String getDateOfWeek(BuildContext context, DateTime now) {
   return type: String
   ex) 2022년 7월 22일 or 2020
 */
-String getDate(BuildContext context, DateTime now) {
+String getDate(DateTime now) {
   if (now == null) return '';
   return DateFormat.yMMMMd().format(now);
+}
+
+/*
+  return type: String
+  ex) 2022년 7월 22일 or 2020
+*/
+String getYear(DateTime now) {
+  if (now == null) return '';
+  return DateFormat.y().format(now);
 }
 
 List timepickerChanged(List timeArray) {
@@ -105,4 +114,11 @@ bool validatePassword(String value) {
     return false;
   else
     return true;
+}
+
+bool validateEmail(String value) {
+  Pattern pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  RegExp regex = new RegExp(pattern);
+  return (!regex.hasMatch(value)) ? false : true;
 }

@@ -87,6 +87,9 @@
     "validate_empty_password": "비밀번호를 입력해주세요.",
     "validate_wrong_password": "비밀번호는 8자 이상 영문 대소문자, 숫자를 포함하며 다음의 특수문자 중 하나를 포함해야 합니다: !@#$%^&*~",
     "validate_empty_password_confirm": "비밀번호를 한번 더 입력해주세요.",
-    "validate_not_match_password_confirm": "비밀번호가 일치하지 않습니다."
-    
+    "validate_not_match_password_confirm": "비밀번호가 일치하지 않습니다.",
+    "register_fail_message": "회원가입에 실패하셨습니다. 잠시 후에 다시 시도해주세요.",
+    "duplicate_email": "이미 가입되어 있는 이메일입니다. 로그인 하시겠습니까?",
+    "success_register": "회원가입이 정상적으로 처리되었습니다. 로그인 후 이용해주세요.",
+    "wrong_information": "입력하신 이메일이나 비밀번호가 일치하지 않습니다. 정확히 입력 후 다시 시도해주세요."
 }

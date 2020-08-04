@@ -76,8 +76,7 @@ class QTRecordState extends State<QTRecord> {
                                 Container(
                                     padding: EdgeInsets.only(bottom: 5),
                                     child: Text(
-                                      getDate(
-                                          context, DateTime.parse(item.date)),
+                                      getDate(DateTime.parse(item.date)),
                                       style: TextStyle(
                                           color: AppColors.greenPointMild),
                                       overflow: TextOverflow.ellipsis,

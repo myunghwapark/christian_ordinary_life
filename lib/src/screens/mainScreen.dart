@@ -17,6 +17,18 @@ class MainScreenState extends State<MainScreen> {
     'thank': false,
   };
 
+  String _year = '';
+  String _date = '';
+  DateTime _currentDateTime;
+
+  @override
+  void initState() {
+    _currentDateTime = new DateTime.now();
+    _year = getYear(_currentDateTime);
+    _date = getDate(_currentDateTime);
+    super.initState();
+  }
+
   Widget _createMainItems({String item, String text}) {
     return ListTile(
         title: Row(
@@ -59,91 +71,104 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final _leftArrow = GestureDetector(
+      child: Icon(
+        Icons.arrow_back_ios,
+        color: AppColors.lightGray,
+        size: 35,
+      ),
+      onTap: () {
+        setState(() {
+          print('left button');
+          _currentDateTime = _currentDateTime.add(new Duration(days: -1));
+          _year = getYear(_currentDateTime);
+          _date = getDate(_currentDateTime);
+        });
+      },
+    );
+
+    final _dateForm = Flexible(
+      fit: FlexFit.tight,
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _year,
+              style: TextStyle(
+                fontFamily: '12LotteMartHappy',
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+              ),
+            ),
+            Text(
+              _date,
+              style: TextStyle(
+                fontFamily: '12LotteMartHappy',
+                fontSize: 30,
+              ),
+            ),
+          ]),
+      flex: 1,
+    );
+
+    final _goalCheck = Flexible(
+      fit: FlexFit.tight,
+      child: ListView(
+        children: <Widget>[
+          _createMainItems(
+              item: 'qt', text: Translations.of(context).trans('qt')),
+          _createMainItems(
+              item: 'praying', text: Translations.of(context).trans('pray')),
+          _createMainItems(
+              item: 'bible',
+              text: Translations.of(context).trans('menu_reading_bible')),
+          _createMainItems(
+              item: 'thank',
+              text: Translations.of(context).trans('menu_thank_diary')),
+        ],
+      ),
+      flex: 2,
+    );
+
+    final _rightArrow = GestureDetector(
+      child: Icon(
+        Icons.arrow_forward_ios,
+        color: AppColors.lightGray,
+        size: 35,
+      ),
+      onTap: () {
+        setState(() {
+          print('right button');
+          _currentDateTime = _currentDateTime.add(new Duration(days: 1));
+          _year = getYear(_currentDateTime);
+          _date = getDate(_currentDateTime);
+        });
+      },
+    );
+
+    final _scriptualPhrase = Flexible(
+      fit: FlexFit.tight,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(
+          Translations.of(context).pharaseTrans('mark_9_23'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )
+      ]),
+      flex: 1,
+    );
+
     return Container(
       child: Row(
         children: [
-          GestureDetector(
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: AppColors.lightGray,
-              size: 35,
-            ),
-            onTap: () {
-              print('left button');
-            },
-          ),
+          _leftArrow,
           Expanded(
               child: Column(children: [
-            // Date
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      getTodayYear(context),
-                      style: TextStyle(
-                        fontFamily: '12LotteMartHappy',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(
-                      getTodayFormat(context),
-                      style: TextStyle(
-                        fontFamily: '12LotteMartHappy',
-                        fontSize: 30,
-                      ),
-                    ),
-                  ]),
-              flex: 1,
-            ),
-            // Goal Check
-            Flexible(
-              fit: FlexFit.tight,
-              child: ListView(
-                children: <Widget>[
-                  _createMainItems(
-                      item: 'qt', text: Translations.of(context).trans('qt')),
-                  _createMainItems(
-                      item: 'praying',
-                      text: Translations.of(context).trans('pray')),
-                  _createMainItems(
-                      item: 'bible',
-                      text:
-                          Translations.of(context).trans('menu_reading_bible')),
-                  _createMainItems(
-                      item: 'thank',
-                      text: Translations.of(context).trans('menu_thank_diary')),
-                ],
-              ),
-              flex: 2,
-            ),
-            // Scriptural phrase
-            Flexible(
-              fit: FlexFit.tight,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      Translations.of(context).pharaseTrans('mark_9_23'),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  ]),
-              flex: 1,
-            ),
+            _dateForm,
+            _goalCheck,
+            _scriptualPhrase,
           ])),
-          GestureDetector(
-            child: Icon(
-              Icons.arrow_forward_ios,
-              color: AppColors.lightGray,
-              size: 35,
-            ),
-            onTap: () {
-              print('right button');
-            },
-          ),
+          _rightArrow,
         ],
       ),
     );

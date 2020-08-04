@@ -1,19 +1,83 @@
+import 'dart:convert';
+
+import 'package:christian_ordinary_life/src/common/apiURL.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
-import 'package:flutter/material.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
 
 class Register extends StatefulWidget {
   @override
   RegisterState createState() => RegisterState();
 }
 
+Future<User> registerUser(BuildContext context, User user) async {
+  final response = await http.post(ApiURL.register,
+      headers: <String, String>{
+        'Content-Type': "application/json; charset=UTF-8"
+      },
+      body: jsonEncode({
+        'userName': user.name,
+        'userEmail': user.email,
+        'userPassword': user.password,
+        'userGrade': 'U002_002' // Normal User
+      }));
+  // Success
+  if (response.statusCode == 200) {
+    User userResult = User.fromJson(json.decode(response.body));
+    if (userResult.result == 'success') {
+      showAlertDialog(
+          context, Translations.of(context).trans('success_register'));
+    } else if (userResult.errorCode == '01') {
+      final result = await showAlertDialog(
+          context, Translations.of(context).trans('duplicate_email'));
+
+      if (result == 'ok') {
+        //TODO: Goto Login
+      }
+    } else {
+      showAlertDialog(
+          context,
+          (Translations.of(context).trans('register_fail_message') +
+              '/n' +
+              userResult.errorMessage));
+    }
+
+    return userResult;
+  }
+  // Fail
+  else {
+    showAlertDialog(
+        context, Translations.of(context).trans('register_fail_message'));
+    return null;
+  }
+}
+
 class RegisterState extends State<Register> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
     TextEditingController nameController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
     TextEditingController passwordConfirmController = TextEditingController();
+
+    _register(BuildContext context) {
+      User newUser = User(
+          email: emailController.text,
+          name: nameController.text,
+          password: passwordController.text);
+
+      registerUser(context, newUser);
+    }
 
     final background = Container(
       decoration: new BoxDecoration(
@@ -57,6 +121,15 @@ class RegisterState extends State<Register> {
     final email = TextFormField(
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
+      maxLength: 20,
+      validator: (value) {
+        if (value.isEmpty) {
+          return Translations.of(context).trans('validate_empty_email');
+        } else if (!validateEmail(value)) {
+          return Translations.of(context).trans('validate_wrong_email');
+        }
+        return null;
+      },
       autofocus: false,
       decoration: InputDecoration(
         filled: true,
@@ -81,6 +154,13 @@ class RegisterState extends State<Register> {
     final name = TextFormField(
       controller: nameController,
       autofocus: false,
+      maxLength: 15,
+      validator: (value) {
+        if (value.isEmpty) {
+          return Translations.of(context).trans('validate_name');
+        }
+        return null;
+      },
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
@@ -104,7 +184,16 @@ class RegisterState extends State<Register> {
     final password = TextFormField(
       controller: passwordController,
       autofocus: false,
+      maxLength: 20,
       obscureText: true,
+      validator: (value) {
+        if (value.isEmpty) {
+          return Translations.of(context).trans('validate_empty_password');
+        } else if (!validatePassword(value)) {
+          return Translations.of(context).trans('validate_wrong_password');
+        }
+        return null;
+      },
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
@@ -129,6 +218,16 @@ class RegisterState extends State<Register> {
       controller: passwordConfirmController,
       autofocus: false,
       obscureText: true,
+      maxLength: 20,
+      validator: (value) {
+        if (value.isEmpty) {
+          return Translations.of(context).trans('validate_empty_password');
+        } else if (value != passwordController.text) {
+          return Translations.of(context)
+              .trans('validate_not_match_password_confirm');
+        }
+        return null;
+      },
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white.withOpacity(0.8),
@@ -152,7 +251,11 @@ class RegisterState extends State<Register> {
     final registerButton = SizedBox(
         width: double.infinity,
         child: RaisedButton(
-          onPressed: () {},
+          onPressed: () {
+            if (_formKey.currentState.validate()) {
+              _register(context);
+            }
+          },
           color: AppColors.greenPointMild,
           textColor: Colors.white,
           padding: const EdgeInsets.all(0.0),
@@ -170,30 +273,32 @@ class RegisterState extends State<Register> {
         child: closeButton,
       ),
       Positioned(
-          child: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            registerLabel,
-            Container(
-              height: 20,
-            ),
-            Container(height: 38, child: email),
-            SizedBox(height: 10.0),
-            Container(height: 38, child: name),
-            SizedBox(height: 10.0),
-            Container(height: 38, child: password),
-            SizedBox(height: 10.0),
-            Container(height: 38, child: passwordConfirm),
-            SizedBox(height: 14.0),
-            registerButton,
-            SizedBox(height: 20.0),
-          ],
-        ),
-      ))
+          child: Form(
+              key: _formKey,
+              child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    registerLabel,
+                    Container(
+                      height: 20,
+                    ),
+                    email,
+                    SizedBox(height: 10.0),
+                    name,
+                    SizedBox(height: 10.0),
+                    password,
+                    SizedBox(height: 10.0),
+                    passwordConfirm,
+                    SizedBox(height: 14.0),
+                    registerButton,
+                    SizedBox(height: 20.0),
+                  ],
+                ),
+              )))
     ]);
   }
 }
