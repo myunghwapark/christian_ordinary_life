@@ -50,7 +50,8 @@ class CalendarState extends State<Calendar> {
 
     return Scaffold(
       appBar: appBarComponent(
-          context, Translations.of(context).trans('select_date'), actionIcon()),
+          context, Translations.of(context).trans('select_date'),
+          actionWidget: actionIcon()),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[

@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../common/translations.dart';
 
 /*
   return type: String
   ex) 7월 22일 수요일 or Wednesday, July 22
 */
-String getTodayFormat(BuildContext context) {
+String getTodayFormat() {
   var now = new DateTime.now();
-  if (Translations.of(context).localeLaunguageCode() == 'ko') {
-    Intl.defaultLocale = 'ko_KR';
-  } else {
-    Intl.defaultLocale = 'en_US';
-  }
   return DateFormat.MMMMEEEEd().format(now);
 }
 
@@ -20,13 +14,8 @@ String getTodayFormat(BuildContext context) {
   return type: String
   ex) 2022년 or 2020
 */
-String getTodayYear(BuildContext context) {
+String getTodayYear() {
   var now = new DateTime.now();
-  if (Translations.of(context).localeLaunguageCode() == 'ko') {
-    Intl.defaultLocale = 'ko_KR';
-  } else {
-    Intl.defaultLocale = 'en_US';
-  }
   return DateFormat.y().format(now);
 }
 
@@ -76,7 +65,26 @@ List timepickerChanged(List timeArray) {
   return timeStrings;
 }
 
-showAlertDialog(BuildContext context, String alertText) async {
+Future<void> showAlertDialog(BuildContext context, String alertText) async {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        content: Text(alertText),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+showConfirmDialog(BuildContext context, String alertText) async {
   String result = await showDialog(
     context: context,
     barrierDismissible: false, // user must tap button!

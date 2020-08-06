@@ -13,8 +13,8 @@ class ReadingBibleState extends State<ReadingBible> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: appBarComponent(context,
-            Translations.of(context).trans('menu_reading_bible'), null),
+        appBar: appBarComponent(
+            context, Translations.of(context).trans('menu_reading_bible')),
         drawer: AppDrawer(),
         body: Center(child: Text("ReadingBible")));
   }

@@ -15,7 +15,7 @@ class ThankDiaryState extends State<ThankDiary> {
     return Scaffold(
         backgroundColor: AppColors.lightPinks,
         appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_qt_record'), null),
+            context, Translations.of(context).trans('menu_qt_record')),
         drawer: AppDrawer(),
         body: Center(child: Text("ThankDiary")));
   }

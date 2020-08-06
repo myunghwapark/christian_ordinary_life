@@ -13,7 +13,10 @@
     "menu_calendar": "Calendar",
     "menu_settings": "Settings",
     "login": "Login",
+    "logout": "Logout",
     "register": "Register",
+    "confirm_logout": "Would you like to log out?",
+    "manOfGod": "#, the man of God",
     "email": "E-mail",
     "password": "Password",
     "confirm_password": "Confirm password",
@@ -44,8 +47,8 @@
     "purposeful_prayer_time": "Purposeful prayer time",
     "praying_time": "Pray Time",
     "pray_notice_setting_ment": "Do you want to set a praying time alarm?",
-    "minutes": "Minutes",
-    "hours": "Hours",
+    "minutes": "Min.",
+    "hours": "Hrs.",
     "setting": "Setting",
     "bible_reading_plan": "Bible reading plan",
     "bible_plan_year_1": "Bible in a year",
@@ -89,8 +92,11 @@
     "validate_empty_password_confirm": "Please enter password one more.",
     "validate_not_match_password_confirm": "The password doesn't match.",
     "register_fail_message": "Member registration failed. Please try again later.",
+    "error_message": "An error occurred while processing your request. Please try again later.",
     "duplicate_email": "This email is already registered. Would you like to log in?",
     "success_register": "Membership registration was processed successfully. Please use the app after logging in.",
-    "wrong_information": "The email or password you entered does not match. Please enter it correctly and try again."
+    "wrong_information": "The email or password you entered does not match. Please enter it correctly and try again.",
+    "login_fail_message": "An error occurred while logging in. Please try again later.",
+    "login_needs": "It is available after login. Would you like to log in?"
     
 }

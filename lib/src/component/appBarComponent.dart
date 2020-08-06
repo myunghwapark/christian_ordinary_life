@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../common/colors.dart';
 import '../common/translations.dart';
 
-Widget appBarComponent(
-    BuildContext context, String title, Widget actionWidget) {
+Widget appBarComponent(BuildContext context, String title,
+    {Widget actionWidget}) {
   return AppBar(
     title: Text(
       title,

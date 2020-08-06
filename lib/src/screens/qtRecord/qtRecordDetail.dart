@@ -56,8 +56,9 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
     return Scaffold(
         backgroundColor: AppColors.lightSky,
-        appBar: appBarComponent(context,
-            Translations.of(context).trans('menu_qt_record'), actionIcon()),
+        appBar: appBarComponent(
+            context, Translations.of(context).trans('menu_qt_record'),
+            actionWidget: actionIcon()),
         body: SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.all(15),

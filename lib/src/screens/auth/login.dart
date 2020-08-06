@@ -1,12 +1,73 @@
+import 'dart:convert';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:christian_ordinary_life/src/common/apiURL.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
-import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/screens/auth/register.dart';
-import 'package:flutter/material.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
   LoginState createState() => LoginState();
+}
+
+Future<User> loginUser(BuildContext context, User user) async {
+  User userResult;
+  final response = await http
+      .post(ApiURL.login,
+          headers: <String, String>{
+            'Content-Type': "application/json; charset=UTF-8"
+          },
+          body: jsonEncode(
+              {'userEmail': user.email, 'userPassword': user.password}))
+      .catchError((e) {
+    print(e.error);
+  });
+
+  try {
+    // Success
+    if (response.statusCode == 200) {
+      userResult = User.fromJson(json.decode(response.body));
+
+      if (userResult.result == 'success') {
+        // Save user information
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('userName', userResult.name);
+        prefs.setString('userEmail', userResult.email);
+
+        Navigator.pop(context, 'success');
+      } else if (userResult.errorCode == '01') {
+        showAlertDialog(
+            context, Translations.of(context).trans('wrong_information'));
+      } else {
+        showAlertDialog(
+            context,
+            (Translations.of(context).trans('login_fail_message') +
+                '\n' +
+                userResult.errorMessage));
+      }
+    } else {
+      showAlertDialog(
+          context, Translations.of(context).trans('login_fail_message'));
+      return null;
+    }
+  } on Exception catch (exception) {
+    showAlertDialog(
+        context,
+        (Translations.of(context).trans('error_message') +
+            '\n' +
+            exception.toString()));
+  } catch (error) {
+    showAlertDialog(
+        context,
+        (Translations.of(context).trans('error_message') +
+            '\n' +
+            error.toString()));
+  }
+
+  return userResult;
 }
 
 class LoginState extends State<Login> {
@@ -138,7 +199,13 @@ class LoginState extends State<Login> {
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {
-            if (_formKey.currentState.validate()) {}
+            if (_formKey.currentState.validate()) {
+              User userInfo = User(
+                  email: emailController.text,
+                  password: passwordController.text);
+
+              loginUser(context, userInfo);
+            }
           },
           color: AppColors.greenPointMild,
           textColor: Colors.white,
@@ -181,12 +248,7 @@ class LoginState extends State<Login> {
       children: <Widget>[
         GestureDetector(
           onTap: () {
-            showModalBottomSheet(
-                isScrollControlled: true,
-                context: context,
-                builder: (BuildContext builder) {
-                  return Register();
-                });
+            Navigator.pop(context, 'register');
           },
           child: Text(
             Translations.of(context).trans('register'),

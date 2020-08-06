@@ -17,7 +17,7 @@ class SettingsState extends State<Settings> {
     return Scaffold(
         backgroundColor: AppColors.lightBgGray,
         appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_settings'), null),
+            context, Translations.of(context).trans('menu_settings')),
         drawer: AppDrawer(),
         body: SettingsList(
           sections: [

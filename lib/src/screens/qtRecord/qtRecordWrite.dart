@@ -55,7 +55,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   }
 
   _delete() async {
-    final result = await showAlertDialog(
+    final result = await showConfirmDialog(
         context, Translations.of(context).trans('delete_confirm'));
     if (result == 'ok') {
       await _qtRecordBloc.deleteQtRecord(widget.qt.qtRecordId).then((result) {
@@ -244,8 +244,9 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
         backgroundColor: AppColors.lightSky,
-        appBar: appBarComponent(context,
-            Translations.of(context).trans('menu_qt_record'), actionIcon()),
+        appBar: appBarComponent(
+            context, Translations.of(context).trans('menu_qt_record'),
+            actionWidget: actionIcon()),
         body: SingleChildScrollView(
             controller: _scroll,
             padding: EdgeInsets.all(10),

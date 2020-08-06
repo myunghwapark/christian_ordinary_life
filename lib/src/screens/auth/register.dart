@@ -14,45 +14,63 @@ class Register extends StatefulWidget {
 }
 
 Future<User> registerUser(BuildContext context, User user) async {
-  final response = await http.post(ApiURL.register,
-      headers: <String, String>{
-        'Content-Type': "application/json; charset=UTF-8"
-      },
-      body: jsonEncode({
-        'userName': user.name,
-        'userEmail': user.email,
-        'userPassword': user.password,
-        'userGrade': 'U002_002' // Normal User
-      }));
-  // Success
-  if (response.statusCode == 200) {
-    User userResult = User.fromJson(json.decode(response.body));
-    if (userResult.result == 'success') {
-      showAlertDialog(
-          context, Translations.of(context).trans('success_register'));
-    } else if (userResult.errorCode == '01') {
-      final result = await showAlertDialog(
-          context, Translations.of(context).trans('duplicate_email'));
+  User userResult;
+  final response = await http
+      .post(ApiURL.register,
+          headers: <String, String>{
+            'Content-Type': "application/json; charset=UTF-8"
+          },
+          body: jsonEncode({
+            'userName': user.name,
+            'userEmail': user.email,
+            'userPassword': user.password,
+            'userGrade': 'U002_002' // Normal User
+          }))
+      .catchError((e) {
+    print(e.error);
+  });
 
-      if (result == 'ok') {
-        //TODO: Goto Login
+  try {
+    // Success
+    if (response.statusCode == 200) {
+      userResult = User.fromJson(json.decode(response.body));
+      if (userResult.result == 'success') {
+        showAlertDialog(
+            context, Translations.of(context).trans('success_register'));
+      } else if (userResult.errorCode == '01') {
+        final result = await showConfirmDialog(
+            context, Translations.of(context).trans('duplicate_email'));
+
+        if (result == 'ok') {
+          Navigator.pop(context, 'login');
+        }
+      } else {
+        showAlertDialog(
+            context,
+            (Translations.of(context).trans('register_fail_message') +
+                '\n' +
+                userResult.errorMessage));
       }
     } else {
       showAlertDialog(
-          context,
-          (Translations.of(context).trans('register_fail_message') +
-              '/n' +
-              userResult.errorMessage));
+          context, Translations.of(context).trans('register_fail_message'));
+      return null;
     }
-
-    return userResult;
-  }
-  // Fail
-  else {
+  } on Exception catch (exception) {
     showAlertDialog(
-        context, Translations.of(context).trans('register_fail_message'));
-    return null;
+        context,
+        (Translations.of(context).trans('error_message') +
+            '\n' +
+            exception.toString()));
+  } catch (error) {
+    showAlertDialog(
+        context,
+        (Translations.of(context).trans('error_message') +
+            '\n' +
+            error.toString()));
   }
+
+  return userResult;
 }
 
 class RegisterState extends State<Register> {

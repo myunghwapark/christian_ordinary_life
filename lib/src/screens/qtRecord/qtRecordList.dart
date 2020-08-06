@@ -128,8 +128,9 @@ class QTRecordState extends State<QTRecord> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.lightSky,
-        appBar: appBarComponent(context,
-            Translations.of(context).trans('menu_qt_record'), actionIcon()),
+        appBar: appBarComponent(
+            context, Translations.of(context).trans('menu_qt_record'),
+            actionWidget: actionIcon()),
         drawer: AppDrawer(),
         body: Container(
             padding: EdgeInsets.all(10),

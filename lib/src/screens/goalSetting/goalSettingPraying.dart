@@ -107,7 +107,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
 
     final _prayingTimeOption = InkWell(
       child: Container(
-        width: 85,
+        width: 90,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.darkGray),

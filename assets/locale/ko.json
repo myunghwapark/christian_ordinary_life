@@ -13,7 +13,10 @@
     "menu_calendar": "달력보기",
     "menu_settings": "환경설정",
     "login": "로그인",
+    "logout": "로그아웃",
     "register": "회원가입",
+    "confirm_logout": "로그아웃 하시겠습니까?",
+    "manOfGod": "하나님의 사람, # 님",
     "email": "이메일",
     "password": "비밀번호",
     "confirm_password": "비밀번호 재입력",
@@ -89,7 +92,10 @@
     "validate_empty_password_confirm": "비밀번호를 한번 더 입력해주세요.",
     "validate_not_match_password_confirm": "비밀번호가 일치하지 않습니다.",
     "register_fail_message": "회원가입에 실패하셨습니다. 잠시 후에 다시 시도해주세요.",
+    "error_message": "요청을 처리하는 중 오류가 발생하였습니다. 잠시 후에 다시 시도해주세요.",
     "duplicate_email": "이미 가입되어 있는 이메일입니다. 로그인 하시겠습니까?",
     "success_register": "회원가입이 정상적으로 처리되었습니다. 로그인 후 이용해주세요.",
-    "wrong_information": "입력하신 이메일이나 비밀번호가 일치하지 않습니다. 정확히 입력 후 다시 시도해주세요."
+    "wrong_information": "입력하신 이메일이나 비밀번호가 일치하지 않습니다. 정확히 입력 후 다시 시도해주세요.",
+    "login_fail_message": "로그인 중 오류가 발생하였습니다. 잠시 후에 다시 시도해주세요.",
+    "login_needs": "로그인 후 이용하실 수 있습니다. 로그인 하시겠습니까?"
 }

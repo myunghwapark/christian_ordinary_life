@@ -168,7 +168,7 @@ class CalendarState extends State<Calendar> {
     return Scaffold(
         backgroundColor: AppColors.lightMint,
         appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_calendar'), null),
+            context, Translations.of(context).trans('menu_calendar')),
         drawer: AppDrawer(),
         body: SingleChildScrollView(
           child: Column(
