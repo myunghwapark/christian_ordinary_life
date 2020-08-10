@@ -13,10 +13,6 @@ Widget appBarComponent(BuildContext context, String title,
     iconTheme: new IconThemeData(
       color: AppColors.lightGray,
     ),
-    /* leading: new IconButton(
-      icon: new Icon(Icons.menu),
-      onPressed: onTap == null ? () => {Navigator.pop(context)} : onTap,
-    ), */
     actions: actionWidget != null ? <Widget>[actionWidget] : [],
   );
 }

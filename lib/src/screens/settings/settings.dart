@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:settings_ui/settings_ui.dart';
-import '../../navigation/appDrawer.dart';
-import '../../component/appBarComponent.dart';
-import '../../common/translations.dart';
-import '../../common/colors.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
 
 class Settings extends StatefulWidget {
+  static const routeName = '/settings';
+
+  final User loginUser;
+  Settings(this.loginUser);
+
   @override
   SettingsState createState() => SettingsState();
 }

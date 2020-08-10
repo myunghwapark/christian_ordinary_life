@@ -1,93 +1,146 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/component/calendar.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:christian_ordinary_life/src/component/calendar.dart';
-import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
-import 'package:christian_ordinary_life/src/model/QT.dart';
+import 'package:christian_ordinary_life/src/model/Diary.dart';
 
-class QtRecordWrite extends StatefulWidget {
-  final QT qt;
-  const QtRecordWrite(this.qt);
+class ThankDiaryWrite extends StatefulWidget {
+  final Diary diary;
+  final User loginUser;
+  ThankDiaryWrite({this.diary, this.loginUser});
 
   @override
-  QtRecordWriteStatus createState() => QtRecordWriteStatus();
+  ThankDiaryWriteState createState() => ThankDiaryWriteState();
 }
 
-class QtRecordWriteStatus extends State<QtRecordWrite> {
-  final QtRecordBloc _qtRecordBloc = QtRecordBloc();
+class ThankDiaryWriteState extends State<ThankDiaryWrite> {
+  Diary newDiary = new Diary();
   final TextEditingController _titleController = new TextEditingController();
   final TextEditingController _contentController = new TextEditingController();
-  final TextEditingController _bibleController = new TextEditingController();
-
   ScrollController _scroll;
   FocusNode _focus = new FocusNode();
 
-  String qtDateForm = '';
-  DateTime qtDate = new DateTime.now();
+  String diaryDateForm = '';
+  DateTime diaryDate = new DateTime.now();
   bool _trashVisibility = false;
-
   final _formKey = GlobalKey<FormState>();
 
-  //DateTime qtDate = new DateTime(2020, 7, 17);
-
-  Future<void> _save() async {
-    if (_formKey.currentState.validate()) {
-      QT qt = new QT(
-          title: _titleController.text,
-          bible: _bibleController.text,
-          content: _contentController.text,
-          date: qtDate.toString());
-
-      if (widget.qt == null) {
-        await _qtRecordBloc.addQtRecord(qt).then((result) {
-          Navigator.pop(context);
-        });
-      } else {
-        qt.qtRecordId = widget.qt.qtRecordId;
-        await _qtRecordBloc.updateQtRecord(qt).then((result) {
-          Navigator.pop(context);
-        });
-      }
+  void writeDiary(BuildContext context) async {
+    try {
+      await API.transaction(context, API.thanksDiaryWrite, param: {
+        'userSeqNo': widget.loginUser.seqNo,
+        'thankDiarySeqNo': newDiary.seqNo,
+        'title': newDiary.title,
+        'diaryDate': newDiary.diaryDate,
+        'content': newDiary.content
+      }).then((response) {
+        Diary writeResult = Diary.fromJson(json.decode(response));
+        if (writeResult.result == 'success') {
+          Navigator.pop(context, newDiary);
+        } else {
+          showAlertDialog(
+              context,
+              (Translations.of(context).trans('error_message') +
+                  '\n' +
+                  newDiary.errorMessage));
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
     }
   }
 
-  _delete() async {
-    final result = await showConfirmDialog(
-        context, Translations.of(context).trans('delete_confirm'));
-    if (result == 'ok') {
-      await _qtRecordBloc.deleteQtRecord(widget.qt.qtRecordId).then((result) {
-        Navigator.pop(context);
-      });
+  void _delete(BuildContext context) async {
+    try {
+      final confirmResult = await showConfirmDialog(
+          context, Translations.of(context).trans('delete_confirm'));
+
+      if (confirmResult == 'ok') {
+        await API.transaction(context, API.thanksDiaryDelete,
+            param: {'thankDiarySeqNo': widget.diary.seqNo}).then((response) {
+          Diary deleteResult = Diary.fromJson(json.decode(response));
+          if (deleteResult.result == 'success') {
+            Navigator.pop(context, 'delete');
+          } else {
+            showAlertDialog(
+                context,
+                (Translations.of(context).trans('error_message') +
+                    '\n' +
+                    newDiary.errorMessage));
+          }
+        });
+      }
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
     }
   }
 
   Widget actionIcon() {
     return FlatButton(
       child: Text(Translations.of(context).trans('save')),
-      onPressed: _save,
+      onPressed: () {
+        if (_formKey.currentState.validate()) {
+          newDiary = new Diary(
+              seqNo: widget.diary != null ? widget.diary.seqNo : null,
+              title: _titleController.text,
+              content: _contentController.text,
+              diaryDate: diaryDate.toString());
+
+          writeDiary(context);
+        }
+      },
       textColor: AppColors.darkGray,
     );
   }
 
-  _setQtRecord() {
-    _titleController.text = widget.qt.title;
-    _bibleController.text = widget.qt.bible;
-    _contentController.text = widget.qt.content;
-    qtDate = DateTime.parse(widget.qt.date);
+  void _setDiary() {
+    _titleController.text = widget.diary.title;
+    _contentController.text = widget.diary.content;
+    diaryDate = DateTime.parse(widget.diary.diaryDate);
+  }
+
+  void _setDate(DateTime selectedDate) {
+    setState(() {
+      diaryDate = selectedDate;
+      diaryDateForm = getDateOfWeek(diaryDate);
+    });
+  }
+
+  void _showCalendar() async {
+    final result = await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext builder) {
+          return Calendar(diaryDate);
+        });
+
+    if (result != null) _setDate(result);
   }
 
   @override
   void initState() {
-    if (widget.qt != null) {
-      _setQtRecord();
+    if (widget.diary != null) {
+      _setDiary();
       _trashVisibility = true;
     } else {
       _trashVisibility = false;
     }
-    qtDateForm = getDateOfWeek(qtDate);
+    diaryDateForm = getDateOfWeek(diaryDate);
 
     _scroll = new ScrollController();
     _focus.addListener(() {
@@ -105,44 +158,24 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
-    _qtRecordBloc.dispose();
     super.dispose();
-  }
-
-  void _setDate(DateTime selectedDate) {
-    setState(() {
-      qtDate = selectedDate;
-      qtDateForm = getDateOfWeek(qtDate);
-    });
-  }
-
-  void _showCalendar() async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Calendar(qtDate);
-        });
-
-    if (result != null) _setDate(result);
   }
 
   @override
   Widget build(BuildContext context) {
-    // final bottom = MediaQuery.of(context).viewInsets.bottom;
     final _calendarButton = Container(
         padding: EdgeInsets.only(right: 5),
         child: IconButton(
           icon: Icon(Icons.calendar_today),
-          color: AppColors.marine,
+          color: AppColors.pastelPink,
           onPressed: _showCalendar,
         ));
 
-    final _qtDate = Flexible(
+    final _diaryDate = Flexible(
       fit: FlexFit.tight,
       child: GestureDetector(
         child: Text(
-          qtDateForm,
+          diaryDateForm,
           style: TextStyle(fontSize: 18),
         ),
         onTap: _showCalendar,
@@ -154,12 +187,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         child: Container(
             padding: EdgeInsets.only(right: 5),
             child: IconButton(
-              icon: Icon(FontAwesomeIcons.trash),
-              color: AppColors.lightGray,
-              onPressed: _delete,
-            )));
+                icon: Icon(FontAwesomeIcons.trash),
+                color: AppColors.lightGray,
+                onPressed: () => _delete(context))));
 
-    final _qtTitle = Container(
+    final _diaryTitle = Container(
       padding: EdgeInsets.all(12),
       height: 90,
       child: TextFormField(
@@ -173,7 +205,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
             fillColor: Colors.white,
             filled: true,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
+              borderSide: BorderSide(color: AppColors.pastelPink, width: 2.0),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             )),
         controller: _titleController,
@@ -188,30 +220,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
       ),
     );
 
-    final _qtBible = Container(
-      padding: EdgeInsets.all(12),
-      height: 90,
-      child: TextFormField(
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue[400], width: 2),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-            hintText: Translations.of(context).trans('qt_bible_hint'),
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            )),
-        controller: _bibleController,
-        keyboardType: TextInputType.text,
-        maxLength: 30,
-      ),
-    );
-
-    final _qtContent = Container(
+    final _diaryContent = Container(
         padding: EdgeInsets.all(12),
         child: TextFormField(
           textAlignVertical: TextAlignVertical.top,
@@ -243,9 +252,9 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
-        backgroundColor: AppColors.lightSky,
+        backgroundColor: AppColors.lightPinks,
         appBar: appBarComponent(
-            context, Translations.of(context).trans('menu_qt_record'),
+            context, Translations.of(context).trans('menu_thank_diary'),
             actionWidget: actionIcon()),
         body: SingleChildScrollView(
             controller: _scroll,
@@ -258,13 +267,12 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         _calendarButton,
-                        _qtDate,
+                        _diaryDate,
                         _deleteButton,
                       ],
                     ),
-                    _qtTitle,
-                    _qtBible,
-                    _qtContent,
+                    _diaryTitle,
+                    _diaryContent,
                     Padding(
                       padding: EdgeInsets.all(130),
                     )

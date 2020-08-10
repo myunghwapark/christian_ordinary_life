@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../navigation/appDrawer.dart';
-import '../../component/appBarComponent.dart';
-import '../../common/translations.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
 
 class ReadingBible extends StatefulWidget {
+  static const routeName = '/readingBible';
+
+  final User loginUser;
+  ReadingBible(this.loginUser);
+
   @override
   ReadingBibleState createState() => ReadingBibleState();
 }

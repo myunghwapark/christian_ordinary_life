@@ -1,4 +1,6 @@
+import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:flutter/material.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/database/dbHelper.dart';
 import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
@@ -11,12 +13,17 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 
 class QTRecord extends StatefulWidget {
+  static const routeName = '/qtRecord';
+
+  final User loginUser;
+  QTRecord(this.loginUser);
+
   @override
   QTRecordState createState() => QTRecordState();
 }
 
 class QTRecordState extends State<QTRecord> {
-  TextEditingController editingController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
   final QtRecordBloc _qtRecordBloc = QtRecordBloc();
   Widget _qtList;
   String keyWord;
@@ -36,7 +43,7 @@ class QTRecordState extends State<QTRecord> {
     return FlatButton(
       child: Text(Translations.of(context).trans('write')),
       onPressed: _goQtRecordWrite,
-      textColor: AppColors.greenPoint,
+      textColor: AppColors.darkGray,
     );
   }
 
@@ -126,6 +133,13 @@ class QTRecordState extends State<QTRecord> {
 
   @override
   Widget build(BuildContext context) {
+    GestureTapCallback _onSubmitted = () {
+      setState(() {
+        keyWord = searchController.text;
+        _qtList = _getList(keyWord);
+      });
+    };
+
     return Scaffold(
         backgroundColor: AppColors.lightSky,
         appBar: appBarComponent(
@@ -135,42 +149,8 @@ class QTRecordState extends State<QTRecord> {
         body: Container(
             padding: EdgeInsets.all(10),
             child: Column(children: <Widget>[
-              Container(
-                height: 57,
-                padding: EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
-                child: TextField(
-                  focusNode: _searchFieldNode,
-                  onSubmitted: (value) {
-                    setState(() {
-                      keyWord = value;
-                      _qtList = _getList(value);
-                    });
-                  },
-                  textAlignVertical: TextAlignVertical.center,
-                  controller: editingController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.marine, width: 2.0),
-                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                    ),
-                    contentPadding: EdgeInsets.all(8),
-                    labelText: Translations.of(context).trans('search'),
-                    hintText: Translations.of(context).trans('search'),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: _searchFieldNode.hasFocus
-                          ? Colors.blue
-                          : AppColors.marine,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25.0)),
-                    ),
-                  ),
-                ),
-              ),
+              searchBox(context, AppColors.marine, _searchFieldNode,
+                  searchController, _onSubmitted),
               Expanded(
                 child: _qtList,
               )

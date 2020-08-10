@@ -29,7 +29,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
     return FlatButton(
       child: Text(Translations.of(context).trans('edit')),
       onPressed: _goQtRecordWrite,
-      textColor: AppColors.greenPoint,
+      textColor: AppColors.darkGray,
     );
   }
 
@@ -41,7 +41,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final _qtTitle = Text(
+    final _qtDate = Text(
       getDateOfWeek(DateTime.parse(widget.qt.date)),
       style: TextStyle(color: AppColors.darkGray),
     );
@@ -70,7 +70,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _qtTitle,
+                _qtDate,
                 _qtBible,
                 Divider(
                   color: AppColors.greenPoint,

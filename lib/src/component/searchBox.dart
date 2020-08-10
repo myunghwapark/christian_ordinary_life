@@ -6,21 +6,23 @@ Widget searchBox(
     BuildContext context,
     Color pointColor,
     FocusNode _searchFieldNode,
-    TextEditingController editingController,
+    TextEditingController searchController,
     GestureTapCallback _onSubmitted) {
   return Container(
     height: 57,
-    padding: const EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
+    padding: EdgeInsets.only(top: 12, left: 8, right: 8, bottom: 8),
     child: TextField(
+      controller: searchController,
       focusNode: _searchFieldNode,
-      onSubmitted: null,
+      onSubmitted: (value) {
+        _onSubmitted();
+      },
       textAlignVertical: TextAlignVertical.center,
-      controller: editingController,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.marine, width: 2.0),
+          borderSide: BorderSide(color: pointColor, width: 2.0),
           borderRadius: BorderRadius.all(Radius.circular(25.0)),
         ),
         contentPadding: EdgeInsets.all(8),
@@ -28,7 +30,11 @@ Widget searchBox(
         hintText: Translations.of(context).trans('search'),
         prefixIcon: Icon(
           Icons.search,
-          color: _searchFieldNode.hasFocus ? Colors.blue : AppColors.marine,
+          color: _searchFieldNode.hasFocus ? Colors.blue : pointColor,
+        ),
+        suffixIcon: IconButton(
+          onPressed: () => searchController.clear(),
+          icon: Icon(Icons.clear),
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(25.0)),

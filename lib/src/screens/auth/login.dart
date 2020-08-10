@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:christian_ordinary_life/src/common/apiURL.dart';
+import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
@@ -16,7 +16,7 @@ class Login extends StatefulWidget {
 Future<User> loginUser(BuildContext context, User user) async {
   User userResult;
   final response = await http
-      .post(ApiURL.login,
+      .post(API.login,
           headers: <String, String>{
             'Content-Type': "application/json; charset=UTF-8"
           },
@@ -30,12 +30,12 @@ Future<User> loginUser(BuildContext context, User user) async {
     // Success
     if (response.statusCode == 200) {
       userResult = User.fromJson(json.decode(response.body));
-
       if (userResult.result == 'success') {
         // Save user information
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('userName', userResult.name);
         prefs.setString('userEmail', userResult.email);
+        prefs.setString('userSeqNo', userResult.seqNo);
 
         Navigator.pop(context, 'success');
       } else if (userResult.errorCode == '01') {

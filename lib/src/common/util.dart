@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
 
 /*
   return type: String
@@ -129,4 +130,9 @@ bool validateEmail(String value) {
       r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
   RegExp regex = new RegExp(pattern);
   return (!regex.hasMatch(value)) ? false : true;
+}
+
+void errorMessage(BuildContext context, dynamic e) {
+  showAlertDialog(context,
+      (Translations.of(context).trans('error_message') + '\n' + e.toString()));
 }

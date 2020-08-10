@@ -5,7 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../model/Goal.dart';
 import '../model/QT.dart';
-import '../model/ThankDiary.dart';
+import '../model/Diary.dart';
 import '../model/BiblePlan.dart';
 
 final String tableThankDiary = 'THANK_DIARY';
@@ -215,37 +215,37 @@ class DBHelper {
   }
 
   // Thank Diary
-  insertThankDiary(ThankDiary thanksDiary) async {
+  insertThankDiary(Diary thanksDiary) async {
     final db = await database;
     var res = await db.rawInsert(
         'INSERT INTO $tableThankDiary(title, date, content) VALUES(?, ?, ?)',
-        [thanksDiary.title, thanksDiary.date, thanksDiary.content]);
+        [thanksDiary.title, thanksDiary.diaryDate, thanksDiary.content]);
     return res;
   }
 
-  updateThankDiary(ThankDiary thanksDiary) async {
+  updateThankDiary(Diary thanksDiary) async {
     final db = await database;
     var res = await db.rawUpdate(
         'UPDATE $tableThankDiary SET title = ?, date = ?, content = ? WHERE thank_diary_id = ?',
         [
           thanksDiary.title,
-          thanksDiary.date,
+          thanksDiary.diaryDate,
           thanksDiary.content,
-          thanksDiary.thankDiaryId
+          thanksDiary.seqNo
         ]);
     return res;
   }
 
-  Future<List<ThankDiary>> getAllThankDiary() async {
+  Future<List<Diary>> getAllThankDiary() async {
     final db = await database;
     var res =
         await db.rawQuery('SELECT * FROM $tableThankDiary ORDER BY date DESC');
-    List<ThankDiary> list = res.isNotEmpty
+    List<Diary> list = res.isNotEmpty
         ? res
-            .map((c) => ThankDiary(
-                thankDiaryId: c['thank_diary_id'],
+            .map((c) => Diary(
+                seqNo: c['thank_diary_seq_no'],
                 title: c['title'],
-                date: c['date'],
+                diaryDate: c['diary_date'],
                 content: c['content']))
             .toList()
         : [];
@@ -258,10 +258,10 @@ class DBHelper {
         'SELECT * FROM $tableThankDiary WHERE thank_diary_id = ?',
         [thankDiaryId]);
     return res.isNotEmpty
-        ? ThankDiary(
-            thankDiaryId: res.first['thank_diary_id'],
+        ? Diary(
+            seqNo: res.first['thank_diary_seq_no'],
             title: res.first['title'],
-            date: res.first['date'],
+            diaryDate: res.first['diary_date'],
             content: res.first['content'])
         : Null;
   }

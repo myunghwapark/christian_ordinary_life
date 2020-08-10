@@ -1,16 +1,18 @@
 class User {
+  String seqNo;
   String name;
   String email;
-  String userGrade;
+  String grade;
   String password;
   String result;
   String errorMessage;
   String errorCode;
 
   User(
-      {this.name,
+      {this.seqNo,
+      this.name,
       this.email,
-      this.userGrade,
+      this.grade,
       this.password,
       this.result,
       this.errorMessage,
@@ -18,9 +20,10 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      seqNo: json['seqNo'],
       name: json['name'],
       email: json['email'],
-      userGrade: json['userGrade'],
+      grade: json['userGrade'],
       password: json['password'],
       result: json['result'],
       errorMessage: json['errorMessage'],

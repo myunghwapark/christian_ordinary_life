@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -35,13 +36,60 @@ class MyApp extends StatelessWidget {
           errorColor: Colors.orange[600]),
       home: MyHomePage(title: ''),
       initialRoute: '/',
-      routes: {
-        '/goalSetting': (context) => GoalSetting(),
-        '/readingBible': (context) => ReadingBible(),
-        '/qtRecord': (context) => QTRecord(),
-        '/thankDiary': (context) => ThankDiary(),
-        '/calendar': (context) => Calendar(),
-        '/settings': (context) => Settings(),
+      routes: {},
+      onGenerateRoute: (routeSettings) {
+        final User args = routeSettings.arguments;
+        switch (routeSettings.name) {
+          case GoalSetting.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return GoalSetting(args);
+              });
+            }
+            break;
+          case QTRecord.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return QTRecord(args);
+              });
+            }
+            break;
+          case ThankDiary.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return ThankDiary(args);
+              });
+            }
+            break;
+          case ReadingBible.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return ReadingBible(args);
+              });
+            }
+            break;
+          case ProcessCalendar.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return ProcessCalendar(args);
+              });
+            }
+            break;
+          case Settings.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return Settings(args);
+              });
+            }
+            break;
+          default:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return GoalSetting(args);
+              });
+            }
+            break;
+        }
       },
       supportedLocales: [const Locale('en', 'US'), const Locale('ko', 'KR')],
       localizationsDelegates: [

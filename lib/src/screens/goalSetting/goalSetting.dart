@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../common/translations.dart';
-import '../../common/colors.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'goalSettingQT.dart';
 import 'goalSettingBible.dart';
 import 'goalSettingPraying.dart';
-import '../../component/appBarComponent.dart';
 
 class GoalSetting extends StatefulWidget {
+  static const routeName = '/goalSetting';
+
+  final User loginUser;
+  GoalSetting(this.loginUser);
+
   @override
   GoalSettingState createState() => GoalSettingState();
 }
@@ -100,6 +106,12 @@ class GoalSettingState extends State<GoalSetting> {
       onPressed: _save,
       textColor: AppColors.greenPoint,
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('loginUser: ${widget.loginUser.name}');
   }
 
   @override

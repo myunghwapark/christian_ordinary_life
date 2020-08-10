@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
@@ -9,12 +10,17 @@ import '../component/appBarComponent.dart';
 import '../common/translations.dart';
 import '../common/colors.dart';
 
-class Calendar extends StatefulWidget {
+class ProcessCalendar extends StatefulWidget {
+  static const routeName = '/processCalendar';
+
+  final User loginUser;
+  ProcessCalendar(this.loginUser);
+
   @override
-  CalendarState createState() => CalendarState();
+  ProcessCalendarState createState() => ProcessCalendarState();
 }
 
-class CalendarState extends State<Calendar> {
+class ProcessCalendarState extends State<ProcessCalendar> {
   static var today = new DateTime.now();
   DateTime _currentDate = today;
   DateTime _currentDate2 = today;

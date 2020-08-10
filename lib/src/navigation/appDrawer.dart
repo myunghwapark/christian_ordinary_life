@@ -1,11 +1,18 @@
-import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSetting.dart';
+import 'package:christian_ordinary_life/src/screens/processCalendar.dart';
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordList.dart';
+import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.dart';
+import 'package:christian_ordinary_life/src/screens/settings/settings.dart';
+import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryList.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/screens/auth/login.dart';
 import 'package:christian_ordinary_life/src/screens/auth/register.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatefulWidget {
   @override
@@ -13,8 +20,7 @@ class AppDrawer extends StatefulWidget {
 }
 
 class AppDrawerState extends State {
-  var userName = '';
-  var userEmail = '';
+  User loginUser;
   Widget memberInfo;
   SharedPreferences prefs;
 
@@ -22,7 +28,10 @@ class AppDrawerState extends State {
     prefs = await SharedPreferences.getInstance();
 
     setState(() {
-      userName = prefs.getString("userName");
+      loginUser = new User();
+      loginUser.name = prefs.getString("userName");
+      loginUser.email = prefs.getString("userEmail");
+      loginUser.seqNo = prefs.getString("userSeqNo");
     });
   }
 
@@ -33,9 +42,9 @@ class AppDrawerState extends State {
     if (result == 'ok') {
       prefs.setString('userName', '');
       prefs.setString('userEmail', '');
+      prefs.setString('userSeqNo', '');
       setState(() {
-        userName = '';
-        userEmail = '';
+        loginUser = null;
       });
     }
   }
@@ -66,7 +75,7 @@ class AppDrawerState extends State {
       onTap: linkURL == null
           ? onTap
           : () async {
-              if (userName == null || userName == '') {
+              if (loginUser == null || loginUser.name == '') {
                 var result = await showConfirmDialog(
                     context, Translations.of(context).trans('login_needs'));
 
@@ -74,7 +83,8 @@ class AppDrawerState extends State {
                   _showLogin(context);
                 }
               } else {
-                Navigator.pushReplacementNamed(context, linkURL);
+                Navigator.pushReplacementNamed(context, linkURL,
+                    arguments: loginUser);
               }
             },
     );
@@ -120,7 +130,8 @@ class AppDrawerState extends State {
   }
 
   Widget user(BuildContext context) {
-    return Text((Translations.of(context).trans('manOfGod', param: userName)));
+    return Text(
+        (Translations.of(context).trans('manOfGod', param: loginUser.name)));
   }
 
   void _showLogin(BuildContext context) async {
@@ -135,7 +146,10 @@ class AppDrawerState extends State {
       _showRegister(context);
     } else if (result == 'success') {
       await SharedPreferences.getInstance().then((value) {
-        userName = value.getString('userName') ?? '';
+        loginUser = new User();
+        loginUser.name = value.getString('userName') ?? '';
+        loginUser.email = value.getString('userEmail') ?? '';
+        loginUser.seqNo = value.getString('userSeqNo') ?? '';
 
         setState(() {
           memberInfo = user(context);
@@ -205,7 +219,7 @@ class AppDrawerState extends State {
         ),
         onTap: () => {Navigator.pushReplacementNamed(context, '/')});
 
-    if (userName == null || userName == '') {
+    if (loginUser == null || loginUser.name == '') {
       memberInfo = loginJoin(context);
     } else {
       memberInfo = user(context);
@@ -235,28 +249,28 @@ class AppDrawerState extends State {
               _createDrawerItem(
                   icon: Icons.location_searching,
                   text: Translations.of(context).trans('menu_goal_setting'),
-                  linkURL: '/goalSetting'),
+                  linkURL: GoalSetting.routeName),
               _createDrawerItem(
                   icon: FontAwesomeIcons.bible,
                   text: Translations.of(context).trans('menu_reading_bible'),
-                  linkURL: '/readingBible'),
+                  linkURL: ReadingBible.routeName),
               _createDrawerItem(
                   icon: FontAwesomeIcons.pen,
                   text: Translations.of(context).trans('menu_qt_record'),
-                  linkURL: '/qtRecord'),
+                  linkURL: QTRecord.routeName),
               _createDrawerItem(
                   icon: FontAwesomeIcons.heart,
                   text: Translations.of(context).trans('menu_thank_diary'),
-                  linkURL: '/thankDiary'),
+                  linkURL: ThankDiary.routeName),
               _createDrawerItem(
                   icon: Icons.calendar_today,
                   text: Translations.of(context).trans('menu_calendar'),
-                  linkURL: '/calendar'),
+                  linkURL: ProcessCalendar.routeName),
               _createDrawerItem(
                   icon: Icons.settings,
                   text: Translations.of(context).trans('menu_settings'),
-                  linkURL: '/settings'),
-              (userName == null || userName == '')
+                  linkURL: Settings.routeName),
+              (loginUser == null || loginUser.name == '')
                   ? Text('')
                   : _createDrawerItem(
                       icon: FontAwesomeIcons.doorOpen,
