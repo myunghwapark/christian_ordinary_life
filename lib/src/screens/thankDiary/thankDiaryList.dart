@@ -1,13 +1,12 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryDetail.dart';
-import 'package:http/http.dart' as http;
-
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -30,46 +29,54 @@ class ThankDiaryState extends State<ThankDiary> {
   TextEditingController searchController = TextEditingController();
   String keyWord = '';
   FocusNode _searchFieldNode = FocusNode();
-  int startPageNum = 0;
+  int _startPageNum = 0;
+  int _pageNum = 0;
+  int _rowCount = 10;
+  int _totalCnt = 0;
+  bool initLoad = true;
+  RefreshController _refreshController;
+  bool _scrollUp;
 
-  Future<void> getThankDiaryList(BuildContext context) async {
-    final response = await http
-        .post(API.thanksDiaryList,
-            headers: <String, String>{
-              'Content-Type': "application/json; charset=UTF-8"
-            },
-            body: jsonEncode({
-              'userSeqNo': widget.loginUser.seqNo,
-              'searchKeyword': keyWord,
-              'startPageNum': startPageNum
-            }))
-        .catchError((e) {
-      print(e.error);
-    });
+  Future<void> getThankDiaryList() async {
+    _startPageNum = _pageNum * _rowCount;
+
+    if (!initLoad && _startPageNum >= _totalCnt) {
+      _refreshController.loadNoData();
+      return null;
+    } else {
+      _refreshController.resetNoData();
+    }
 
     try {
-      // Success
-      if (response.statusCode == 200) {
-        diary = Diary.fromJson(json.decode(response.body));
+      await API.transaction(context, API.thanksDiaryList, param: {
+        'userSeqNo': widget.loginUser.seqNo,
+        'searchKeyword': keyWord,
+        'startPageNum': _startPageNum,
+        'rowCount': _rowCount
+      }).then((response) {
+        diary = Diary.fromJson(json.decode(response));
+        _totalCnt = diary.totalCnt;
 
         setState(() {
-          diaryList =
+          List<Diary> tempList;
+          tempList =
               diary.diaryList.map((model) => Diary.fromJson(model)).toList();
+          for (int i = 0; i < tempList.length; i++) {
+            diaryList.add(tempList[i]);
+          }
         });
-      }
+      });
     } on Exception catch (exception) {
-      showAlertDialog(
-          context,
-          (Translations.of(context).trans('error_message') +
-              '\n' +
-              exception.toString()));
-    } catch (error) {
-      showAlertDialog(
-          context,
-          (Translations.of(context).trans('error_message') +
-              '\n' +
-              error.toString()));
+      _errorHandle(exception);
+    } catch (exception) {
+      _errorHandle(exception);
     }
+    _pageNum++;
+    initLoad = false;
+    if (_scrollUp)
+      _refreshController.refreshCompleted();
+    else
+      _refreshController.loadComplete();
   }
 
   Future<void> _goThankDiaryWrite() async {
@@ -80,7 +87,7 @@ class ThankDiaryState extends State<ThankDiary> {
                   loginUser: widget.loginUser,
                 ))).then((value) {
       setState(() {
-        getThankDiaryList(context);
+        _refresh();
       });
     });
   }
@@ -93,17 +100,39 @@ class ThankDiaryState extends State<ThankDiary> {
     );
   }
 
+  void _errorHandle(Exception exception) {
+    if (_scrollUp)
+      _refreshController.refreshFailed();
+    else
+      _refreshController.loadFailed();
+
+    errorMessage(context, exception);
+  }
+
+  void _refresh() {
+    _scrollUp = true;
+    _pageNum = 0;
+
+    diaryList = new List<Diary>();
+    getThankDiaryList();
+  }
+
+  void _load() {
+    _scrollUp = false;
+    getThankDiaryList();
+  }
+
   @override
   Widget build(BuildContext context) {
     GestureTapCallback _onSubmitted = () {
       setState(() {
         keyWord = searchController.text;
-        getThankDiaryList(context);
+        _refresh();
       });
     };
 
     final _diaryList = ListView.separated(
-        itemCount: diaryList.length,
+        itemCount: diaryList?.length,
         separatorBuilder: (context, index) {
           if (index == 0) return SizedBox.shrink();
           return const Divider();
@@ -151,7 +180,7 @@ class ThankDiaryState extends State<ThankDiary> {
                           diary: curDiary, loginUser: widget.loginUser)),
                 ).then((value) {
                   setState(() {
-                    getThankDiaryList(context);
+                    _refresh();
                   });
                 });
               },
@@ -169,15 +198,26 @@ class ThankDiaryState extends State<ThankDiary> {
           searchBox(context, AppColors.pastelPink, _searchFieldNode,
               searchController, _onSubmitted),
           Expanded(
-            child: _diaryList,
-          )
+              child: SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: true,
+            controller: _refreshController,
+            onRefresh: _refresh,
+            onLoading: _load,
+            child: _totalCnt == 0
+                ? Center(
+                    child: Text(Translations.of(context).trans('no_data')),
+                  )
+                : _diaryList,
+          ))
         ]));
   }
 
   @override
   initState() {
     super.initState();
-    getThankDiaryList(context);
+    _refreshController = new RefreshController();
+    _refresh();
   }
 
   @override

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
@@ -15,59 +14,40 @@ class Register extends StatefulWidget {
 
 Future<User> registerUser(BuildContext context, User user) async {
   User userResult;
-  final response = await http
-      .post(API.register,
-          headers: <String, String>{
-            'Content-Type': "application/json; charset=UTF-8"
-          },
-          body: jsonEncode({
-            'userName': user.name,
-            'userEmail': user.email,
-            'userPassword': user.password,
-            'userGrade': 'U002_002' // Normal User
-          }))
-      .catchError((e) {
-    print(e.error);
-  });
 
   try {
-    // Success
-    if (response.statusCode == 200) {
-      userResult = User.fromJson(json.decode(response.body));
-      if (userResult.result == 'success') {
-        showAlertDialog(
-            context, Translations.of(context).trans('success_register'));
-      } else if (userResult.errorCode == '01') {
-        final result = await showConfirmDialog(
-            context, Translations.of(context).trans('duplicate_email'));
+    final response = await API.transaction(context, API.register, param: {
+      'userName': user.name,
+      'userEmail': user.email,
+      'userPassword': user.password,
+      'userGrade': 'U002_002'
+    });
 
-        if (result == 'ok') {
-          Navigator.pop(context, 'login');
-        }
-      } else {
-        showAlertDialog(
-            context,
-            (Translations.of(context).trans('register_fail_message') +
-                '\n' +
-                userResult.errorMessage));
+    userResult = User.fromJson(json.decode(response));
+
+    // Success
+    if (userResult.result == 'success') {
+      showAlertDialog(
+              context, Translations.of(context).trans('success_register'))
+          .then((value) => Navigator.pop(context, 'login'));
+    } else if (userResult.errorCode == '01') {
+      final result = await showConfirmDialog(
+          context, Translations.of(context).trans('duplicate_email'));
+
+      if (result == 'ok') {
+        Navigator.pop(context, 'login');
       }
     } else {
       showAlertDialog(
-          context, Translations.of(context).trans('register_fail_message'));
-      return null;
+          context,
+          (Translations.of(context).trans('register_fail_message') +
+              '\n' +
+              userResult.errorMessage));
     }
   } on Exception catch (exception) {
-    showAlertDialog(
-        context,
-        (Translations.of(context).trans('error_message') +
-            '\n' +
-            exception.toString()));
+    errorMessage(context, exception);
   } catch (error) {
-    showAlertDialog(
-        context,
-        (Translations.of(context).trans('error_message') +
-            '\n' +
-            error.toString()));
+    errorMessage(context, error);
   }
 
   return userResult;
@@ -97,7 +77,7 @@ class RegisterState extends State<Register> {
       registerUser(context, newUser);
     }
 
-    final background = Container(
+    final _background = Container(
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
             colors: [AppColors.gradientStart, AppColors.gradientEnd],
@@ -108,7 +88,7 @@ class RegisterState extends State<Register> {
       ),
     );
 
-    final closeButton = AppBar(
+    final _closeButton = AppBar(
       title: Text(""),
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -126,7 +106,7 @@ class RegisterState extends State<Register> {
       ],
     );
 
-    final registerLabel = Text(
+    final _registerLabel = Text(
       Translations.of(context).trans('register'),
       style: TextStyle(
         color: Colors.white,
@@ -136,7 +116,7 @@ class RegisterState extends State<Register> {
       textAlign: TextAlign.center,
     );
 
-    final email = TextFormField(
+    final _email = TextFormField(
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
       maxLength: 20,
@@ -169,7 +149,7 @@ class RegisterState extends State<Register> {
       ),
     );
 
-    final name = TextFormField(
+    final _name = TextFormField(
       controller: nameController,
       autofocus: false,
       maxLength: 15,
@@ -199,7 +179,7 @@ class RegisterState extends State<Register> {
       ),
     );
 
-    final password = TextFormField(
+    final _password = TextFormField(
       controller: passwordController,
       autofocus: false,
       maxLength: 20,
@@ -232,7 +212,7 @@ class RegisterState extends State<Register> {
       ),
     );
 
-    final passwordConfirm = TextFormField(
+    final _passwordConfirm = TextFormField(
       controller: passwordConfirmController,
       autofocus: false,
       obscureText: true,
@@ -266,7 +246,7 @@ class RegisterState extends State<Register> {
       ),
     );
 
-    final registerButton = SizedBox(
+    final _registerButton = SizedBox(
         width: double.infinity,
         child: RaisedButton(
           onPressed: () {
@@ -286,9 +266,9 @@ class RegisterState extends State<Register> {
         ));
 
     return Stack(children: <Widget>[
-      background,
+      _background,
       Positioned(
-        child: closeButton,
+        child: _closeButton,
       ),
       Positioned(
           child: Form(
@@ -300,19 +280,19 @@ class RegisterState extends State<Register> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    registerLabel,
+                    _registerLabel,
                     Container(
                       height: 20,
                     ),
-                    email,
+                    _email,
                     SizedBox(height: 10.0),
-                    name,
+                    _name,
                     SizedBox(height: 10.0),
-                    password,
+                    _password,
                     SizedBox(height: 10.0),
-                    passwordConfirm,
+                    _passwordConfirm,
                     SizedBox(height: 14.0),
-                    registerButton,
+                    _registerButton,
                     SizedBox(height: 20.0),
                   ],
                 ),

@@ -7,6 +7,7 @@ class Diary {
   String errorMessage;
   String errorCode;
   String searchKeyword;
+  int totalCnt;
   List diaryList;
 
   Diary(
@@ -17,7 +18,8 @@ class Diary {
       this.searchKeyword,
       this.result,
       this.errorCode,
-      this.errorMessage});
+      this.errorMessage,
+      this.totalCnt});
 
   Diary.fromJson(Map json)
       : title = json['title'],
@@ -28,5 +30,6 @@ class Diary {
         errorMessage = json['errorMessage'],
         errorCode = json['errorCode'],
         searchKeyword = json['searchKeyword'],
-        diaryList = json['diaryList'];
+        diaryList = json['diaryList'],
+        totalCnt = json['totalCnt'];
 }

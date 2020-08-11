@@ -1,19 +1,38 @@
 class QT {
-  int qtRecordId;
+  String seqNo;
   String title;
-  String date;
+  String qtDate;
   String bible;
   String content;
   String result;
   String errorMessage;
   String errorCode;
   String searchKeyword;
+  int totalCnt;
+  List qtList;
 
   QT(
-      {this.qtRecordId,
+      {this.seqNo,
       this.title,
-      this.date,
+      this.qtDate,
       this.bible,
       this.content,
-      this.searchKeyword});
+      this.searchKeyword,
+      this.result,
+      this.errorCode,
+      this.errorMessage,
+      this.totalCnt});
+
+  QT.fromJson(Map json)
+      : title = json['title'],
+        seqNo = json['seqNo'],
+        qtDate = json['qtDate'],
+        bible = json['bible'],
+        content = json['content'],
+        result = json['result'],
+        errorMessage = json['errorMessage'],
+        errorCode = json['errorCode'],
+        searchKeyword = json['searchKeyword'],
+        qtList = json['qtList'],
+        totalCnt = json['totalCnt'];
 }

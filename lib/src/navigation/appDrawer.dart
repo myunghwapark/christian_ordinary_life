@@ -75,7 +75,7 @@ class AppDrawerState extends State {
       onTap: linkURL == null
           ? onTap
           : () async {
-              if (loginUser == null || loginUser.name == '') {
+              if (!_loginCheck()) {
                 var result = await showConfirmDialog(
                     context, Translations.of(context).trans('login_needs'));
 
@@ -171,6 +171,13 @@ class AppDrawerState extends State {
     }
   }
 
+  bool _loginCheck() {
+    if (loginUser == null || loginUser.name == null || loginUser.name == '') {
+      return false;
+    } else
+      return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -219,7 +226,7 @@ class AppDrawerState extends State {
         ),
         onTap: () => {Navigator.pushReplacementNamed(context, '/')});
 
-    if (loginUser == null || loginUser.name == '') {
+    if (!_loginCheck()) {
       memberInfo = loginJoin(context);
     } else {
       memberInfo = user(context);
@@ -270,7 +277,7 @@ class AppDrawerState extends State {
                   icon: Icons.settings,
                   text: Translations.of(context).trans('menu_settings'),
                   linkURL: Settings.routeName),
-              (loginUser == null || loginUser.name == '')
+              (!_loginCheck())
                   ? Text('')
                   : _createDrawerItem(
                       icon: FontAwesomeIcons.doorOpen,

@@ -17,7 +17,7 @@ class ThankDiaryDetail extends StatefulWidget {
 }
 
 class ThankDiaryDetailState extends State<ThankDiaryDetail> {
-  Diary updatedDiray = new Diary();
+  Diary detailDiary = new Diary();
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(
         context,
@@ -30,7 +30,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
         Navigator.pop(context);
       } else {
         setState(() {
-          updatedDiray = value;
+          detailDiary = value;
         });
       }
     });
@@ -47,19 +47,19 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   @override
   Widget build(BuildContext context) {
     final _qtDate = Text(
-      getDateOfWeek(DateTime.parse(updatedDiray.diaryDate)),
+      getDateOfWeek(DateTime.parse(detailDiary.diaryDate)),
       style: TextStyle(color: AppColors.darkGray),
     );
 
     final _qtTitle = Text(
-      updatedDiray.title,
+      detailDiary.title,
       style: TextStyle(color: AppColors.black, fontSize: 18),
     );
 
     final _qtContent = Container(
         padding: EdgeInsets.only(top: 10, bottom: 10),
         constraints: BoxConstraints(minHeight: 100),
-        child: Text(updatedDiray.content));
+        child: Text(detailDiary.content));
 
     return Scaffold(
         backgroundColor: AppColors.lightPinks,
@@ -91,7 +91,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
 
   @override
   void initState() {
-    updatedDiray = widget.diary;
+    detailDiary = widget.diary;
     super.initState();
   }
 }

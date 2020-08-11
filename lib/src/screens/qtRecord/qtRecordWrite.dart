@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/component/calendar.dart';
-import 'package:christian_ordinary_life/src/database/qtRecordBloc.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 
 class QtRecordWrite extends StatefulWidget {
   final QT qt;
-  const QtRecordWrite(this.qt);
+  final User loginUser;
+  const QtRecordWrite({this.qt, this.loginUser});
 
   @override
   QtRecordWriteStatus createState() => QtRecordWriteStatus();
 }
 
 class QtRecordWriteStatus extends State<QtRecordWrite> {
-  final QtRecordBloc _qtRecordBloc = QtRecordBloc();
+  QT newQt = new QT();
   final TextEditingController _titleController = new TextEditingController();
   final TextEditingController _contentController = new TextEditingController();
   final TextEditingController _bibleController = new TextEditingController();
@@ -28,46 +32,76 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   String qtDateForm = '';
   DateTime qtDate = new DateTime.now();
   bool _trashVisibility = false;
-
   final _formKey = GlobalKey<FormState>();
 
-  //DateTime qtDate = new DateTime(2020, 7, 17);
-
-  Future<void> _save() async {
-    if (_formKey.currentState.validate()) {
-      QT qt = new QT(
-          title: _titleController.text,
-          bible: _bibleController.text,
-          content: _contentController.text,
-          date: qtDate.toString());
-
-      if (widget.qt == null) {
-        await _qtRecordBloc.addQtRecord(qt).then((result) {
-          Navigator.pop(context);
-        });
-      } else {
-        qt.qtRecordId = widget.qt.qtRecordId;
-        await _qtRecordBloc.updateQtRecord(qt).then((result) {
-          Navigator.pop(context);
-        });
-      }
+  void _writeQT() async {
+    try {
+      await API.transaction(context, API.qtRecordWrite, param: {
+        'userSeqNo': widget.loginUser.seqNo,
+        'qtRecordSeqNo': newQt.seqNo,
+        'title': newQt.title,
+        'qtDate': newQt.qtDate,
+        'bible': newQt.bible,
+        'content': newQt.content
+      }).then((response) {
+        QT writeResult = QT.fromJson(json.decode(response));
+        if (writeResult.result == 'success') {
+          Navigator.pop(context, newQt);
+        } else {
+          errorMessage(context, newQt.errorMessage);
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
     }
   }
 
-  _delete() async {
-    final result = await showConfirmDialog(
-        context, Translations.of(context).trans('delete_confirm'));
-    if (result == 'ok') {
-      await _qtRecordBloc.deleteQtRecord(widget.qt.qtRecordId).then((result) {
-        Navigator.pop(context);
-      });
+  void _delete() async {
+    try {
+      final confirmResult = await showConfirmDialog(
+          context, Translations.of(context).trans('delete_confirm'));
+
+      if (confirmResult == 'ok') {
+        await API.transaction(context, API.qtRecordDelete, param: {
+          'userSeqNo': widget.loginUser.seqNo,
+          'qtRecordSeqNo': widget.qt.seqNo
+        }).then((response) {
+          QT deleteResult = QT.fromJson(json.decode(response));
+          if (deleteResult.result == 'success') {
+            Navigator.pop(context, 'delete');
+          } else {
+            errorMessage(context, newQt.errorMessage);
+          }
+        });
+      }
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
     }
   }
 
   Widget actionIcon() {
     return FlatButton(
       child: Text(Translations.of(context).trans('save')),
-      onPressed: _save,
+      onPressed: () {
+        if (_formKey.currentState.validate()) {
+          newQt = new QT(
+              seqNo: widget.qt != null ? widget.qt.seqNo : null,
+              title: _titleController.text,
+              content: _contentController.text,
+              bible: _bibleController.text,
+              qtDate: qtDate.toString());
+
+          _writeQT();
+        }
+      },
       textColor: AppColors.darkGray,
     );
   }
@@ -76,7 +110,25 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     _titleController.text = widget.qt.title;
     _bibleController.text = widget.qt.bible;
     _contentController.text = widget.qt.content;
-    qtDate = DateTime.parse(widget.qt.date);
+    qtDate = DateTime.parse(widget.qt.qtDate);
+  }
+
+  void _setDate(DateTime selectedDate) {
+    setState(() {
+      qtDate = selectedDate;
+      qtDateForm = getDateOfWeek(qtDate);
+    });
+  }
+
+  void _showCalendar() async {
+    final result = await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext builder) {
+          return Calendar(qtDate);
+        });
+
+    if (result != null) _setDate(result);
   }
 
   @override
@@ -105,31 +157,12 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
-    _qtRecordBloc.dispose();
+    _bibleController.dispose();
     super.dispose();
-  }
-
-  void _setDate(DateTime selectedDate) {
-    setState(() {
-      qtDate = selectedDate;
-      qtDateForm = getDateOfWeek(qtDate);
-    });
-  }
-
-  void _showCalendar() async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Calendar(qtDate);
-        });
-
-    if (result != null) _setDate(result);
   }
 
   @override
   Widget build(BuildContext context) {
-    // final bottom = MediaQuery.of(context).viewInsets.bottom;
     final _calendarButton = Container(
         padding: EdgeInsets.only(right: 5),
         child: IconButton(

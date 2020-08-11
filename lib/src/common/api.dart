@@ -10,14 +10,17 @@ class API {
 
   static String register = serverURL + 'user/register.php';
   static String login = serverURL + 'user/login.php';
+
   static String thanksDiaryList =
       serverURL + 'thank_diary/thank_diary_list.php';
-  static String thanksDiaryDetail =
-      serverURL + 'thank_diary/thank_diary_detail.php';
   static String thanksDiaryWrite =
       serverURL + 'thank_diary/thank_diary_write.php';
   static String thanksDiaryDelete =
       serverURL + 'thank_diary/thank_diary_delete.php';
+
+  static String qtRecordList = serverURL + 'qt_record/qt_record_list.php';
+  static String qtRecordWrite = serverURL + 'qt_record/qt_record_write.php';
+  static String qtRecordDelete = serverURL + 'qt_record/qt_record_delete.php';
 
   static Future<dynamic> transaction(BuildContext context, String url,
       {Object param}) async {

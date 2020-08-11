@@ -111,7 +111,6 @@ class GoalSettingState extends State<GoalSetting> {
   @override
   void initState() {
     super.initState();
-    print('loginUser: ${widget.loginUser.name}');
   }
 
   @override

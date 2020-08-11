@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -15,56 +14,33 @@ class Login extends StatefulWidget {
 
 Future<User> loginUser(BuildContext context, User user) async {
   User userResult;
-  final response = await http
-      .post(API.login,
-          headers: <String, String>{
-            'Content-Type': "application/json; charset=UTF-8"
-          },
-          body: jsonEncode(
-              {'userEmail': user.email, 'userPassword': user.password}))
-      .catchError((e) {
-    print(e.error);
-  });
-
   try {
-    // Success
-    if (response.statusCode == 200) {
-      userResult = User.fromJson(json.decode(response.body));
-      if (userResult.result == 'success') {
-        // Save user information
-        final prefs = await SharedPreferences.getInstance();
-        prefs.setString('userName', userResult.name);
-        prefs.setString('userEmail', userResult.email);
-        prefs.setString('userSeqNo', userResult.seqNo);
+    final response = await API.transaction(context, API.login,
+        param: {'userEmail': user.email, 'userPassword': user.password});
 
-        Navigator.pop(context, 'success');
-      } else if (userResult.errorCode == '01') {
-        showAlertDialog(
-            context, Translations.of(context).trans('wrong_information'));
-      } else {
-        showAlertDialog(
-            context,
-            (Translations.of(context).trans('login_fail_message') +
-                '\n' +
-                userResult.errorMessage));
-      }
+    userResult = User.fromJson(json.decode(response));
+    if (userResult.result == 'success') {
+      // Save user information
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('userName', userResult.name);
+      prefs.setString('userEmail', userResult.email);
+      prefs.setString('userSeqNo', userResult.seqNo);
+
+      Navigator.pop(context, 'success');
+    } else if (userResult.errorCode == '01') {
+      showAlertDialog(
+          context, Translations.of(context).trans('wrong_information'));
     } else {
       showAlertDialog(
-          context, Translations.of(context).trans('login_fail_message'));
-      return null;
+          context,
+          (Translations.of(context).trans('login_fail_message') +
+              '\n' +
+              userResult.errorMessage));
     }
   } on Exception catch (exception) {
-    showAlertDialog(
-        context,
-        (Translations.of(context).trans('error_message') +
-            '\n' +
-            exception.toString()));
+    errorMessage(context, exception);
   } catch (error) {
-    showAlertDialog(
-        context,
-        (Translations.of(context).trans('error_message') +
-            '\n' +
-            error.toString()));
+    errorMessage(context, error);
   }
 
   return userResult;

@@ -1,5 +1,6 @@
-import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:flutter/material.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -8,20 +9,31 @@ import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 
 class QtRecordDetail extends StatefulWidget {
   final QT qt;
-  const QtRecordDetail(this.qt);
+  final User loginUser;
+  const QtRecordDetail({this.qt, this.loginUser});
 
   @override
   QtRecordDetailState createState() => QtRecordDetailState();
 }
 
 class QtRecordDetailState extends State<QtRecordDetail> {
-  QT detailQt;
+  QT detailQt = new QT();
 
   Future<void> _goQtRecordWrite() async {
-    await Navigator.push(context,
-            MaterialPageRoute(builder: (context) => QtRecordWrite(widget.qt)))
-        .then((value) {
-      setState(() {});
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => QtRecordWrite(
+                  qt: widget.qt,
+                  loginUser: widget.loginUser,
+                ))).then((value) {
+      if (value == 'delete') {
+        Navigator.pop(context);
+      } else {
+        setState(() {
+          detailQt = value;
+        });
+      }
     });
   }
 
@@ -34,25 +46,24 @@ class QtRecordDetailState extends State<QtRecordDetail> {
   }
 
   @override
-  void initState() {
-    //detailQt = DBHelper().getQtRecord(widget.qt.qtRecordId);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final _qtDate = Text(
-      getDateOfWeek(DateTime.parse(widget.qt.date)),
+      getDateOfWeek(DateTime.parse(detailQt.qtDate)),
       style: TextStyle(color: AppColors.darkGray),
     );
 
-    final _qtBible = Text(
-      (widget.qt.bible != null ? '[${widget.qt.bible}] ' : '') +
-          widget.qt.title,
+    final _qtTitle = Text(
+      ((detailQt.bible != null && detailQt.bible != '')
+              ? '[${detailQt.bible}] '
+              : '') +
+          detailQt.title,
       style: TextStyle(color: AppColors.black, fontSize: 18),
     );
 
-    final _qtContent = Text(widget.qt.content);
+    final _qtContent = Container(
+        padding: EdgeInsets.only(top: 10, bottom: 10),
+        constraints: BoxConstraints(minHeight: 100),
+        child: Text(detailQt.content));
 
     return Scaffold(
         backgroundColor: AppColors.lightSky,
@@ -71,7 +82,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 _qtDate,
-                _qtBible,
+                _qtTitle,
                 Divider(
                   color: AppColors.greenPoint,
                 ),
@@ -80,5 +91,11 @@ class QtRecordDetailState extends State<QtRecordDetail> {
             ),
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    detailQt = widget.qt;
+    super.initState();
   }
 }

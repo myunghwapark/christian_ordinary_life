@@ -32,7 +32,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   bool _trashVisibility = false;
   final _formKey = GlobalKey<FormState>();
 
-  void writeDiary(BuildContext context) async {
+  void _writeDiary() async {
     try {
       await API.transaction(context, API.thanksDiaryWrite, param: {
         'userSeqNo': widget.loginUser.seqNo,
@@ -45,11 +45,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
         if (writeResult.result == 'success') {
           Navigator.pop(context, newDiary);
         } else {
-          showAlertDialog(
-              context,
-              (Translations.of(context).trans('error_message') +
-                  '\n' +
-                  newDiary.errorMessage));
+          errorMessage(context, newDiary.errorMessage);
         }
       });
     } on Exception catch (exception) {
@@ -61,23 +57,21 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     }
   }
 
-  void _delete(BuildContext context) async {
+  void _delete() async {
     try {
       final confirmResult = await showConfirmDialog(
           context, Translations.of(context).trans('delete_confirm'));
 
       if (confirmResult == 'ok') {
-        await API.transaction(context, API.thanksDiaryDelete,
-            param: {'thankDiarySeqNo': widget.diary.seqNo}).then((response) {
+        await API.transaction(context, API.thanksDiaryDelete, param: {
+          'userSeqNo': widget.loginUser.seqNo,
+          'thankDiarySeqNo': widget.diary.seqNo
+        }).then((response) {
           Diary deleteResult = Diary.fromJson(json.decode(response));
           if (deleteResult.result == 'success') {
             Navigator.pop(context, 'delete');
           } else {
-            showAlertDialog(
-                context,
-                (Translations.of(context).trans('error_message') +
-                    '\n' +
-                    newDiary.errorMessage));
+            errorMessage(context, newDiary.errorMessage);
           }
         });
       }
@@ -101,7 +95,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
               content: _contentController.text,
               diaryDate: diaryDate.toString());
 
-          writeDiary(context);
+          _writeDiary();
         }
       },
       textColor: AppColors.darkGray,
@@ -189,7 +183,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
             child: IconButton(
                 icon: Icon(FontAwesomeIcons.trash),
                 color: AppColors.lightGray,
-                onPressed: () => _delete(context))));
+                onPressed: _delete)));
 
     final _diaryTitle = Container(
       padding: EdgeInsets.all(12),
