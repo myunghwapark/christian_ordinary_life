@@ -22,6 +22,13 @@ class API {
   static String qtRecordWrite = serverURL + 'qt_record/qt_record_write.php';
   static String qtRecordDelete = serverURL + 'qt_record/qt_record_delete.php';
 
+  static String getUserGoal = serverURL + 'goal/get_user_goal.php';
+  static String setUserGoal = serverURL + 'goal/set_user_goal.php';
+
+  static String biblePlanList = serverURL + 'reading_bible/bible_plan_list.php';
+  static String biblePlanDetail =
+      serverURL + 'reading_bible/bible_plan_detail.php';
+
   static Future<dynamic> transaction(BuildContext context, String url,
       {Object param}) async {
     final response = await http

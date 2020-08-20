@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           case GoalSetting.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return GoalSetting(args);
+                return GoalSetting(loginUser: args);
               });
             }
             break;
@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
           default:
             {
               return MaterialPageRoute(builder: (context) {
-                return GoalSetting(args);
+                return GoalSetting(loginUser: args);
               });
             }
             break;

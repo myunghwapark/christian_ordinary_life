@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../common/colors.dart';
-import '../common/translations.dart';
 
 Widget appBarComponent(BuildContext context, String title,
     {Widget actionWidget}) {
@@ -17,8 +16,8 @@ Widget appBarComponent(BuildContext context, String title,
   );
 }
 
-Widget appBarBack(BuildContext context, String title, GestureTapCallback onTap,
-    Widget actionWidget) {
+Widget appBarBack(BuildContext context, String title,
+    {GestureTapCallback onTap, Widget actionWidget}) {
   return AppBar(
     title: Text(
       title,
@@ -30,36 +29,42 @@ Widget appBarBack(BuildContext context, String title, GestureTapCallback onTap,
     ),
     leading: new IconButton(
       icon: new Icon(Icons.arrow_back_ios),
-      onPressed: onTap == null ? () => {Navigator.pop(context)} : onTap,
+      onPressed: onTap == null ? () => Navigator.pop(context) : onTap,
     ),
     actions: actionWidget != null ? <Widget>[actionWidget] : [],
   );
 }
 
 Widget appBarCustom(
-    BuildContext context, String title, GestureTapCallback onTap) {
+  BuildContext context,
+  String title, {
+  String leaderText,
+  GestureTapCallback onLeaderTap,
+  String actionText,
+  GestureTapCallback onActionTap,
+}) {
   return Container(
+    height: 70,
     padding: EdgeInsets.only(top: 15),
     color: Colors.teal,
     child: Row(children: [
       Flexible(
           fit: FlexFit.tight,
           flex: 1,
-          child: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Colors.white,
-              size: 25,
+          child: FlatButton(
+            child: Text(
+              leaderText,
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: onLeaderTap == null
+                ? () => Navigator.pop(context)
+                : onLeaderTap,
           )),
       Flexible(
           fit: FlexFit.tight,
           flex: 4,
           child: Text(
-            Translations.of(context).trans('bible_plan_custom'),
+            title,
             style: TextStyle(color: Colors.white, fontSize: 20),
             textAlign: TextAlign.center,
           )),
@@ -68,10 +73,10 @@ Widget appBarCustom(
           flex: 1,
           child: FlatButton(
             child: Text(
-              Translations.of(context).trans('next'),
+              actionText,
               style: TextStyle(color: Colors.white, fontSize: 16),
             ),
-            onPressed: onTap,
+            onPressed: onActionTap,
           ))
     ]),
   );

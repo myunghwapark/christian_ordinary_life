@@ -55,10 +55,16 @@ class Translations {
     return true;
   }
 
-  String trans(String key, {String param}) {
+  String trans(String key, {String param1, String param2, String param3}) {
     var sentence = this._sentences[key];
-    if (param != null && sentence.indexOf('#') != -1) {
-      sentence = sentence.replaceAll('#', param);
+    if (param1 != null && sentence.indexOf('#1') != -1) {
+      sentence = sentence.replaceAll('#1', param1);
+    }
+    if (param2 != null && sentence.indexOf('#2') != -1) {
+      sentence = sentence.replaceAll('#2', param2);
+    }
+    if (param3 != null && sentence.indexOf('#3') != -1) {
+      sentence = sentence.replaceAll('#3', param3);
     }
     return sentence;
   }

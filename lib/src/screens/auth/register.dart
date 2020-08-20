@@ -265,38 +265,42 @@ class RegisterState extends State<Register> {
               style: TextStyle(fontSize: 14)),
         ));
 
-    return Stack(children: <Widget>[
-      _background,
-      Positioned(
-        child: _closeButton,
-      ),
-      Positioned(
-          child: Form(
-              key: _formKey,
-              child: Container(
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    _registerLabel,
-                    Container(
-                      height: 20,
+    return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Stack(children: <Widget>[
+          _background,
+          Positioned(
+            child: _closeButton,
+          ),
+          Positioned(
+              child: Form(
+                  key: _formKey,
+                  child: Container(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        _registerLabel,
+                        Container(
+                          height: 20,
+                        ),
+                        _email,
+                        SizedBox(height: 10.0),
+                        _name,
+                        SizedBox(height: 10.0),
+                        _password,
+                        SizedBox(height: 10.0),
+                        _passwordConfirm,
+                        SizedBox(height: 14.0),
+                        _registerButton,
+                        SizedBox(height: 20.0),
+                      ],
                     ),
-                    _email,
-                    SizedBox(height: 10.0),
-                    _name,
-                    SizedBox(height: 10.0),
-                    _password,
-                    SizedBox(height: 10.0),
-                    _passwordConfirm,
-                    SizedBox(height: 14.0),
-                    _registerButton,
-                    SizedBox(height: 20.0),
-                  ],
-                ),
-              )))
-    ]);
+                  )))
+        ]));
   }
 }

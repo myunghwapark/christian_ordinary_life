@@ -31,7 +31,7 @@ String getDateOfWeek(DateTime now) {
 
 /*
   return type: String
-  ex) 2022년 7월 22일 or 2020
+  ex) 2022년 7월 22일 or July 22 2020
 */
 String getDate(DateTime now) {
   if (now == null) return '';
@@ -114,6 +114,15 @@ showConfirmDialog(BuildContext context, String alertText) async {
   return result;
 }
 
+void showToast(GlobalKey<ScaffoldState> scaffordKey, String toastText,
+    {SnackBarAction action}) {
+  //final scaffold = Scaffold.of(context);
+  scaffordKey.currentState.showSnackBar(SnackBar(
+    content: Text(toastText),
+    action: action != null ? action : null,
+  ));
+}
+
 bool validatePassword(String value) {
   Pattern pattern =
       r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
@@ -135,4 +144,21 @@ bool validateEmail(String value) {
 void errorMessage(BuildContext context, dynamic e) {
   showAlertDialog(context,
       (Translations.of(context).trans('error_message') + '\n' + e.toString()));
+}
+
+String getPlanPeriod(BuildContext context, String period) {
+  if (period == null) return null;
+  String _periodType = period.substring(period.length - 1, period.length);
+  String _planPeriod = period.substring(0, period.length - 1);
+
+  switch (_periodType) {
+    case 'd':
+      _periodType = Translations.of(context).trans("day");
+      break;
+    case 'w':
+      _periodType = Translations.of(context).trans("week");
+      break;
+    default:
+  }
+  return _planPeriod + _periodType;
 }

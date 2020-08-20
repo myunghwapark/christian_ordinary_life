@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:flutter/material.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -11,42 +17,136 @@ class GoalSetting extends StatefulWidget {
   static const routeName = '/goalSetting';
 
   final User loginUser;
-  GoalSetting(this.loginUser);
+  final Goal goal;
+  final BibleUserPlan bibleUserPlan;
+  GoalSetting({this.loginUser, this.goal, this.bibleUserPlan});
 
   @override
   GoalSettingState createState() => GoalSettingState();
 }
 
 class GoalSettingState extends State<GoalSetting> {
-  var _checkVars = {
-    'qt': false,
-    'praying': false,
-    'bible': false,
-    'diary': false,
-  };
+  Goal goal = new Goal();
+  BibleUserPlan bibleUserPlan = new BibleUserPlan();
 
-  _goToSettingDetail(String title, bool value) {
+  Future<void> getUserGoal() async {
+    try {
+      Goal result = new Goal();
+      await API.transaction(context, API.getUserGoal,
+          param: {'userSeqNo': widget.loginUser.seqNo}).then((response) {
+        result = Goal.fromJson(json.decode(response));
+        print('response: $response');
+        if (result.result == 'success') {
+          setState(() {
+            List<Goal> goalInfo =
+                result.goalInfo.map((model) => Goal.fromJson(model)).toList();
+            goal = goalInfo[0];
+            // 한번에 파싱하기 위해 어쩔 수 없이 Goal에 담아서 분배
+            bibleUserPlan.biblePlanId = goal.biblePlanId;
+            bibleUserPlan.customBible = goal.customBible;
+            bibleUserPlan.planPeriod = goal.planPeriod;
+          });
+        } else if (result.errorCode == '01') {
+        } else {
+          errorMessage(context, result.errorMessage);
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    }
+  }
+
+  Future<void> setUserGoal() async {
+    /*  print('readingBible: ${goal.readingBible}');
+    print('qtAlarm: ${goal.qtAlarm}');
+    print('biblePlanId: ${bibleUserPlan.biblePlanId}');
+    print('customBible: ${bibleUserPlan.customBible}');
+    return; */
+    try {
+      Goal result = new Goal();
+      await API.transaction(context, API.setUserGoal, param: {
+        'userSeqNo': widget.loginUser.seqNo,
+        'readingBible': goal.readingBible,
+        'thankDiary': goal.thankDiary,
+        'qtRecord': goal.qtRecord,
+        'qtTime': goal.qtTime,
+        'qtAlarm': goal.qtAlarm,
+        'praying': goal.praying,
+        'prayingTime': goal.prayingTime,
+        'prayingAlarm': goal.prayingAlarm,
+        'prayingDuration': goal.prayingDuration
+      }).then((response) async {
+        result = Goal.fromJson(json.decode(response));
+        if (result.result == 'success') {
+          final askingResult = await showConfirmDialog(
+              context,
+              (Translations.of(context)
+                  .trans('goal_setted', param1: widget.loginUser.name)));
+          if (askingResult == 'ok') _goToMain();
+        } else {
+          errorMessage(context, result.errorMessage);
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    }
+  }
+
+  _goToSettingDetail(String title) {
     setState(() {
-      _checkVars[title] = value;
-
       switch (title) {
         case 'qt':
-          if (value == true) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GoalSettingQT()));
+          goal.qtRecord = !goal.qtRecord;
+          if (goal.qtRecord == true) {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GoalSettingQT(goal: goal)))
+                .then((value) {
+              if (value != null) {
+                goal = value['goal'];
+                //goal.qtAlarm = tempGoal.qtAlarm;
+                //goal.qtTime = tempGoal.qtTime;
+              }
+            });
           }
           break;
         case 'praying':
-          if (value == true) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GoalSettingPraying()));
+          goal.praying = !goal.praying;
+          if (goal.praying == true) {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GoalSettingPraying(goal: goal)))
+                .then((value) {
+              if (value != null) {
+                goal = value['goal'];
+              }
+            });
           }
           break;
         case 'bible':
-          if (value == true) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => GoalSettingBible()));
+          goal.readingBible = !goal.readingBible;
+          if (goal.readingBible == true) {
+            String language = Translations.of(context).localeLaunguageCode();
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GoalSettingBible(
+                          language: language,
+                          goal: goal,
+                          bibleUserPlan: bibleUserPlan,
+                        ))).then((value) {
+              if (value != null) bibleUserPlan = value['bibleUserPlan'];
+            });
           }
+          break;
+        case 'diary':
+          goal.thankDiary = !goal.thankDiary;
           break;
       }
     });
@@ -58,7 +158,7 @@ class GoalSettingState extends State<GoalSetting> {
         fit: FlexFit.tight,
         flex: 1,
         child: InkWell(
-            onTap: () => {_goToSettingDetail(target, !_checkVars[target])},
+            onTap: () => _goToSettingDetail(target),
             child: Container(
               color: bgColor,
               padding: EdgeInsets.all(20),
@@ -68,8 +168,7 @@ class GoalSettingState extends State<GoalSetting> {
                     data: ThemeData(unselectedWidgetColor: Colors.white),
                     child: Checkbox(
                       value: checkboxVar,
-                      onChanged: (bool newValue) =>
-                          {_goToSettingDetail(target, newValue)},
+                      onChanged: (bool newValue) => _goToSettingDetail(target),
                       activeColor: AppColors.darkGray,
                     ),
                   ),
@@ -94,45 +193,40 @@ class GoalSettingState extends State<GoalSetting> {
             )));
   }
 
-  _save() {}
-
   _goToMain() {
     Navigator.pushReplacementNamed(context, '/');
   }
 
-  Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('save')),
-      onPressed: _save,
-      textColor: AppColors.greenPoint,
-    );
-  }
-
   @override
   void initState() {
+    goal.qtRecord = false;
+    goal.readingBible = false;
+    goal.praying = false;
+    goal.thankDiary = false;
+
+    getUserGoal();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    //print('build qtRecord: ${goal.qtRecord}');
     return Scaffold(
-        appBar: appBarBack(
-            context,
-            Translations.of(context).trans('qt_notice_setting_title'),
-            _goToMain,
-            actionIcon()),
         body: Column(children: [
-          _createGoal('qt', Translations.of(context).trans('daily_qt'),
-              AppColors.blueSky, _checkVars['qt']),
-          _createGoal(
-              'praying',
-              Translations.of(context).trans('daily_praying'),
-              AppColors.mint,
-              _checkVars['praying']),
-          _createGoal('bible', Translations.of(context).trans('daily_bible'),
-              AppColors.lightOrange, _checkVars['bible']),
-          _createGoal('diary', Translations.of(context).trans('daily_thank'),
-              AppColors.pastelPink, _checkVars['diary']),
-        ]));
+      appBarCustom(
+          context, Translations.of(context).trans('title_goal_setting'),
+          leaderText: Translations.of(context).trans('cancel'),
+          onLeaderTap: _goToMain,
+          actionText: Translations.of(context).trans('save'),
+          onActionTap: setUserGoal),
+      _createGoal('qt', Translations.of(context).trans('daily_qt'),
+          AppColors.blueSky, goal.qtRecord),
+      _createGoal('praying', Translations.of(context).trans('daily_praying'),
+          AppColors.mint, goal.praying),
+      _createGoal('bible', Translations.of(context).trans('daily_bible'),
+          AppColors.lightOrange, goal.readingBible),
+      _createGoal('diary', Translations.of(context).trans('daily_thank'),
+          AppColors.pastelPink, goal.thankDiary),
+    ]));
   }
 }

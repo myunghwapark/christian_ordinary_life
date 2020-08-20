@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:badges/badges.dart';
-import '../../common/translations.dart';
-import '../../common/colors.dart';
-import '../../component/appBarComponent.dart';
-import '../../model/Bible.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
+import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/model/Bible.dart';
+import 'goalBibleCustom2.dart';
 
-var biblePlan = <Bible>[];
-
-class GoalSettingBibleCustom extends StatefulWidget {
+class GoalBibleCustom1 extends StatefulWidget {
   @override
-  GoalSettingBibleCustomState createState() => GoalSettingBibleCustomState();
+  GoalBibleCustom1State createState() => GoalBibleCustom1State();
 
-  GoalSettingBibleCustom({biblePlan});
+  final User loginUser;
+  final Goal goal;
+  final BibleUserPlan bibleUserPlan;
+  GoalBibleCustom1({this.loginUser, this.goal, this.bibleUserPlan});
 }
 
-class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
+class GoalBibleCustom1State extends State<GoalBibleCustom1> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  BibleUserPlan bibleUserPlan = new BibleUserPlan();
+  List biblePlan = <Bible>[];
   var oldTestaments = <Bible>[];
   var newTestaments = <Bible>[];
   Map _oldTestament, _newTestament;
+  bool first = true;
 
-  @override
-  initState() {
-    super.initState();
+  void _getBible() {
     biblePlan = <Bible>[];
-  }
-
-  void _getBible(BuildContext context) {
     if (oldTestaments.length == 0) {
       _oldTestament = Translations.of(context).bible('old_testament');
       _oldTestament.forEach((key, value) => oldTestaments
@@ -38,6 +43,8 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
       _newTestament.forEach((key, value) => newTestaments
           .add(Bible(key, value['title'], value['chapters'], false)));
     }
+
+    first = false;
   }
 
   void _setBibleOrder(Bible bible) {
@@ -51,12 +58,15 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
     if (!exist) {
       biblePlan.add(bible);
     }
+    int totalChapters = 0;
     // Make order
-    for (int i = 0; i < biblePlan.length; i++) {
-      Bible currentBible = biblePlan[i];
-      currentBible.setCheckOrder(i + 1);
-    }
-    print('biblePlan: $biblePlan');
+    biblePlan.asMap().forEach((index, currentBible) {
+      currentBible.setCheckOrder(index + 1);
+      totalChapters += currentBible.chapters;
+    });
+    print(biblePlan);
+    bibleUserPlan.customTotalChapters = totalChapters;
+    bibleUserPlan.customBible = biblePlan.toString();
   }
 
   Widget _displayBibles(Bible bible) {
@@ -100,20 +110,33 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
     );
   }
 
-  void _nextSetting() {}
+  void _nextSetting() async {
+    if (biblePlan.length == 0) {
+      showToast(
+          scaffoldKey, Translations.of(context).trans('bible_custom_validate'));
+      return;
+    }
+    bibleUserPlan.customBible = biblePlan.toString();
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GoalBibleCustom2(bibleUserPlan: bibleUserPlan),
+      ),
+    ).then((value) {
+      if (value != null && value['result'] == 'complete') {
+        Navigator.pop(context,
+            {"result": "complete", "bibleUserPlan": value['bibleUserPlan']});
+      }
+    });
+  }
 
-  Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('next')),
-      onPressed: _nextSetting,
-      textColor: AppColors.greenPoint,
-    );
+  void _goToBack() {
+    Navigator.pop(context, {"result": "cancel"});
   }
 
   @override
   Widget build(BuildContext context) {
-    _getBible(context);
-
+    if (first) _getBible();
     final _bibleSelectionLabel = Padding(
       padding: EdgeInsets.only(bottom: 8),
       child: Text(
@@ -174,24 +197,37 @@ class GoalSettingBibleCustomState extends State<GoalSettingBibleCustom> {
     );
 
     return Scaffold(
-        appBar: appBarBack(
-            context,
-            Translations.of(context).trans('bible_plan_custom'),
-            null,
-            actionIcon()),
-        body: Container(
-          height: MediaQuery.of(context).copyWith().size.height,
-          padding: EdgeInsets.all(20),
-          child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: <Widget>[
-                _bibleSelectionLabel,
-                _subtitle,
-                _oldTestamentTitle,
-                _oldTestaments,
-                _newTestamentTitle,
-                _newTestaments,
-              ]),
-        ));
+        key: scaffoldKey,
+        body: Column(children: [
+          appBarCustom(
+              context, Translations.of(context).trans('title_goal_setting'),
+              leaderText: Translations.of(context).trans('cancel'),
+              onLeaderTap: _goToBack,
+              actionText: Translations.of(context).trans('next'),
+              onActionTap: _nextSetting),
+          Container(
+            height: (MediaQuery.of(context).copyWith().size.height - 70),
+            padding: EdgeInsets.only(top: 5, left: 20, right: 20),
+            child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: <Widget>[
+                  _bibleSelectionLabel,
+                  _subtitle,
+                  _oldTestamentTitle,
+                  _oldTestaments,
+                  _newTestamentTitle,
+                  _newTestaments,
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                  )
+                ]),
+          )
+        ]));
+  }
+
+  @override
+  initState() {
+    bibleUserPlan = widget.bibleUserPlan;
+    super.initState();
   }
 }

@@ -131,7 +131,7 @@ class AppDrawerState extends State {
 
   Widget user(BuildContext context) {
     return Text(
-        (Translations.of(context).trans('manOfGod', param: loginUser.name)));
+        (Translations.of(context).trans('manOfGod', param1: loginUser.name)));
   }
 
   void _showLogin(BuildContext context) async {

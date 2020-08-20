@@ -1,4 +1,3 @@
-import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:flutter/material.dart';
 

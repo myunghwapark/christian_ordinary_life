@@ -25,6 +25,6 @@ class Bible {
 
   @override
   String toString() {
-    return '{ ${this.id}, ${this.title}, ${this.chapters} }';
+    return '{ "book": "${this.id}", "volume":"${this.chapters}" }';
   }
 }

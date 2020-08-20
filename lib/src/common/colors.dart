@@ -12,6 +12,7 @@ class AppColors {
   static Color moss = HexColor('#018181');
   static Color gradientStart = HexColor('#43c6ac');
   static Color gradientEnd = HexColor('#f8ffae');
+  static Color yellowishGreen = HexColor('#47f84b');
 
   static Color blueSky = HexColor('#56d2d2');
   static Color lightSky = HexColor('#dff4f4');
@@ -19,10 +20,13 @@ class AppColors {
   static Color sky = HexColor('#3fcece');
 
   static Color lightOrange = HexColor('#f1c96e');
+  static Color orange = HexColor('#f3b34d');
+  static Color lightBrown = HexColor('#c38907');
 
   static Color pastelPink = HexColor('#f88185');
   static Color lightPinks = HexColor('#fceff0');
 
+  static Color almostWhite = HexColor('#fdfcfc');
   static Color lightGray = HexColor('#bababa');
   static Color lightBgGray = HexColor('#ebebeb');
   static Color moreLightGray = HexColor('#d6d6d6');
