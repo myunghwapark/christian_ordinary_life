@@ -5,7 +5,7 @@ class Bible {
   bool checked;
   int checkOrder;
 
-  Bible(this.id, this.title, this.chapters, this.checked);
+  Bible(this.id, this.title, this.chapters, {this.checked, this.checkOrder});
 
   void setChecked(bool value) {
     this.checked = value;

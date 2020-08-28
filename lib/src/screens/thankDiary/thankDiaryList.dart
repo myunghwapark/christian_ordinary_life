@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -7,7 +8,6 @@ import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -15,9 +15,6 @@ import 'package:christian_ordinary_life/src/common/colors.dart';
 
 class ThankDiary extends StatefulWidget {
   static const routeName = '/thankDiary';
-
-  final User loginUser;
-  ThankDiary(this.loginUser);
 
   @override
   ThankDiaryState createState() => ThankDiaryState();
@@ -49,7 +46,7 @@ class ThankDiaryState extends State<ThankDiary> {
 
     try {
       await API.transaction(context, API.thanksDiaryList, param: {
-        'userSeqNo': widget.loginUser.seqNo,
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'searchKeyword': keyWord,
         'startPageNum': _startPageNum,
         'rowCount': _rowCount
@@ -84,7 +81,7 @@ class ThankDiaryState extends State<ThankDiary> {
         context,
         MaterialPageRoute(
             builder: (context) => ThankDiaryWrite(
-                  loginUser: widget.loginUser,
+                  loginUser: UserInfo.loginUser,
                 ))).then((value) {
       setState(() {
         _refresh();
@@ -177,7 +174,7 @@ class ThankDiaryState extends State<ThankDiary> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ThankDiaryDetail(
-                          diary: curDiary, loginUser: widget.loginUser)),
+                          diary: curDiary, loginUser: UserInfo.loginUser)),
                 ).then((value) {
                   setState(() {
                     _refresh();

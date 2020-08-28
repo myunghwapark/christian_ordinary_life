@@ -15,6 +15,7 @@ class Goal {
   String errorMessage;
   String errorCode;
   List goalInfo;
+  bool goalSet;
 
   String biblePlanId;
   String planPeriod;
@@ -39,7 +40,8 @@ class Goal {
       this.goalInfo,
       this.biblePlanId,
       this.planPeriod,
-      this.customBible});
+      this.customBible,
+      this.goalSet});
 
   Goal.fromJson(Map json)
       : goalSeqNo = json['goalSeqNo'],

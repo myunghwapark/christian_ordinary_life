@@ -1,10 +1,10 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/component/searchBox.dart';
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordDetail.dart';
@@ -16,9 +16,6 @@ import 'package:christian_ordinary_life/src/common/colors.dart';
 
 class QTRecord extends StatefulWidget {
   static const routeName = '/qtRecord';
-
-  final User loginUser;
-  QTRecord(this.loginUser);
 
   @override
   QTRecordState createState() => QTRecordState();
@@ -50,7 +47,7 @@ class QTRecordState extends State<QTRecord> {
 
     try {
       await API.transaction(context, API.qtRecordList, param: {
-        'userSeqNo': widget.loginUser.seqNo,
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'searchKeyword': keyWord,
         'startPageNum': _startPageNum,
         'rowCount': _rowCount
@@ -84,7 +81,7 @@ class QTRecordState extends State<QTRecord> {
         context,
         MaterialPageRoute(
             builder: (context) => QtRecordWrite(
-                  loginUser: widget.loginUser,
+                  loginUser: UserInfo.loginUser,
                 ))).then((value) {
       setState(() {
         _refresh();
@@ -179,7 +176,7 @@ class QTRecordState extends State<QTRecord> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => QtRecordDetail(
-                          qt: curQt, loginUser: widget.loginUser)),
+                          qt: curQt, loginUser: UserInfo.loginUser)),
                 ).then((value) {
                   setState(() {
                     _refresh();

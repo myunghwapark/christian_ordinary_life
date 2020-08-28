@@ -1,4 +1,3 @@
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
@@ -12,9 +11,6 @@ import '../common/colors.dart';
 
 class ProcessCalendar extends StatefulWidget {
   static const routeName = '/processCalendar';
-
-  final User loginUser;
-  ProcessCalendar(this.loginUser);
 
   @override
   ProcessCalendarState createState() => ProcessCalendarState();

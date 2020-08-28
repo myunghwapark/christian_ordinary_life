@@ -34,6 +34,7 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
       return;
     }
     bibleUserPlan.planPeriod = _daysController.text;
+    print('bibleUserPlan.planPeriod: ${bibleUserPlan.planPeriod}');
     Navigator.pop(
         context, {"result": "complete", "bibleUserPlan": bibleUserPlan});
   }
@@ -139,6 +140,11 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
   @override
   void initState() {
     bibleUserPlan = widget.bibleUserPlan;
+    if (bibleUserPlan != null &&
+        bibleUserPlan.planPeriod != null &&
+        bibleUserPlan.planPeriod != '0') {
+      _daysController.text = bibleUserPlan.planPeriod;
+    }
     super.initState();
   }
 }

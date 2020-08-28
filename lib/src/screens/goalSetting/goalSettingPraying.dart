@@ -26,7 +26,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
 
   void _init() {
     goal = widget.goal;
-    if (goal.prayingTime == null) {
+    if (goal.prayingTime == null || goal.prayingTime == '') {
       goal.prayingTime = _setHour + ':' + _setMinute;
     } else {
       List<String> prayingTime = goal.prayingTime.split(':');

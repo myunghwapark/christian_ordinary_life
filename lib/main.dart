@@ -1,4 +1,3 @@
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -38,54 +37,53 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {},
       onGenerateRoute: (routeSettings) {
-        final User args = routeSettings.arguments;
         switch (routeSettings.name) {
           case GoalSetting.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return GoalSetting(loginUser: args);
+                return GoalSetting();
               });
             }
             break;
           case QTRecord.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return QTRecord(args);
+                return QTRecord();
               });
             }
             break;
           case ThankDiary.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return ThankDiary(args);
+                return ThankDiary();
               });
             }
             break;
           case ReadingBible.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return ReadingBible(args);
+                return ReadingBible();
               });
             }
             break;
           case ProcessCalendar.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return ProcessCalendar(args);
+                return ProcessCalendar();
               });
             }
             break;
           case Settings.routeName:
             {
               return MaterialPageRoute(builder: (context) {
-                return Settings(args);
+                return Settings();
               });
             }
             break;
           default:
             {
               return MaterialPageRoute(builder: (context) {
-                return GoalSetting(loginUser: args);
+                return GoalSetting();
               });
             }
             break;

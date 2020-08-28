@@ -1,6 +1,6 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSetting.dart';
 import 'package:christian_ordinary_life/src/screens/processCalendar.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordList.dart';
@@ -8,9 +8,6 @@ import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.da
 import 'package:christian_ordinary_life/src/screens/settings/settings.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryList.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/model/User.dart';
-import 'package:christian_ordinary_life/src/screens/auth/login.dart';
-import 'package:christian_ordinary_life/src/screens/auth/register.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 
@@ -20,34 +17,8 @@ class AppDrawer extends StatefulWidget {
 }
 
 class AppDrawerState extends State {
-  User loginUser;
+  UserInfo userInfo = new UserInfo();
   Widget memberInfo;
-  SharedPreferences prefs;
-
-  Future<Null> getSharedPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      loginUser = new User();
-      loginUser.name = prefs.getString("userName");
-      loginUser.email = prefs.getString("userEmail");
-      loginUser.seqNo = prefs.getString("userSeqNo");
-    });
-  }
-
-  Future<void> _logout() async {
-    final result = await showConfirmDialog(
-        context, Translations.of(context).trans('confirm_logout'));
-
-    if (result == 'ok') {
-      prefs.setString('userName', '');
-      prefs.setString('userEmail', '');
-      prefs.setString('userSeqNo', '');
-      setState(() {
-        loginUser = null;
-      });
-    }
-  }
 
   Widget _createDrawerItem(
       {IconData icon,
@@ -75,16 +46,22 @@ class AppDrawerState extends State {
       onTap: linkURL == null
           ? onTap
           : () async {
-              if (!_loginCheck()) {
+              if (!userInfo.loginCheck()) {
                 var result = await showConfirmDialog(
                     context, Translations.of(context).trans('login_needs'));
 
                 if (result == 'ok') {
-                  _showLogin(context);
+                  userInfo.showLogin(context).then((value) {
+                    setState(() {
+                      memberInfo = user(context);
+
+                      Navigator.pushReplacementNamed(context, '/');
+                    });
+                  });
                 }
               } else {
                 Navigator.pushReplacementNamed(context, linkURL,
-                    arguments: loginUser);
+                    arguments: UserInfo.loginUser);
               }
             },
     );
@@ -101,7 +78,12 @@ class AppDrawerState extends State {
               padding: EdgeInsets.all(0),
               splashColor: Colors.transparent,
               onPressed: () {
-                _showLogin(context);
+                userInfo.showLogin(context).then((value) {
+                  setState(() {
+                    memberInfo = user(context);
+                    Navigator.pushReplacementNamed(context, '/');
+                  });
+                });
               },
               child: Text(
                 Translations.of(context).trans('login'),
@@ -118,7 +100,7 @@ class AppDrawerState extends State {
               padding: EdgeInsets.all(0),
               splashColor: Colors.transparent,
               onPressed: () {
-                _showRegister(context);
+                userInfo.showRegister(context);
               },
               child: Text(
                 Translations.of(context).trans('register'),
@@ -130,58 +112,22 @@ class AppDrawerState extends State {
   }
 
   Widget user(BuildContext context) {
-    return Text(
-        (Translations.of(context).trans('manOfGod', param1: loginUser.name)));
+    return Text((Translations.of(context)
+        .trans('manOfGod', param1: UserInfo.loginUser.name)));
   }
 
-  void _showLogin(BuildContext context) async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Login();
-        });
-
-    if (result == 'register') {
-      _showRegister(context);
-    } else if (result == 'success') {
-      await SharedPreferences.getInstance().then((value) {
-        loginUser = new User();
-        loginUser.name = value.getString('userName') ?? '';
-        loginUser.email = value.getString('userEmail') ?? '';
-        loginUser.seqNo = value.getString('userSeqNo') ?? '';
-
-        setState(() {
-          memberInfo = user(context);
-        });
+  void _getLoginInfo() async {
+    await userInfo.getUserInfo().then((value) {
+      setState(() {
+        UserInfo.loginUser = value;
       });
-    }
-  }
-
-  void _showRegister(BuildContext context) async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Register();
-        });
-
-    if (result == 'login') {
-      _showLogin(context);
-    }
-  }
-
-  bool _loginCheck() {
-    if (loginUser == null || loginUser.name == null || loginUser.name == '') {
-      return false;
-    } else
-      return true;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    getSharedPrefs();
+    _getLoginInfo();
   }
 
   @override
@@ -224,9 +170,9 @@ class AppDrawerState extends State {
           ),
           padding: EdgeInsets.only(top: 60, left: 20),
         ),
-        onTap: () => {Navigator.pushReplacementNamed(context, '/')});
+        onTap: () => Navigator.pushReplacementNamed(context, '/'));
 
-    if (!_loginCheck()) {
+    if (!userInfo.loginCheck()) {
       memberInfo = loginJoin(context);
     } else {
       memberInfo = user(context);
@@ -254,7 +200,7 @@ class AppDrawerState extends State {
                 color: Colors.white,
               ),
               _createDrawerItem(
-                  icon: Icons.location_searching,
+                  icon: Icons.gps_fixed,
                   text: Translations.of(context).trans('menu_goal_setting'),
                   linkURL: GoalSetting.routeName),
               _createDrawerItem(
@@ -277,13 +223,16 @@ class AppDrawerState extends State {
                   icon: Icons.settings,
                   text: Translations.of(context).trans('menu_settings'),
                   linkURL: Settings.routeName),
-              (!_loginCheck())
+              (!userInfo.loginCheck())
                   ? Text('')
                   : _createDrawerItem(
                       icon: FontAwesomeIcons.doorOpen,
                       text: Translations.of(context).trans('logout'),
                       onTap: () {
-                        _logout();
+                        userInfo.logout(context).then((value) => setState(() {
+                              UserInfo.loginUser = null;
+                              Navigator.pushReplacementNamed(context, '/');
+                            }));
                       },
                       iconColor: Colors.grey,
                       textColor: Colors.grey[600]),

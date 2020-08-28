@@ -47,6 +47,16 @@ String getYear(DateTime now) {
   return DateFormat.y().format(now);
 }
 
+/*
+  return type: String
+  ex) 2020-08-28
+*/
+String getToday() {
+  var now = new DateTime.now();
+  final template = DateFormat('yyyy-MM-dd');
+  return template.format(now);
+}
+
 List timepickerChanged(List timeArray) {
   int hour = timeArray[0], minute = timeArray[1];
   List<String> timeStrings = new List<String>(2);
@@ -112,6 +122,24 @@ showConfirmDialog(BuildContext context, String alertText) async {
   );
 
   return result;
+}
+
+void showLoading(BuildContext context) {
+  AlertDialog alert = AlertDialog(
+    content: new Row(
+      children: [
+        CircularProgressIndicator(),
+        Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
+      ],
+    ),
+  );
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
 
 void showToast(GlobalKey<ScaffoldState> scaffordKey, String toastText,

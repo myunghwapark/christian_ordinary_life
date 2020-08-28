@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:badges/badges.dart';
@@ -30,18 +32,68 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
   Map _oldTestament, _newTestament;
   bool first = true;
 
+  void _bibleSetInit() {
+    if (bibleUserPlan != null &&
+        bibleUserPlan.customBible != null &&
+        bibleUserPlan.customBible != '') {
+      int totalChapters = 0;
+      List<dynamic> biblePlanTemp = json.decode(bibleUserPlan.customBible);
+      biblePlanTemp.asMap().forEach((index, obj) {
+        Bible bible = new Bible(
+            obj['book'],
+            Translations.of(context).trans(obj['book']),
+            int.parse(obj['volume']),
+            checked: true);
+        bible.setCheckOrder((index + 1));
+        totalChapters += bible.chapters;
+        biblePlan.add(bible);
+      });
+      bibleUserPlan.customTotalChapters = totalChapters;
+    }
+  }
+
   void _getBible() {
-    biblePlan = <Bible>[];
+    _bibleSetInit();
+    if (biblePlan == null) biblePlan = <Bible>[];
+
     if (oldTestaments.length == 0) {
       _oldTestament = Translations.of(context).bible('old_testament');
-      _oldTestament.forEach((key, value) => oldTestaments
-          .add(Bible(key, value['title'], value['chapters'], false)));
+      _oldTestament.forEach((key, value) {
+        bool selected = false;
+        int order;
+
+        if (biblePlan != null) {
+          biblePlan.forEach((obj) {
+            Bible bible = obj;
+            if (bible.id == key && bible.checked) {
+              selected = true;
+              order = bible.checkOrder;
+            }
+          });
+        }
+        oldTestaments.add(Bible(key, value['title'], value['chapters'],
+            checked: selected, checkOrder: order));
+      });
     }
 
     if (newTestaments.length == 0) {
       _newTestament = Translations.of(context).bible('new_testament');
-      _newTestament.forEach((key, value) => newTestaments
-          .add(Bible(key, value['title'], value['chapters'], false)));
+      _newTestament.forEach((key, value) {
+        bool selected = false;
+        int order;
+
+        if (biblePlan != null) {
+          biblePlan.forEach((obj) {
+            Bible bible = obj;
+            if (bible.id == key && bible.checked) {
+              selected = true;
+              order = bible.checkOrder;
+            }
+          });
+        }
+        newTestaments.add(Bible(key, value['title'], value['chapters'],
+            checked: selected, checkOrder: order));
+      });
     }
 
     first = false;
@@ -49,22 +101,39 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
 
   void _setBibleOrder(Bible bible) {
     bool exist = false;
-    for (int i = 0; i < biblePlan.length; i++) {
-      if (bible.title == biblePlan[i].title) {
-        biblePlan.removeAt(i);
-        exist = true;
+    if (bible != null) {
+      for (int i = 0; i < biblePlan.length; i++) {
+        if (bible.title == biblePlan[i].title) {
+          biblePlan.removeAt(i);
+          print('removed at $i');
+          exist = true;
+        }
+      }
+      if (!exist) {
+        biblePlan.add(bible);
       }
     }
-    if (!exist) {
-      biblePlan.add(bible);
-    }
+
     int totalChapters = 0;
     // Make order
     biblePlan.asMap().forEach((index, currentBible) {
       currentBible.setCheckOrder(index + 1);
+      print('${currentBible.id} ${index + 1}');
       totalChapters += currentBible.chapters;
+      print('totalChapters: $totalChapters');
+      newTestaments.forEach((value) {
+        Bible tempBible = value;
+        if (currentBible.id == tempBible.id) {
+          tempBible.setCheckOrder(index + 1);
+        }
+      });
+      oldTestaments.forEach((value) {
+        Bible tempBible = value;
+        if (currentBible.id == tempBible.id) {
+          tempBible.setCheckOrder(index + 1);
+        }
+      });
     });
-    print(biblePlan);
     bibleUserPlan.customTotalChapters = totalChapters;
     bibleUserPlan.customBible = biblePlan.toString();
   }
@@ -117,6 +186,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       return;
     }
     bibleUserPlan.customBible = biblePlan.toString();
+    print('biblePlan: ${biblePlan.toString()}');
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -136,7 +206,9 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
 
   @override
   Widget build(BuildContext context) {
-    if (first) _getBible();
+    if (first) {
+      _getBible();
+    }
     final _bibleSelectionLabel = Padding(
       padding: EdgeInsets.only(bottom: 8),
       child: Text(

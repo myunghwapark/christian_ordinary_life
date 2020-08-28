@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/goalInfo.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -16,75 +18,54 @@ import 'goalSettingPraying.dart';
 class GoalSetting extends StatefulWidget {
   static const routeName = '/goalSetting';
 
-  final User loginUser;
   final Goal goal;
   final BibleUserPlan bibleUserPlan;
-  GoalSetting({this.loginUser, this.goal, this.bibleUserPlan});
+  GoalSetting({this.goal, this.bibleUserPlan});
 
   @override
   GoalSettingState createState() => GoalSettingState();
 }
 
 class GoalSettingState extends State<GoalSetting> {
-  Goal goal = new Goal();
+  GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
 
-  Future<void> getUserGoal() async {
-    try {
-      Goal result = new Goal();
-      await API.transaction(context, API.getUserGoal,
-          param: {'userSeqNo': widget.loginUser.seqNo}).then((response) {
-        result = Goal.fromJson(json.decode(response));
-        print('response: $response');
-        if (result.result == 'success') {
-          setState(() {
-            List<Goal> goalInfo =
-                result.goalInfo.map((model) => Goal.fromJson(model)).toList();
-            goal = goalInfo[0];
-            // 한번에 파싱하기 위해 어쩔 수 없이 Goal에 담아서 분배
-            bibleUserPlan.biblePlanId = goal.biblePlanId;
-            bibleUserPlan.customBible = goal.customBible;
-            bibleUserPlan.planPeriod = goal.planPeriod;
-          });
-        } else if (result.errorCode == '01') {
-        } else {
-          errorMessage(context, result.errorMessage);
-        }
-      });
-    } on Exception catch (exception) {
-      errorMessage(context, exception);
-    } catch (error) {
-      errorMessage(context, error);
-    }
-  }
-
   Future<void> setUserGoal() async {
-    /*  print('readingBible: ${goal.readingBible}');
-    print('qtAlarm: ${goal.qtAlarm}');
-    print('biblePlanId: ${bibleUserPlan.biblePlanId}');
-    print('customBible: ${bibleUserPlan.customBible}');
-    return; */
     try {
+      showLoading(context);
       Goal result = new Goal();
       await API.transaction(context, API.setUserGoal, param: {
-        'userSeqNo': widget.loginUser.seqNo,
-        'readingBible': goal.readingBible,
-        'thankDiary': goal.thankDiary,
-        'qtRecord': goal.qtRecord,
-        'qtTime': goal.qtTime,
-        'qtAlarm': goal.qtAlarm,
-        'praying': goal.praying,
-        'prayingTime': goal.prayingTime,
-        'prayingAlarm': goal.prayingAlarm,
-        'prayingDuration': goal.prayingDuration
+        'userSeqNo': UserInfo.loginUser.seqNo,
+        'readingBible': GoalInfo.goal.readingBible,
+        'thankDiary': GoalInfo.goal.thankDiary,
+        'qtRecord': GoalInfo.goal.qtRecord,
+        'qtTime': GoalInfo.goal.qtTime,
+        'qtAlarm': GoalInfo.goal.qtAlarm,
+        'praying': GoalInfo.goal.praying,
+        'prayingTime': GoalInfo.goal.prayingTime,
+        'prayingAlarm': GoalInfo.goal.prayingAlarm,
+        'prayingDuration': GoalInfo.goal.prayingDuration,
+        'biblePlanId': bibleUserPlan.biblePlanId,
+        'planPeriod': bibleUserPlan.planPeriod,
+        'customBible': bibleUserPlan.customBible,
+        'planEndDate': bibleUserPlan.planEndDate
       }).then((response) async {
+        print('response: $response');
         result = Goal.fromJson(json.decode(response));
         if (result.result == 'success') {
-          final askingResult = await showConfirmDialog(
+          bool nothingSelected = false;
+
+          // For the case of when a user chooses nothing, next page must show a different message.
+          if (!GoalInfo.goal.readingBible &&
+              !GoalInfo.goal.thankDiary &&
+              !GoalInfo.goal.qtRecord &&
+              !GoalInfo.goal.praying) {
+            nothingSelected = true;
+          }
+          Navigator.push(
               context,
-              (Translations.of(context)
-                  .trans('goal_setted', param1: widget.loginUser.name)));
-          if (askingResult == 'ok') _goToMain();
+              MaterialPageRoute(
+                  builder: (context) => GoalSettingComplete(nothingSelected)));
         } else {
           errorMessage(context, result.errorMessage);
         }
@@ -100,53 +81,53 @@ class GoalSettingState extends State<GoalSetting> {
     setState(() {
       switch (title) {
         case 'qt':
-          goal.qtRecord = !goal.qtRecord;
-          if (goal.qtRecord == true) {
+          GoalInfo.goal.qtRecord = !GoalInfo.goal.qtRecord;
+          if (GoalInfo.goal.qtRecord == true) {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GoalSettingQT(goal: goal)))
-                .then((value) {
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        GoalSettingQT(goal: GoalInfo.goal))).then((value) {
               if (value != null) {
-                goal = value['goal'];
-                //goal.qtAlarm = tempGoal.qtAlarm;
-                //goal.qtTime = tempGoal.qtTime;
+                GoalInfo.goal = value['goal'];
               }
             });
           }
           break;
         case 'praying':
-          goal.praying = !goal.praying;
-          if (goal.praying == true) {
+          GoalInfo.goal.praying = !GoalInfo.goal.praying;
+          if (GoalInfo.goal.praying == true) {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GoalSettingPraying(goal: goal)))
-                .then((value) {
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        GoalSettingPraying(goal: GoalInfo.goal))).then((value) {
               if (value != null) {
-                goal = value['goal'];
+                GoalInfo.goal = value['goal'];
               }
             });
           }
           break;
         case 'bible':
-          goal.readingBible = !goal.readingBible;
-          if (goal.readingBible == true) {
+          GoalInfo.goal.readingBible = !GoalInfo.goal.readingBible;
+          if (GoalInfo.goal.readingBible == true) {
             String language = Translations.of(context).localeLaunguageCode();
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => GoalSettingBible(
                           language: language,
-                          goal: goal,
+                          goal: GoalInfo.goal,
                           bibleUserPlan: bibleUserPlan,
                         ))).then((value) {
-              if (value != null) bibleUserPlan = value['bibleUserPlan'];
+              if (value != null) {
+                bibleUserPlan = value['bibleUserPlan'];
+              }
             });
           }
           break;
         case 'diary':
-          goal.thankDiary = !goal.thankDiary;
+          GoalInfo.goal.thankDiary = !GoalInfo.goal.thankDiary;
           break;
       }
     });
@@ -199,18 +180,24 @@ class GoalSettingState extends State<GoalSetting> {
 
   @override
   void initState() {
-    goal.qtRecord = false;
-    goal.readingBible = false;
-    goal.praying = false;
-    goal.thankDiary = false;
+    GoalInfo.goal.qtRecord = false;
+    GoalInfo.goal.readingBible = false;
+    GoalInfo.goal.praying = false;
+    GoalInfo.goal.thankDiary = false;
 
-    getUserGoal();
+    goalInfo.getUserGoal(context).then((value) {
+      setState(() {
+        GoalInfo.goal = value;
+        bibleUserPlan.biblePlanId = GoalInfo.goal.biblePlanId;
+        bibleUserPlan.customBible = GoalInfo.goal.customBible;
+        bibleUserPlan.planPeriod = GoalInfo.goal.planPeriod;
+      });
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    //print('build qtRecord: ${goal.qtRecord}');
     return Scaffold(
         body: Column(children: [
       appBarCustom(
@@ -220,13 +207,13 @@ class GoalSettingState extends State<GoalSetting> {
           actionText: Translations.of(context).trans('save'),
           onActionTap: setUserGoal),
       _createGoal('qt', Translations.of(context).trans('daily_qt'),
-          AppColors.blueSky, goal.qtRecord),
+          AppColors.blueSky, GoalInfo.goal.qtRecord),
       _createGoal('praying', Translations.of(context).trans('daily_praying'),
-          AppColors.mint, goal.praying),
+          AppColors.mint, GoalInfo.goal.praying),
       _createGoal('bible', Translations.of(context).trans('daily_bible'),
-          AppColors.lightOrange, goal.readingBible),
+          AppColors.lightOrange, GoalInfo.goal.readingBible),
       _createGoal('diary', Translations.of(context).trans('daily_thank'),
-          AppColors.pastelPink, goal.thankDiary),
+          AppColors.pastelPink, GoalInfo.goal.thankDiary),
     ]));
   }
 }

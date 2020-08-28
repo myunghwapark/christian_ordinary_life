@@ -44,7 +44,10 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                 .toList();
             for (int i = 0; i < tempList.length; i++) {
               tempList[i].isSelected = false;
-              if (bibleUserPlan.biblePlanId == tempList[i].biblePlanId) {
+
+              if (bibleUserPlan.biblePlanId != null &&
+                  bibleUserPlan.biblePlanId != '' &&
+                  bibleUserPlan.biblePlanId == tempList[i].biblePlanId) {
                 tempList[i].isSelected = true;
               }
               biblePlanList.add(tempList[i]);
@@ -61,13 +64,6 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     }
 
     return result;
-  }
-
-  @override
-  initState() {
-    super.initState();
-    bibleUserPlan = widget.bibleUserPlan;
-    _getBiblePlan();
   }
 
   String _getPlanEndDate(String period) {
@@ -103,21 +99,12 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GoalBibleCustom1(
-              //loginUser: widget.loginUser,
-              //goal: widget.goal,
-              bibleUserPlan: bibleUserPlan),
+          builder: (context) => GoalBibleCustom1(bibleUserPlan: bibleUserPlan),
         ),
       ).then((value) {
         if (value != null && value['result'] == 'complete') {
           Navigator.pop(context,
               {"result": "complete", "bibleUserPlan": value['bibleUserPlan']});
-        } else if (value != null && value['result'] == 'cancel') {
-          setState(() {
-            biblePlanList.forEach((element) => element.isSelected = false);
-            //biblePlanList[0].isSelected = true;
-            //bibleUserPlan.biblePlanId = biblePlanList[0].biblePlanId;
-          });
         }
       });
     }
@@ -146,5 +133,12 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                 title: RadioBox(biblePlanList[index]),
               );
             }));
+  }
+
+  @override
+  initState() {
+    super.initState();
+    bibleUserPlan = widget.bibleUserPlan;
+    _getBiblePlan();
   }
 }
