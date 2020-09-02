@@ -6,13 +6,14 @@ class AppColors {
   static Color greenPoint = HexColor('#06614e');
   static Color greenPointMild = HexColor('#0a8d71');
   static Color blackGreen = HexColor('#001914');
+  static Color yellowishGreen = HexColor('#47f84b');
+  static Color yellowishGreenDarker = HexColor('#16b925');
 
   static Color mint = HexColor('#66e098');
   static Color lightMint = HexColor('#e4ffef');
   static Color moss = HexColor('#018181');
   static Color gradientStart = HexColor('#43c6ac');
   static Color gradientEnd = HexColor('#f8ffae');
-  static Color yellowishGreen = HexColor('#47f84b');
 
   static Color blueSky = HexColor('#56d2d2');
   static Color lightSky = HexColor('#dff4f4');

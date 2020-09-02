@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
@@ -26,6 +27,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   final TextEditingController _contentController = new TextEditingController();
   ScrollController _scroll;
   FocusNode _focus = new FocusNode();
+  ComponentStyle componentStyle = new ComponentStyle();
 
   String diaryDateForm = '';
   DateTime diaryDate = new DateTime.now();
@@ -190,18 +192,8 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
       height: 90,
       child: TextFormField(
         textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue[400], width: 2),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-            hintText: Translations.of(context).trans('title_hint'),
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.pastelPink, width: 2.0),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            )),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('title_hint')),
         controller: _titleController,
         keyboardType: TextInputType.text,
         maxLength: 80,
@@ -221,17 +213,8 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           keyboardType: TextInputType.multiline,
           minLines: 10,
           maxLines: 100,
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue[400], width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              ),
-              hintText: Translations.of(context).trans('qt_hint'),
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              )),
+          decoration: componentStyle
+              .whiteGreyInput(Translations.of(context).trans('qt_hint')),
           controller: _contentController,
           maxLength: 1000,
           focusNode: _focus,

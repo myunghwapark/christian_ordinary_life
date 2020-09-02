@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -107,6 +108,7 @@ class MyApp extends StatelessWidget {
         for (Locale supportedLocale in supportedLocales) {
           if (supportedLocale.languageCode == locale.languageCode) {
             debugPrint("*language ok for launageCode $supportedLocale");
+            UserInfo.language = locale.languageCode;
             return supportedLocale;
           }
         }

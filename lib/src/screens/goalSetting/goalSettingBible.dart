@@ -81,17 +81,19 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
 
   Future<void> _onRadioChanged(int index) async {
     setState(() {
-      biblePlanList.forEach((element) => element.isSelected = false);
-      biblePlanList[index].isSelected = true;
-      bibleUserPlan.biblePlanId = biblePlanList[index].biblePlanId;
-      if (biblePlanList[index].biblePlanId != 'custom') {
-        bibleUserPlan.planPeriod = biblePlanList[index].planPeriod;
+      if (bibleUserPlan.biblePlanId != biblePlanList[index].biblePlanId) {
+        biblePlanList.forEach((element) => element.isSelected = false);
+        biblePlanList[index].isSelected = true;
+        bibleUserPlan.biblePlanId = biblePlanList[index].biblePlanId;
+        if (biblePlanList[index].biblePlanId != 'custom') {
+          bibleUserPlan.planPeriod = biblePlanList[index].planPeriod;
 
-        bibleUserPlan.planEndDate =
-            _getPlanEndDate(biblePlanList[index].planPeriod);
-      } else {
-        bibleUserPlan.planPeriod = null;
-        bibleUserPlan.planEndDate = null;
+          bibleUserPlan.planEndDate =
+              _getPlanEndDate(biblePlanList[index].planPeriod);
+        } else {
+          bibleUserPlan.planPeriod = null;
+          bibleUserPlan.planEndDate = null;
+        }
       }
     });
 

@@ -65,6 +65,8 @@
     "bible_plan_custom": "Custom plan",
     "bible_custom_validate": "Please, select a bible you would like to read.",
     "bible_period_validate": "Please, enter the period.",
+    "select_bible_plan": "Please select a Bible reading plan.",
+    "select_custom_bible_plan": "Please select detail for the custom Bible reading plan.",
     "day": "days",
     "days": "days",
     "week": "weeks",
@@ -115,6 +117,8 @@
     "login_needs": "It is available after login. Would you like to log in?",
     "chapter": "",
     "chapter_ps": "",
+    "manual_read_check": "Check by yourself",
+    "read_up_to": "I've read up to #1 of #2",
 
     "gen": "Genesis",
     "ex": "Exodus",

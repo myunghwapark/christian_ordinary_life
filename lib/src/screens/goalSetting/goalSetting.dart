@@ -31,6 +31,7 @@ class GoalSettingState extends State<GoalSetting> {
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
 
   Future<void> setUserGoal() async {
+    if (!_checkContent()) return;
     try {
       showLoading(context);
       Goal result = new Goal();
@@ -50,7 +51,7 @@ class GoalSettingState extends State<GoalSetting> {
         'customBible': bibleUserPlan.customBible,
         'planEndDate': bibleUserPlan.planEndDate
       }).then((response) async {
-        print('response: $response');
+        //print('response: $response');
         result = Goal.fromJson(json.decode(response));
         if (result.result == 'success') {
           bool nothingSelected = false;
@@ -74,6 +75,31 @@ class GoalSettingState extends State<GoalSetting> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    }
+  }
+
+  bool _checkContent() {
+    if (GoalInfo.goal.readingBible &&
+        (bibleUserPlan.biblePlanId == null ||
+            bibleUserPlan.biblePlanId == '')) {
+      showAlertDialog(
+          context, Translations.of(context).trans('select_bible_plan'));
+      return false;
+    } else if (bibleUserPlan.biblePlanId == 'custom' &&
+        (bibleUserPlan.customBible == null ||
+            bibleUserPlan.customBible == '')) {
+      showAlertDialog(
+          context, Translations.of(context).trans('select_custom_bible_plan'));
+      return false;
+    } else if (bibleUserPlan.biblePlanId == 'custom' &&
+        (bibleUserPlan.planPeriod == null ||
+            bibleUserPlan.planPeriod == '' ||
+            bibleUserPlan.planPeriod == '0')) {
+      showAlertDialog(
+          context, Translations.of(context).trans('select_custom_bible_plan'));
+      return false;
+    } else {
+      return true;
     }
   }
 

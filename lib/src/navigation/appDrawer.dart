@@ -51,7 +51,7 @@ class AppDrawerState extends State {
                     context, Translations.of(context).trans('login_needs'));
 
                 if (result == 'ok') {
-                  userInfo.showLogin(context).then((value) {
+                  userInfo.showLogin(context, method: () {
                     setState(() {
                       memberInfo = user(context);
 
@@ -78,9 +78,10 @@ class AppDrawerState extends State {
               padding: EdgeInsets.all(0),
               splashColor: Colors.transparent,
               onPressed: () {
-                userInfo.showLogin(context).then((value) {
+                userInfo.showLogin(context, method: () {
                   setState(() {
                     memberInfo = user(context);
+
                     Navigator.pushReplacementNamed(context, '/');
                   });
                 });

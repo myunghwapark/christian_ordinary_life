@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -49,6 +51,8 @@ Future<User> loginUser(BuildContext context, User user) async {
 class LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  AppButtons appButtons = new AppButtons();
+  ComponentStyle componentStyle = new ComponentStyle();
 
   bool _keepMeLoginVar = false;
   final _formKey = GlobalKey<FormState>();
@@ -95,66 +99,32 @@ class LoginState extends State<Login> {
     );
 
     final email = TextFormField(
-      controller: emailController,
-      keyboardType: TextInputType.emailAddress,
-      maxLength: 20,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_empty_email');
-        }
-        return null;
-      },
-      autofocus: false,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('email'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.mail,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: emailController,
+        keyboardType: TextInputType.emailAddress,
+        maxLength: 20,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_email');
+          }
+          return null;
+        },
+        autofocus: false,
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('email'), Icons.mail));
 
     final password = TextFormField(
-      controller: passwordController,
-      maxLength: 20,
-      autofocus: false,
-      obscureText: true,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_empty_password');
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('password'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.lock,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: passwordController,
+        maxLength: 20,
+        autofocus: false,
+        obscureText: true,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_password');
+          }
+          return null;
+        },
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('password'), Icons.lock));
 
     final keepLogin = Row(children: <Widget>[
       Theme(
@@ -171,28 +141,15 @@ class LoginState extends State<Login> {
       Text(Translations.of(context).trans('keep_login')),
     ]);
 
-    final loginButton = SizedBox(
-        width: double.infinity,
-        child: RaisedButton(
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              User userInfo = User(
-                  email: emailController.text,
-                  password: passwordController.text);
+    final loginButton = appButtons
+        .filledGreenButton(Translations.of(context).trans('login'), () {
+      if (_formKey.currentState.validate()) {
+        User userInfo = User(
+            email: emailController.text, password: passwordController.text);
 
-              loginUser(context, userInfo);
-            }
-          },
-          color: AppColors.greenPointMild,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: AppColors.greenPointMild),
-          ),
-          child: Text(Translations.of(context).trans('login'),
-              style: TextStyle(fontSize: 14)),
-        ));
+        loginUser(context, userInfo);
+      }
+    });
 
     final labelOr = Container(
         padding: EdgeInsets.all(8),

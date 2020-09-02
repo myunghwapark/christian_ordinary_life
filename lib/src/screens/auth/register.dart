@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -55,6 +57,8 @@ Future<User> registerUser(BuildContext context, User user) async {
 
 class RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
+  AppButtons appButtons = new AppButtons();
+  ComponentStyle componentStyle = new ComponentStyle();
 
   @override
   void initState() {
@@ -117,153 +121,73 @@ class RegisterState extends State<Register> {
     );
 
     final _email = TextFormField(
-      controller: emailController,
-      keyboardType: TextInputType.emailAddress,
-      maxLength: 20,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_empty_email');
-        } else if (!validateEmail(value)) {
-          return Translations.of(context).trans('validate_wrong_email');
-        }
-        return null;
-      },
-      autofocus: false,
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('email'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.mail,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: emailController,
+        keyboardType: TextInputType.emailAddress,
+        maxLength: 20,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_email');
+          } else if (!validateEmail(value)) {
+            return Translations.of(context).trans('validate_wrong_email');
+          }
+          return null;
+        },
+        autofocus: false,
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('email'), Icons.mail));
 
     final _name = TextFormField(
-      controller: nameController,
-      autofocus: false,
-      maxLength: 15,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_name');
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('name'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.person,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: nameController,
+        autofocus: false,
+        maxLength: 15,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_name');
+          }
+          return null;
+        },
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('name'), Icons.person));
 
     final _password = TextFormField(
-      controller: passwordController,
-      autofocus: false,
-      maxLength: 20,
-      obscureText: true,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_empty_password');
-        } else if (!validatePassword(value)) {
-          return Translations.of(context).trans('validate_wrong_password');
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('password'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.lock,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: passwordController,
+        autofocus: false,
+        maxLength: 20,
+        obscureText: true,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_password');
+          } else if (!validatePassword(value)) {
+            return Translations.of(context).trans('validate_wrong_password');
+          }
+          return null;
+        },
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('password'), Icons.lock));
 
     final _passwordConfirm = TextFormField(
-      controller: passwordConfirmController,
-      autofocus: false,
-      obscureText: true,
-      maxLength: 20,
-      validator: (value) {
-        if (value.isEmpty) {
-          return Translations.of(context).trans('validate_empty_password');
-        } else if (value != passwordController.text) {
-          return Translations.of(context)
-              .trans('validate_not_match_password_confirm');
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.8),
-        hintText: Translations.of(context).trans('confirm_password'),
-        hintStyle: TextStyle(color: AppColors.greenPointMild),
-        contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.transparent, width: 0.0),
-          borderRadius: BorderRadius.all(Radius.circular(25.0)),
-        ),
-        prefixIcon: Icon(
-          Icons.lock,
-          color: AppColors.greenPointMild,
-        ),
-      ),
-    );
+        controller: passwordConfirmController,
+        autofocus: false,
+        obscureText: true,
+        maxLength: 20,
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_password');
+          } else if (value != passwordController.text) {
+            return Translations.of(context)
+                .trans('validate_not_match_password_confirm');
+          }
+          return null;
+        },
+        decoration: componentStyle.whiteGreenInput(
+            Translations.of(context).trans('confirm_password'), Icons.lock));
 
-    final _registerButton = SizedBox(
-        width: double.infinity,
-        child: RaisedButton(
-          onPressed: () {
-            if (_formKey.currentState.validate()) {
-              _register(context);
-            }
-          },
-          color: AppColors.greenPointMild,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: AppColors.greenPointMild),
-          ),
-          child: Text(Translations.of(context).trans('register'),
-              style: TextStyle(fontSize: 14)),
-        ));
+    final _registerButton = appButtons
+        .filledGreenButton(Translations.of(context).trans('register'), () {
+      if (_formKey.currentState.validate()) {
+        _register(context);
+      }
+    });
 
     return GestureDetector(
         onTap: () {

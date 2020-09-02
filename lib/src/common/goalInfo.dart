@@ -69,12 +69,12 @@ class GoalInfo {
         }
         // If there is no goal progress, set default setting.
         else if (result.errorCode == '01') {
-          //setState(() {
+          goalProgress = new GoalProgress();
+
           if (!goal.readingBible) goalProgress.readingBible = '-';
           if (!goal.praying) goalProgress.praying = '-';
           if (!goal.qtRecord) goalProgress.qtRecord = '-';
           if (!goal.thankDiary) goalProgress.thankDiary = '-';
-          // });
         } else {
           errorMessage(context, result.errorMessage);
         }

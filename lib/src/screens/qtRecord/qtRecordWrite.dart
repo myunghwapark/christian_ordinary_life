@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,6 +29,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
 
   ScrollController _scroll;
   FocusNode _focus = new FocusNode();
+  ComponentStyle componentStyle = new ComponentStyle();
 
   String qtDateForm = '';
   DateTime qtDate = new DateTime.now();
@@ -197,18 +199,8 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
       height: 90,
       child: TextFormField(
         textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue[400], width: 2),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-            hintText: Translations.of(context).trans('title_hint'),
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            )),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('title_hint')),
         controller: _titleController,
         keyboardType: TextInputType.text,
         maxLength: 80,
@@ -226,18 +218,8 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
       height: 90,
       child: TextFormField(
         textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue[400], width: 2),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-            hintText: Translations.of(context).trans('qt_bible_hint'),
-            fillColor: Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.marine, width: 2.0),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            )),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('qt_bible_hint')),
         controller: _bibleController,
         keyboardType: TextInputType.text,
         maxLength: 30,
@@ -251,17 +233,8 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
           keyboardType: TextInputType.multiline,
           minLines: 10,
           maxLines: 100,
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue[400], width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              ),
-              hintText: Translations.of(context).trans('qt_hint'),
-              fillColor: Colors.white,
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              )),
+          decoration: componentStyle
+              .whiteGreyInput(Translations.of(context).trans('qt_hint')),
           controller: _contentController,
           maxLength: 1000,
           focusNode: _focus,

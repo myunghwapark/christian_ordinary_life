@@ -4,6 +4,8 @@ class GoalProgress {
   String thankDiary;
   String qtRecord;
   String praying;
+  String bibleProgress;
+  String bibleDays;
   String goalDate;
   String result;
   String errorCode;
@@ -16,6 +18,8 @@ class GoalProgress {
       this.thankDiary,
       this.qtRecord,
       this.praying,
+      this.bibleProgress,
+      this.bibleDays,
       this.goalDate,
       this.result,
       this.errorCode,
@@ -28,6 +32,8 @@ class GoalProgress {
         thankDiary = json['thankDiary'],
         qtRecord = json['qtRecord'],
         praying = json['praying'],
+        bibleProgress = json['bibleProgress'],
+        bibleDays = json['bibleDays'],
         goalDate = json['goalDate'],
         result = json['result'],
         errorCode = json['errorCode'],

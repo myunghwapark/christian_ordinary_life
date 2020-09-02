@@ -65,6 +65,8 @@
     "bible_plan_custom": "맞춤계획",
     "bible_custom_validate": "원하시는 성경을 선택해주세요.",
     "bible_period_validate": "기간을 입력해주세요.",
+    "select_bible_plan": "성경읽기 계획을 선택해주세요.",
+    "select_custom_bible_plan": "맞춤 성경읽기 세부 계획을 선택해주세요.",
     "day": "일",
     "days": "일간",
     "week": "주",
@@ -115,6 +117,8 @@
     "login_needs": "로그인 후 이용하실 수 있습니다. 로그인 하시겠습니까?",
     "chapter": "장",
     "chapter_ps": "편",
+    "manual_read_check": "직접 체크하기",
+    "read_up_to": "#1 #2 까지 읽음",
 
 
     "gen": "창세기",

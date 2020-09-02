@@ -1,5 +1,6 @@
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,6 +18,7 @@ class MainScreenState extends State<MainScreen> {
   UserInfo userInfo = new UserInfo();
   GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
+  AppButtons buttons = new AppButtons();
 
   String _year = '';
   String _date = '';
@@ -35,27 +37,6 @@ class MainScreenState extends State<MainScreen> {
         UserInfo.loginUser = value;
       });
     });
-  }
-
-  @override
-  void initState() {
-    GoalInfo.goal.goalSet = false;
-    getSharedPrefs()
-        .then((value) => goalInfo.getUserGoal(context).then((value) {
-              setState(() {
-                GoalInfo.goal = value;
-              });
-
-              goalInfo.getGoalProgress(context).then((value) {
-                setState(() {
-                  GoalInfo.goalProgress = value;
-                });
-              });
-            }));
-    _currentDateTime = new DateTime.now();
-    _year = getYear(_currentDateTime);
-    _date = getDate(_currentDateTime);
-    super.initState();
   }
 
   Widget _createMainItems({String item}) {
@@ -215,18 +196,10 @@ class MainScreenState extends State<MainScreen> {
         SizedBox(
           height: 35,
         ),
-        OutlineButton(
-          onPressed: () {
-            _goGoalSet();
-          },
-          borderSide: BorderSide(color: AppColors.marine),
-          shape: StadiumBorder(),
-          child: Text(
-            Translations.of(context).trans('goal_set_button'),
-            style: TextStyle(color: AppColors.greenPoint),
-          ),
-          highlightColor: AppColors.marine.withOpacity(0.1),
-        )
+        buttons.outerlineMintButton(
+            Translations.of(context).trans('goal_set_button'), () {
+          _goGoalSet();
+        })
       ],
     );
 
@@ -271,7 +244,9 @@ class MainScreenState extends State<MainScreen> {
           Expanded(
               child: Column(children: [
             _dateForm,
-            (userInfo.loginCheck() && GoalInfo.goal.goalSet)
+            (userInfo.loginCheck() &&
+                    GoalInfo.goal != null &&
+                    GoalInfo.goal.goalSet)
                 ? _goalCheck()
                 : _goalSet,
             _scriptualPhrase,
@@ -283,5 +258,26 @@ class MainScreenState extends State<MainScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    GoalInfo.goal?.goalSet = false;
+    getSharedPrefs()
+        .then((value) => goalInfo.getUserGoal(context).then((value) {
+              setState(() {
+                GoalInfo.goal = value;
+              });
+
+              goalInfo.getGoalProgress(context).then((value) {
+                setState(() {
+                  GoalInfo.goalProgress = value;
+                });
+              });
+            }));
+    _currentDateTime = new DateTime.now();
+    _year = getYear(_currentDateTime);
+    _date = getDate(_currentDateTime);
+    super.initState();
   }
 }

@@ -105,7 +105,6 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       for (int i = 0; i < biblePlan.length; i++) {
         if (bible.title == biblePlan[i].title) {
           biblePlan.removeAt(i);
-          print('removed at $i');
           exist = true;
         }
       }
@@ -118,9 +117,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
     // Make order
     biblePlan.asMap().forEach((index, currentBible) {
       currentBible.setCheckOrder(index + 1);
-      print('${currentBible.id} ${index + 1}');
       totalChapters += currentBible.chapters;
-      print('totalChapters: $totalChapters');
       newTestaments.forEach((value) {
         Bible tempBible = value;
         if (currentBible.id == tempBible.id) {
@@ -186,7 +183,6 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       return;
     }
     bibleUserPlan.customBible = biblePlan.toString();
-    print('biblePlan: ${biblePlan.toString()}');
     await Navigator.push(
       context,
       MaterialPageRoute(

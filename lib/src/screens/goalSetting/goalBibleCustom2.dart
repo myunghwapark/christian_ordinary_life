@@ -34,13 +34,12 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
       return;
     }
     bibleUserPlan.planPeriod = _daysController.text;
-    print('bibleUserPlan.planPeriod: ${bibleUserPlan.planPeriod}');
     Navigator.pop(
         context, {"result": "complete", "bibleUserPlan": bibleUserPlan});
   }
 
   void _setPeriod(value) {
-    period = int.parse(_daysController.text);
+    period = int.parse(value);
     totalChapters = bibleUserPlan.customTotalChapters;
     int dayReading = (totalChapters / period).round();
     var now = new DateTime.now();
@@ -59,6 +58,9 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
 
   @override
   Widget build(BuildContext context) {
+    if (bibleUserPlan.planPeriod != null && bibleUserPlan.planPeriod != '') {
+      _setPeriod(_daysController.text);
+    }
     final _label = Padding(
       padding: EdgeInsets.only(bottom: 8),
       child: Text(

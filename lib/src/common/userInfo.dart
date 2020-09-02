@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfo {
   static User loginUser;
+  static String language;
   SharedPreferences prefs;
 
   Future<User> getUserInfo() async {
@@ -40,7 +41,8 @@ class UserInfo {
       return true;
   }
 
-  Future<void> showLogin(BuildContext context) async {
+  Future<void> showLogin(BuildContext context,
+      {GestureTapCallback method}) async {
     final result = await showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -57,6 +59,10 @@ class UserInfo {
         loginUser.email = value.getString('userEmail') ?? '';
         loginUser.seqNo = value.getString('userSeqNo') ?? '';
       });
+
+      if (method != null) {
+        method();
+      }
     }
   }
 

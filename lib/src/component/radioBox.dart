@@ -1,13 +1,15 @@
+import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlan.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalBiblePlanDetail.dart';
-import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RadioBox extends StatelessWidget {
   final BiblePlan _item;
+  final AppButtons buttons = new AppButtons();
   RadioBox(this._item);
 
   Future<void> _goDetail(BuildContext context) async {
@@ -77,14 +79,10 @@ class RadioBox extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
           children: [
-            OutlineButton(
-              color: AppColors.almostWhite,
-              child: Text(Translations.of(context).trans('view_plan')),
-              onPressed: () => _goDetail(context),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                  side: BorderSide(color: AppColors.yellowishGreen)),
-            )
+            buttons.outerlineGreyButton(
+                Translations.of(context).trans('view_plan'), () {
+              _goDetail(context);
+            })
           ],
         ));
 
