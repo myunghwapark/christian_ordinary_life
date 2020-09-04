@@ -233,7 +233,8 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
     );
 
     final _oldTestaments = GridView.count(
-      physics: ScrollPhysics(),
+      //physics: ScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
       childAspectRatio: 2.5,
       shrinkWrap: true,
@@ -257,6 +258,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       crossAxisCount: 3,
       childAspectRatio: 2.5,
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: newTestaments.map((Bible bible) {
         return Center(
           child: _displayBibles(bible),

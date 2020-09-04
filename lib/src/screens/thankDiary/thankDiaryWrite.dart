@@ -41,7 +41,9 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
         'thankDiarySeqNo': newDiary.seqNo,
         'title': newDiary.title,
         'diaryDate': newDiary.diaryDate,
-        'content': newDiary.content
+        'content': newDiary.content,
+        'thankDiary': 'y',
+        'goalDate': getToday()
       }).then((response) {
         Diary writeResult = Diary.fromJson(json.decode(response));
         if (writeResult.result == 'success') {

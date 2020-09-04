@@ -40,6 +40,37 @@ class AppButtons {
           ),
           child: Text(title, style: TextStyle(fontSize: 14)),
         ));
-    ;
+  }
+
+  Widget filledGreyButton(String title, GestureTapCallback method) {
+    return SizedBox(
+        width: double.infinity,
+        child: RaisedButton(
+          onPressed: method,
+          color: Colors.grey,
+          textColor: Colors.white,
+          padding: const EdgeInsets.all(0.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            side: BorderSide(color: Colors.grey),
+          ),
+          child: Text(title, style: TextStyle(fontSize: 14)),
+        ));
+  }
+
+  Widget filledOrangeButton(String title, GestureTapCallback method) {
+    return SizedBox(
+        width: double.infinity,
+        child: RaisedButton(
+          onPressed: method,
+          color: Colors.orange[300],
+          textColor: Colors.white,
+          padding: const EdgeInsets.all(0.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            side: BorderSide(color: Colors.orange[300]),
+          ),
+          child: Text(title, style: TextStyle(fontSize: 14)),
+        ));
   }
 }

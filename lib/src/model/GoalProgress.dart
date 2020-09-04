@@ -5,6 +5,7 @@ class GoalProgress {
   String qtRecord;
   String praying;
   String bibleProgress;
+  int bibleProgressNo;
   String bibleDays;
   String goalDate;
   String result;
@@ -19,6 +20,7 @@ class GoalProgress {
       this.qtRecord,
       this.praying,
       this.bibleProgress,
+      this.bibleProgressNo,
       this.bibleDays,
       this.goalDate,
       this.result,

@@ -1,7 +1,11 @@
+import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
+import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.dart';
+import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../common/translations.dart';
@@ -72,35 +76,102 @@ class MainScreenState extends State<MainScreen> {
           ]),
         ),
         onTap: () {
-          setState(() {
-            _checkVars[item] = !_checkVars[item];
-
-            switch (item) {
-              case 'qt':
-                GoalInfo.goalProgress.qtRecord = _convertVal(_checkVars[item]);
-                break;
-              case 'praying':
-                GoalInfo.goalProgress.praying = _convertVal(_checkVars[item]);
-                break;
-              case 'thank_diray':
-                GoalInfo.goalProgress.thankDiary =
-                    _convertVal(_checkVars[item]);
-                break;
-              case 'reading_bible':
-                GoalInfo.goalProgress.readingBible =
-                    _convertVal(_checkVars[item]);
-                break;
-              default:
-            }
-          });
+          switch (item) {
+            case 'qt':
+              if (GoalInfo.goalProgress.qtRecord != 'y') {
+                _goQtRecordWrite();
+              }
+              break;
+            case 'praying':
+              if (GoalInfo.goalProgress.praying != 'y') {
+                GoalInfo.goalProgress.praying = 'y';
+                goalInfo.setPrayingProgress(context).then((value) {
+                  setState(() {
+                    _checkVars[item] = !_checkVars[item];
+                  });
+                });
+              }
+              break;
+            case 'thank_diary':
+              if (GoalInfo.goalProgress.thankDiary != 'y') {
+                _goThankDiaryWrite();
+              }
+              break;
+            case 'reading_bible':
+              if (GoalInfo.goalProgress.readingBible != 'y') {
+                _goReadingBible();
+              }
+              break;
+            default:
+          }
         });
   }
 
-  String _convertVal(bool selected) {
-    if (!selected)
-      return 'y';
+  void _refresh() {
+    goalInfo.getGoalProgress(context).then((value) {
+      setState(() {
+        GoalInfo.goalProgress = value;
+        _setGoals();
+      });
+    });
+  }
+
+  Future<void> _goQtRecordWrite() async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => QtRecordWrite(
+                  loginUser: UserInfo.loginUser,
+                ))).then((value) {
+      setState(() {
+        _refresh();
+      });
+    });
+  }
+
+  Future<void> _goThankDiaryWrite() async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ThankDiaryWrite(
+                  loginUser: UserInfo.loginUser,
+                ))).then((value) {
+      setState(() {
+        _refresh();
+      });
+    });
+  }
+
+  Future<void> _goReadingBible() async {
+    await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ReadingBible()))
+        .then((value) {
+      setState(() {
+        _refresh();
+      });
+    });
+  }
+
+  void _setGoals() {
+    if (GoalInfo.goalProgress.thankDiary == 'y')
+      _checkVars['thank_diary'] = true;
     else
-      return 'n';
+      _checkVars['thank_diary'] = false;
+
+    if (GoalInfo.goalProgress.qtRecord == 'y')
+      _checkVars['qt'] = true;
+    else
+      _checkVars['qt'] = false;
+
+    if (GoalInfo.goalProgress.praying == 'y')
+      _checkVars['praying'] = true;
+    else
+      _checkVars['praying'] = false;
+
+    if (GoalInfo.goalProgress.readingBible == 'y')
+      _checkVars['reading_bible'] = true;
+    else
+      _checkVars['reading_bible'] = false;
   }
 
   Future<void> _goGoalSet() async {
@@ -272,6 +343,7 @@ class MainScreenState extends State<MainScreen> {
               goalInfo.getGoalProgress(context).then((value) {
                 setState(() {
                   GoalInfo.goalProgress = value;
+                  _setGoals();
                 });
               });
             }));

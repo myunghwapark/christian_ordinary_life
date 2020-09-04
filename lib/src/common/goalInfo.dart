@@ -60,8 +60,8 @@ class GoalInfo {
         'goalDate': getToday()
       }).then((response) {
         result = GoalProgress.fromJson(json.decode(response));
-        print('response: $response');
         if (result.result == 'success') {
+          print('response: ${result.goalProgress}');
           List<GoalProgress> goalInfo = result.goalProgress
               .map((model) => GoalProgress.fromJson(model))
               .toList();
@@ -88,22 +88,16 @@ class GoalInfo {
     return goalProgress;
   }
 
-  Future<String> setGoalProgress(
-      BuildContext context, GoalProgress goalProgress) async {
+  Future<void> setPrayingProgress(BuildContext context) async {
     if (!userInfo.loginCheck()) return null;
     GoalProgress result = new GoalProgress();
-
     try {
-      await API.transaction(context, API.setGoalProgress, param: {
+      await API.transaction(context, API.setPrayingProgress, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
-        'goalDate': getToday(),
-        'readingBible': goalProgress.readingBible,
-        'praying': goalProgress.praying,
-        'qtRecord': goalProgress.qtRecord,
-        'thankDiary': goalProgress.thankDiary
+        'goalDate': goalProgress.goalDate,
+        'praying': goalProgress.praying
       }).then((response) {
         result = GoalProgress.fromJson(json.decode(response));
-        print('response: $response');
         if (result.result != 'success') {
           errorMessage(context, result.errorMessage);
         }
@@ -113,6 +107,5 @@ class GoalInfo {
     } catch (error) {
       errorMessage(context, error);
     }
-    return result.result;
   }
 }

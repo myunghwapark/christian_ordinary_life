@@ -44,8 +44,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         'title': newQt.title,
         'qtDate': newQt.qtDate,
         'bible': newQt.bible,
-        'content': newQt.content
+        'content': newQt.content,
+        'qtRecord': 'y',
+        'goalDate': getToday()
       }).then((response) {
+        print('response: $response');
         QT writeResult = QT.fromJson(json.decode(response));
         if (writeResult.result == 'success') {
           Navigator.pop(context, newQt);

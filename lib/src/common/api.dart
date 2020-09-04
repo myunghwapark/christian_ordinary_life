@@ -14,7 +14,10 @@ class API {
   static String getUserGoal = serverURL + 'goal/get_user_goal.php';
   static String setUserGoal = serverURL + 'goal/set_user_goal.php';
 
-  static String setGoalProgress = serverURL + 'goal/set_goal_progress.php';
+  static String setPrayingProgress =
+      serverURL + 'goal/set_praying_progress.php';
+
+  static String setBibleProgress = serverURL + 'goal/set_bible_progress.php';
   static String getGoalProgress = serverURL + 'goal/get_goal_progress.php';
 
   static String bibleBooks = serverURL + 'reading_bible/bible_books.php';
