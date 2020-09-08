@@ -1,10 +1,10 @@
-import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.dart';
+import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

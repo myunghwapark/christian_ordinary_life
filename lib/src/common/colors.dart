@@ -20,6 +20,8 @@ class AppColors {
   static Color marine = HexColor('#2bcbba');
   static Color sky = HexColor('#3fcece');
 
+  static Color pastelMint = HexColor('#a1ffce');
+  static Color pastelYellow = HexColor('#faffd1');
   static Color lightOrange = HexColor('#f1c96e');
   static Color orange = HexColor('#f3b34d');
   static Color lightBrown = HexColor('#c38907');

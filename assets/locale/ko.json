@@ -44,6 +44,7 @@
     "daily_qt": "매일 묵상",
     "daily_praying": "매일 기도",
     "daily_bible": "성경통독",
+    "complete_reading_bible": "성경통독 완료",
     "daily_thank": "매일 감사일기",
     "qt_notice_setting_title": "묵상 계획",
     "qt_notice_setting_ment": "묵상시간을 알려드릴까요?",
@@ -120,6 +121,8 @@
     "chapter_ps": "편",
     "manual_read_check": "직접 체크하기",
     "read_up_to": "#1 #2 까지 읽음",
+    "new_bible_plan_ment": "새로운 성경 통독 계획을 선택하셔서\n매일 말씀으로 승리하세요.",
+    "choose_bible_plan": "통독계획 선택",
 
 
     "gen": "창세기",

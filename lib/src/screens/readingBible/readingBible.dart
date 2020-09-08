@@ -1,4 +1,8 @@
 import 'dart:convert';
+import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -9,11 +13,8 @@ import 'package:christian_ordinary_life/src/model/BiblePlanDetail.dart';
 import 'package:christian_ordinary_life/src/model/Book.dart';
 import 'package:christian_ordinary_life/src/model/Chapter.dart';
 import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
-import 'package:flutter/rendering.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 
 class ReadingBible extends StatefulWidget {
@@ -194,6 +195,12 @@ class ReadingBibleState extends State<ReadingBible> {
       errorMessage(context, error);
     }
     return result.result;
+  }
+
+  Future<void> _goReadingBibleComplete() async {
+    await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ReadingBibleComplete()))
+        .then((value) {});
   }
 
   void _scrollTo(double number) {

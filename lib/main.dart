@@ -1,4 +1,5 @@
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -36,7 +37,9 @@ class MyApp extends StatelessWidget {
           errorColor: Colors.orange[600]),
       home: MyHomePage(title: ''),
       initialRoute: '/',
-      routes: {},
+      routes: {
+        GoalSettingBible.routeName: (context) => GoalSettingBible(),
+      },
       onGenerateRoute: (routeSettings) {
         switch (routeSettings.name) {
           case GoalSetting.routeName:

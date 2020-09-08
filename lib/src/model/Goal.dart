@@ -11,6 +11,7 @@ class Goal {
   String prayingTime;
   String prayingDuration;
   String goalSetDate;
+  String biblePlanStartDate;
   String result;
   String errorMessage;
   String errorCode;
@@ -34,6 +35,7 @@ class Goal {
       this.prayingTime,
       this.prayingDuration,
       this.goalSetDate,
+      this.biblePlanStartDate,
       this.result,
       this.errorMessage,
       this.errorCode,
@@ -55,6 +57,7 @@ class Goal {
         prayingTime = json['prayingTime'],
         prayingDuration = json['prayingDuration'],
         goalSetDate = json['goalSetDate'],
+        biblePlanStartDate = json['biblePlanStartDate'],
         result = json['result'],
         errorMessage = json['errorMessage'],
         errorCode = json['errorCode'],

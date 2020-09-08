@@ -20,6 +20,7 @@ class API {
   static String setBibleProgress = serverURL + 'goal/set_bible_progress.php';
   static String getGoalProgress = serverURL + 'goal/get_goal_progress.php';
 
+  static String getBiblePlan = serverURL + 'reading_bible/bible_plan.php';
   static String bibleBooks = serverURL + 'reading_bible/bible_books.php';
   static String getBible = serverURL + 'reading_bible/get_bible.php';
   static String biblePlanList = serverURL + 'reading_bible/bible_plan_list.php';

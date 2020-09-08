@@ -70,10 +70,9 @@ class GoalSettingCompleteState extends State<GoalSettingComplete> {
               height: 30,
             ),
             Image(
-              image: AssetImage(
-                  Translations.of(context).localeLaunguageCode() == "ko"
-                      ? "assets/images/cheers_ko.png"
-                      : "assets/images/cheers_en.png"),
+              image: AssetImage(UserInfo.language == "ko"
+                  ? "assets/images/cheers_ko.png"
+                  : "assets/images/cheers_en.png"),
               width: MediaQuery.of(context).copyWith().size.width - 100,
             ),
             SizedBox(

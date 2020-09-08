@@ -1,9 +1,4 @@
-import 'dart:convert';
-
-import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
-import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
 import 'package:flutter/material.dart';
@@ -31,76 +26,25 @@ class GoalSettingState extends State<GoalSetting> {
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
 
   Future<void> setUserGoal() async {
-    if (!_checkContent()) return;
-    try {
-      showLoading(context);
-      Goal result = new Goal();
-      await API.transaction(context, API.setUserGoal, param: {
-        'userSeqNo': UserInfo.loginUser.seqNo,
-        'readingBible': GoalInfo.goal.readingBible,
-        'thankDiary': GoalInfo.goal.thankDiary,
-        'qtRecord': GoalInfo.goal.qtRecord,
-        'qtTime': GoalInfo.goal.qtTime,
-        'qtAlarm': GoalInfo.goal.qtAlarm,
-        'praying': GoalInfo.goal.praying,
-        'prayingTime': GoalInfo.goal.prayingTime,
-        'prayingAlarm': GoalInfo.goal.prayingAlarm,
-        'prayingDuration': GoalInfo.goal.prayingDuration,
-        'biblePlanId': bibleUserPlan.biblePlanId,
-        'planPeriod': bibleUserPlan.planPeriod,
-        'customBible': bibleUserPlan.customBible,
-        'planEndDate': bibleUserPlan.planEndDate
-      }).then((response) async {
-        //print('response: $response');
-        result = Goal.fromJson(json.decode(response));
-        if (result.result == 'success') {
-          bool nothingSelected = false;
+    if (!goalInfo.checkContent(context, bibleUserPlan)) return;
 
-          // For the case of when a user chooses nothing, next page must show a different message.
-          if (!GoalInfo.goal.readingBible &&
-              !GoalInfo.goal.thankDiary &&
-              !GoalInfo.goal.qtRecord &&
-              !GoalInfo.goal.praying) {
-            nothingSelected = true;
-          }
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => GoalSettingComplete(nothingSelected)));
-        } else {
-          errorMessage(context, result.errorMessage);
+    goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
+      if (value.result == 'success') {
+        bool nothingSelected = false;
+
+        // For the case of when a user chooses nothing, next page must show a different message.
+        if (!GoalInfo.goal.readingBible &&
+            !GoalInfo.goal.thankDiary &&
+            !GoalInfo.goal.qtRecord &&
+            !GoalInfo.goal.praying) {
+          nothingSelected = true;
         }
-      });
-    } on Exception catch (exception) {
-      errorMessage(context, exception);
-    } catch (error) {
-      errorMessage(context, error);
-    }
-  }
-
-  bool _checkContent() {
-    if (GoalInfo.goal.readingBible &&
-        (bibleUserPlan.biblePlanId == null ||
-            bibleUserPlan.biblePlanId == '')) {
-      showAlertDialog(
-          context, Translations.of(context).trans('select_bible_plan'));
-      return false;
-    } else if (bibleUserPlan.biblePlanId == 'custom' &&
-        (bibleUserPlan.customBible == null ||
-            bibleUserPlan.customBible == '')) {
-      showAlertDialog(
-          context, Translations.of(context).trans('select_custom_bible_plan'));
-      return false;
-    } else if (bibleUserPlan.biblePlanId == 'custom' &&
-        (bibleUserPlan.planPeriod == null ||
-            bibleUserPlan.planPeriod == '' ||
-            bibleUserPlan.planPeriod == '0')) {
-      showAlertDialog(
-          context, Translations.of(context).trans('select_custom_bible_plan'));
-      return false;
-    } else {
-      return true;
-    }
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GoalSettingComplete(nothingSelected)));
+      }
+    });
   }
 
   _goToSettingDetail(String title) {
@@ -137,12 +81,10 @@ class GoalSettingState extends State<GoalSetting> {
         case 'bible':
           GoalInfo.goal.readingBible = !GoalInfo.goal.readingBible;
           if (GoalInfo.goal.readingBible == true) {
-            String language = Translations.of(context).localeLaunguageCode();
             Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) => GoalSettingBible(
-                          language: language,
                           goal: GoalInfo.goal,
                           bibleUserPlan: bibleUserPlan,
                         ))).then((value) {
