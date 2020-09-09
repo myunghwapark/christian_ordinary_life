@@ -1,15 +1,16 @@
 import 'dart:convert';
-import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:christian_ordinary_life/src/common/goalInfo.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
+import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:christian_ordinary_life/src/model/BiblePlanDetail.dart';
 import 'package:christian_ordinary_life/src/model/Book.dart';
 import 'package:christian_ordinary_life/src/model/Chapter.dart';
 import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
@@ -19,17 +20,19 @@ import 'package:christian_ordinary_life/src/component/buttons.dart';
 
 class ReadingBible extends StatefulWidget {
   static const routeName = '/readingBible';
+  final TodayBible todayBible;
+
+  ReadingBible(this.todayBible);
 
   @override
   ReadingBibleState createState() => ReadingBibleState();
 }
 
 class ReadingBibleState extends State<ReadingBible> {
-  ScrollController _scrollController = new ScrollController();
-  bool _showAppbar = true;
-  bool isScrollingDown = false;
-  BiblePlanDetail biblePlanDetail = new BiblePlanDetail();
+  ScrollController _scrollController;
+  TodayBible todayBible = new TodayBible();
   AppButtons appButtons = new AppButtons();
+  GoalInfo goalInfo = new GoalInfo();
   GoalProgress goalProgress = new GoalProgress();
 
   // 성경별, 장별로 구분하기 위해 두개의 배열이 필요
@@ -41,26 +44,40 @@ class ReadingBibleState extends State<ReadingBible> {
   List<Book> bookToRead = new List<Book>(); // 성경 1장 분량
   String _dropDownValue;
   String _dropDownSelectedTitle;
+  GlobalKey _keyTodaysBible = GlobalKey();
+  bool _first = true;
 
-  void myScroll() async {
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (!isScrollingDown) {
-          isScrollingDown = true;
-          _showAppbar = false;
-          print('_showAppbar: $_showAppbar');
-        }
-      }
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (isScrollingDown) {
-          isScrollingDown = false;
-          _showAppbar = true;
-          print('_showAppbar: $_showAppbar');
-        }
-      }
-    });
+  void _moveContent() {
+    if (_first) {
+      Size size = getSizes(_keyTodaysBible);
+      _scrollTo(size.height);
+      _first = false;
+    }
+  }
+
+  void _scrollTo(double moveHeight) {
+    double maxScroll = _scrollController.position.maxScrollExtent;
+
+    if (moveHeight > maxScroll) {
+      moveHeight = maxScroll;
+    }
+
+    _scrollController.animateTo(moveHeight,
+        curve: Curves.linear, duration: Duration(milliseconds: 500));
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      //reach the bottom
+
+    }
+    if (_scrollController.offset <=
+            _scrollController.position.minScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      // reach the top
+    }
   }
 
   void _setChapterReadYn(Chapter chapter, int count) {
@@ -77,25 +94,18 @@ class ReadingBibleState extends State<ReadingBible> {
 
   Future<void> getTodaysBible() async {
     try {
-      await API.transaction(context, API.todayBible, param: {
-        'userSeqNo': UserInfo.loginUser.seqNo,
-        'goalDate': getToday()
-      }).then((response) {
-        print('response: $response');
-        setState(() {
-          List<dynamic> tempList;
-          biblePlanDetail = BiblePlanDetail.fromJson(json.decode(response));
-          goalProgress.bibleDays = biblePlanDetail.days;
-          goalProgress.readingBible = 'n';
-          tempList = json
-              .decode(biblePlanDetail.chapter)
-              .map((model) => Chapter.fromJson(model))
-              .toList();
+      if (todayBible.result == 'success') {
+        List<dynamic> tempList;
+        goalProgress.bibleDays = todayBible.days;
+        tempList = json
+            .decode(todayBible.chapter)
+            .map((model) => Chapter.fromJson(model))
+            .toList();
 
+        setState(() {
           todaysBible = new List<Chapter>();
-          goalProgress.bibleProgressNo =
-              int.parse(biblePlanDetail.bibleProgress);
-          goalProgress.bibleProgress = biblePlanDetail.bibleProgress;
+          goalProgress.bibleProgressNo = int.parse(todayBible.bibleProgress);
+          goalProgress.bibleProgress = todayBible.bibleProgress;
           for (int i = 0; i < tempList.length; i++) {
             todaysBible.add(tempList[i]);
           }
@@ -129,7 +139,9 @@ class ReadingBibleState extends State<ReadingBible> {
             }
           }
         });
-      });
+
+        getBible();
+      }
     } on Exception catch (exception) {
       errorMessage(context, exception);
     } catch (error) {
@@ -144,7 +156,6 @@ class ReadingBibleState extends State<ReadingBible> {
         'book': todaysBibleChapters[goalProgress.bibleProgressNo].book,
         'chapter': todaysBibleChapters[goalProgress.bibleProgressNo].volume
       }).then((response) {
-        //print('response: $response');
         setState(() {
           Book book = Book.fromJson(json.decode(response));
 
@@ -175,15 +186,23 @@ class ReadingBibleState extends State<ReadingBible> {
         'goalDate': getToday(),
         'readingBible': goalProgress.readingBible,
         'bibleProgress': goalProgress.bibleProgress,
+        'bibleProgressDone': goalProgress.bibleProgressDone,
         'bibleDays': goalProgress.bibleDays,
+        'lastDay': todayBible.lastDay,
+        'userBiblePlanSeqNo': GoalInfo.goal.userBiblePlanSeqNo
       }).then((response) {
         result = GoalProgress.fromJson(json.decode(response));
-        print('response: $response');
         if (result.result == 'success') {
-          if (goalProgress.readingBible == 'y') {
+          if (goalProgress.bibleProgressDone == 'y' &&
+              todayBible.lastDay == goalProgress.bibleDays) {
+            _goReadingBibleComplete();
+          } else if (goalProgress.bibleProgressDone == 'y') {
             Navigator.pushReplacementNamed(context, '/');
           } else {
-            getTodaysBible().then((value) => getBible());
+            goalInfo.getTodaysBible(context).then((value) {
+              todayBible = value;
+              getTodaysBible().then((value) => getBible());
+            });
           }
         } else {
           errorMessage(context, result.errorMessage);
@@ -198,17 +217,9 @@ class ReadingBibleState extends State<ReadingBible> {
   }
 
   Future<void> _goReadingBibleComplete() async {
-    await Navigator.push(context,
+    await Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => ReadingBibleComplete()))
         .then((value) {});
-  }
-
-  void _scrollTo(double number) {
-    _scrollController.animateTo(
-      number,
-      curve: Curves.easeOut,
-      duration: const Duration(milliseconds: 300),
-    );
   }
 
   @override
@@ -356,8 +367,11 @@ class ReadingBibleState extends State<ReadingBible> {
                   goalProgress.bibleProgress = val;
                   goalProgress.bibleProgressNo = int.parse(val);
                   if (goalProgress.bibleProgressNo ==
-                      todaysBibleChapters.length)
+                      todaysBibleChapters.length) {
                     goalProgress.readingBible = 'y';
+                    goalProgress.bibleProgressDone = 'y';
+                  }
+
                   setBibleProgress().then((value) {
                     _dropDownValue = null;
                   });
@@ -369,55 +383,81 @@ class ReadingBibleState extends State<ReadingBible> {
 
     Widget _todaysBible() {
       return SliverList(
+          key: _keyTodaysBible,
           delegate:
               SliverChildBuilderDelegate((BuildContext context, int index) {
-        return Container(
-          margin: EdgeInsets.all(10),
-          padding: EdgeInsets.only(left: 5, right: 5, bottom: 5),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              border: Border.all(color: AppColors.orange)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _days,
-              ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: todaysBible.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _chapterTitle(todaysBible[index].book),
-                        _todaysChapters(),
-                      ],
-                    );
-                  }),
-              _dropdownButton()
-            ],
-          ),
-        );
-      }, childCount: 1));
+            return Container(
+              margin: EdgeInsets.all(10),
+              padding: EdgeInsets.only(left: 5, right: 5, bottom: 5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  border: Border.all(color: AppColors.orange)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _days,
+                  ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: todaysBible.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _chapterTitle(todaysBible[index].book),
+                            _todaysChapters(),
+                          ],
+                        );
+                      }),
+                  _dropdownButton()
+                ],
+              ),
+            );
+          }, childCount: 1));
     }
 
     final _bibleTitle = SliverList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+      String _title = '';
+      String _chapter = '';
+      if (todaysBibleChapters.length != 0 &&
+          goalProgress.bibleProgressNo != todaysBibleChapters.length) {
+        if (todaysBibleChapters[goalProgress.bibleProgressNo].book == 'ps')
+          _chapter = Translations.of(context).trans('chapter_ps');
+        else
+          _chapter = Translations.of(context).trans('chapter');
+
+        _title = Translations.of(context)
+                .trans(todaysBibleChapters[goalProgress.bibleProgressNo].book) +
+            ' ' +
+            todaysBibleChapters[goalProgress.bibleProgressNo].volume +
+            _chapter;
+      }
+
       return Container(
           margin: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 15),
           padding: EdgeInsets.all(10),
           width: MediaQuery.of(context).size.width,
-          child: Text(
-            (todaysBibleChapters.length != 0 &&
-                    goalProgress.bibleProgressNo != todaysBibleChapters.length)
-                ? '${Translations.of(context).trans(todaysBibleChapters[goalProgress.bibleProgressNo].book)} ${todaysBibleChapters[goalProgress.bibleProgressNo].volume}${Translations.of(context).trans(todaysBibleChapters[goalProgress.bibleProgressNo].book == 'ps' ? 'chapter_ps' : 'chapter')}'
-                : '',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 17,
-            ),
-            textAlign: TextAlign.center,
+          child: Column(
+            children: [
+              Text(
+                _title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 17,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                Translations.of(context).trans('bible_version'),
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 15,
+                ),
+                textAlign: TextAlign.center,
+              )
+            ],
           ),
           decoration: BoxDecoration(color: Colors.grey[300]));
     }, childCount: 1));
@@ -465,17 +505,20 @@ class ReadingBibleState extends State<ReadingBible> {
               margin: EdgeInsets.all(10),
               child: goalProgress.bibleProgressNo != null
                   ? appButtons.filledOrangeButton(
-                      Translations.of(context).trans(
-                          todaysBibleChapters.length ==
-                                  (goalProgress.bibleProgressNo + 1)
-                              ? 'complete_bible'
-                              : 'next'), () {
+                      todaysBibleChapters.length ==
+                              (goalProgress.bibleProgressNo + 1)
+                          ? Translations.of(context).trans('complete_bible',
+                              param1: goalProgress.bibleDays)
+                          : Translations.of(context).trans('next'), () {
                       goalProgress.bibleProgressNo++;
                       goalProgress.bibleProgress =
                           goalProgress.bibleProgressNo.toString();
+
                       if (goalProgress.bibleProgressNo ==
-                          todaysBibleChapters.length)
+                          todaysBibleChapters.length) {
                         goalProgress.readingBible = 'y';
+                        goalProgress.bibleProgressDone = 'y';
+                      }
                       setBibleProgress();
                     })
                   : Container()),
@@ -483,34 +526,46 @@ class ReadingBibleState extends State<ReadingBible> {
       );
     }, childCount: 1));
 
+    final _floatingButton = Container(
+      height: 50.0,
+      width: 50.0,
+      child: FittedBox(
+        child: FloatingActionButton(
+          onPressed: () {
+            double moveHeight = _scrollController.offset +
+                (MediaQuery.of(context).copyWith().size.height - 100);
+            _scrollTo(moveHeight);
+          },
+          child: Icon(FontAwesomeIcons.arrowDown),
+          backgroundColor: Colors.orange[300],
+        ),
+      ),
+    );
+
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: AppDrawer(),
-        appBar: appBarComponent(
-          context,
-          Translations.of(context).trans('menu_reading_bible'),
-        ),
         body: CustomScrollView(
           controller: _scrollController,
-          slivers: <Widget>[_todaysBible(), _bibleTitle, _bible, _buttons],
+          slivers: <Widget>[
+            sliverAppBar(
+                context, Translations.of(context).trans('menu_reading_bible')),
+            _todaysBible(),
+            _bibleTitle,
+            _bible,
+            _buttons
+          ],
         ),
-        floatingActionButton: Container(
-          height: 50.0,
-          width: 50.0,
-          child: FittedBox(
-            child: FloatingActionButton(
-              onPressed: () {},
-              child: Icon(FontAwesomeIcons.arrowDown),
-              backgroundColor: Colors.orange[300],
-            ),
-          ),
-        ));
+        floatingActionButton: _floatingButton);
   }
 
   @override
   void initState() {
-    getTodaysBible().then((value) => getBible());
-    myScroll();
+    _scrollController = new ScrollController();
+    _scrollController.addListener(_scrollListener);
+    todayBible = widget.todayBible;
+
+    getTodaysBible();
     super.initState();
   }
 /* 

@@ -1,4 +1,5 @@
 import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -6,9 +7,12 @@ import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'goalSettingComplete.dart';
+
 class GoalBibleCustom2 extends StatefulWidget {
   final BibleUserPlan bibleUserPlan;
-  GoalBibleCustom2({this.bibleUserPlan});
+  final bool newBiblePlan;
+  GoalBibleCustom2({this.bibleUserPlan, this.newBiblePlan});
 
   @override
   GoalBibleCustom2State createState() => GoalBibleCustom2State();
@@ -18,10 +22,33 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   TextEditingController _daysController = new TextEditingController();
+  GoalInfo goalInfo = new GoalInfo();
   String _period = '';
   String _periodMent = '';
   int period = 0;
   int totalChapters = 0;
+
+  Future<void> setUserGoal() async {
+    if (!goalInfo.checkContent(context, bibleUserPlan)) return;
+
+    goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
+      if (value.result == 'success') {
+        bool nothingSelected = false;
+
+        // For the case of when a user chooses nothing, next page must show a different message.
+        if (!GoalInfo.goal.readingBible &&
+            !GoalInfo.goal.thankDiary &&
+            !GoalInfo.goal.qtRecord &&
+            !GoalInfo.goal.praying) {
+          nothingSelected = true;
+        }
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GoalSettingComplete(nothingSelected)));
+      }
+    });
+  }
 
   void _complete() {
     if (_daysController.text.isEmpty) {
@@ -34,8 +61,12 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
       return;
     }
     bibleUserPlan.planPeriod = _daysController.text;
-    Navigator.pop(
-        context, {"result": "complete", "bibleUserPlan": bibleUserPlan});
+    if (widget.newBiblePlan) {
+      setUserGoal();
+    } else {
+      Navigator.pop(
+          context, {"result": "complete", "bibleUserPlan": bibleUserPlan});
+    }
   }
 
   void _setPeriod(value) {

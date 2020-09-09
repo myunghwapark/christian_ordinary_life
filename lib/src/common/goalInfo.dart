@@ -4,6 +4,8 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
@@ -21,16 +23,12 @@ class GoalInfo {
       await API.transaction(context, API.getUserGoal,
           param: {'userSeqNo': UserInfo.loginUser.seqNo}).then((response) {
         result = Goal.fromJson(json.decode(response));
-        print('response: $response');
+        //print('response: $response');
         if (result.result == 'success') {
           List<Goal> goalInfo =
               result.goalInfo.map((model) => Goal.fromJson(model)).toList();
           goal = goalInfo[0];
-          /* // 한번에 파싱하기 위해 어쩔 수 없이 Goal에 담아서 분배
-          bibleUserPlan.biblePlanId = goal.biblePlanId;
-          bibleUserPlan.customBible = goal.customBible;
-          bibleUserPlan.planPeriod = goal.planPeriod;
- */
+
           if (!goal.readingBible &&
               !goal.praying &&
               !goal.qtRecord &&
@@ -61,9 +59,9 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
+        //print('response getGoalProgress: $response');
         result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
-          print('response: ${result.goalProgress}');
           List<GoalProgress> goalInfo = result.goalProgress
               .map((model) => GoalProgress.fromJson(model))
               .toList();
@@ -158,7 +156,7 @@ class GoalInfo {
     try {
       await API.transaction(context, API.setPrayingProgress, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
-        'goalDate': goalProgress.goalDate,
+        'goalDate': getToday(),
         'praying': goalProgress.praying
       }).then((response) {
         result = GoalProgress.fromJson(json.decode(response));
@@ -171,5 +169,34 @@ class GoalInfo {
     } catch (error) {
       errorMessage(context, error);
     }
+  }
+
+  Future<TodayBible> getTodaysBible(BuildContext context) async {
+    TodayBible todayBible;
+    try {
+      await API.transaction(context, API.todayBible, param: {
+        'userSeqNo': UserInfo.loginUser.seqNo,
+        'goalDate': getToday()
+      }).then((response) {
+        //print('todayBible response: $response');
+        todayBible = TodayBible.fromJson(json.decode(response));
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    }
+
+    return todayBible;
+  }
+
+  void goBiblePlan(BuildContext context) {
+    BibleUserPlan bibleUserPlan = new BibleUserPlan();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => GoalSettingBible(
+              newBiblePlan: true, bibleUserPlan: bibleUserPlan)),
+    );
   }
 }

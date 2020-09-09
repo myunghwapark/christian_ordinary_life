@@ -5,6 +5,7 @@ class GoalProgress {
   String qtRecord;
   String praying;
   String bibleProgress;
+  String bibleProgressDone;
   int bibleProgressNo;
   String bibleDays;
   String goalDate;
@@ -20,6 +21,7 @@ class GoalProgress {
       this.qtRecord,
       this.praying,
       this.bibleProgress,
+      this.bibleProgressDone,
       this.bibleProgressNo,
       this.bibleDays,
       this.goalDate,
@@ -35,6 +37,7 @@ class GoalProgress {
         qtRecord = json['qtRecord'],
         praying = json['praying'],
         bibleProgress = json['bibleProgress'],
+        bibleProgressDone = json['bibleProgressDone'],
         bibleDays = json['bibleDays'],
         goalDate = json['goalDate'],
         result = json['result'],

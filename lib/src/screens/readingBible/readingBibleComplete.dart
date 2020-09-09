@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -10,7 +11,6 @@ import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlan.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
-import 'package:flutter/material.dart';
 
 class ReadingBibleComplete extends StatefulWidget {
   ReadingBibleCompleteState createState() => ReadingBibleCompleteState();
@@ -56,8 +56,8 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              GoalSettingBible(newPlan: true, bibleUserPlan: bibleUserPlan)),
+          builder: (context) => GoalSettingBible(
+              newBiblePlan: true, bibleUserPlan: bibleUserPlan)),
     );
   }
 
@@ -68,6 +68,7 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
         'language': UserInfo.language,
         'biblePlanId': GoalInfo.goal.biblePlanId
       }).then((response) {
+        print('response: $response');
         result = BiblePlan.fromJson(json.decode(response));
 
         if (result.result == 'success') {

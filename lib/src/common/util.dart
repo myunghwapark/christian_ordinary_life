@@ -95,7 +95,7 @@ Future<void> showAlertDialog(BuildContext context, String alertText) async {
   );
 }
 
-showConfirmDialog(BuildContext context, String alertText) async {
+Future<String> showConfirmDialog(BuildContext context, String alertText) async {
   String result = await showDialog(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -189,4 +189,11 @@ String getPlanPeriod(BuildContext context, String period) {
     default:
   }
   return _planPeriod + _periodType;
+}
+
+Size getSizes(GlobalKey key) {
+  final RenderBox renderBox = key.currentContext.findRenderObject();
+  final size = renderBox.size;
+  print("SIZE of Object: $size");
+  return size;
 }

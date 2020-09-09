@@ -21,10 +21,10 @@ class GoalSettingBible extends StatefulWidget {
   final User loginUser;
   final Goal goal;
   final BibleUserPlan bibleUserPlan;
-  final bool newPlan;
+  final bool newBiblePlan;
 
   GoalSettingBible(
-      {this.loginUser, this.goal, this.bibleUserPlan, this.newPlan});
+      {this.loginUser, this.goal, this.bibleUserPlan, this.newBiblePlan});
 
   @override
   GoalSettingBibleState createState() => GoalSettingBibleState();
@@ -130,7 +130,10 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => GoalBibleCustom1(bibleUserPlan: bibleUserPlan),
+          builder: (context) => GoalBibleCustom1(
+            bibleUserPlan: bibleUserPlan,
+            newBiblePlan: widget.newBiblePlan,
+          ),
         ),
       ).then((value) {
         if (value != null && value['result'] == 'complete') {
@@ -157,7 +160,7 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.lightOrange,
-        appBar: widget.newPlan
+        appBar: widget.newBiblePlan
             ? appBarComponent(
                 context, Translations.of(context).trans('bible_reading_plan'),
                 actionWidget: actionIcon())

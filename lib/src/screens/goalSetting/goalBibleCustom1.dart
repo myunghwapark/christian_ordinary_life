@@ -20,7 +20,9 @@ class GoalBibleCustom1 extends StatefulWidget {
   final User loginUser;
   final Goal goal;
   final BibleUserPlan bibleUserPlan;
-  GoalBibleCustom1({this.loginUser, this.goal, this.bibleUserPlan});
+  final bool newBiblePlan;
+  GoalBibleCustom1(
+      {this.loginUser, this.goal, this.bibleUserPlan, this.newBiblePlan});
 }
 
 class GoalBibleCustom1State extends State<GoalBibleCustom1> {
@@ -186,7 +188,10 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => GoalBibleCustom2(bibleUserPlan: bibleUserPlan),
+        builder: (context) => GoalBibleCustom2(
+          bibleUserPlan: bibleUserPlan,
+          newBiblePlan: widget.newBiblePlan,
+        ),
       ),
     ).then((value) {
       if (value != null && value['result'] == 'complete') {

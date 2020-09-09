@@ -1,6 +1,7 @@
 class Goal {
   String goalSeqNo;
   String userSeqNo;
+  String userBiblePlanSeqNo;
   bool readingBible;
   bool thankDiary;
   bool qtRecord;
@@ -25,6 +26,7 @@ class Goal {
   Goal(
       {this.goalSeqNo,
       this.userSeqNo,
+      this.userBiblePlanSeqNo,
       this.readingBible,
       this.thankDiary,
       this.qtRecord,
@@ -47,6 +49,7 @@ class Goal {
 
   Goal.fromJson(Map json)
       : goalSeqNo = json['goalSeqNo'],
+        userBiblePlanSeqNo = json['userBiblePlanSeqNo'],
         readingBible = (json['readingBible'] == 'true'),
         thankDiary = (json['thankDiary'] == 'true'),
         qtRecord = (json['qtRecord'] == 'true'),

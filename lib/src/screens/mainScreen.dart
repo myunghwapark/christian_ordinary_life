@@ -2,9 +2,9 @@ import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.dart';
-import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,6 +23,7 @@ class MainScreenState extends State<MainScreen> {
   GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   AppButtons buttons = new AppButtons();
+  TodayBible todayBible = new TodayBible();
 
   String _year = '';
   String _date = '';
@@ -44,6 +45,8 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Widget _createMainItems({String item}) {
+    //print('item: $item');
+    //print('_checkVars: ${_checkVars[item]}');
     String text = Translations.of(context).trans('menu_$item');
     return ListTile(
         title: Row(
@@ -143,16 +146,37 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _goReadingBible() async {
-    await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ReadingBible()))
-        .then((value) {
+    if (todayBible.result == 'success') {
+      await Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ReadingBible(todayBible)))
+          .then((value) {
+        setState(() {
+          _refresh();
+        });
+      });
+    } else {
+      showConfirmDialog(
+              context, Translations.of(context).trans('no_bible_plan_ment'))
+          .then((value) {
+        if (value == 'ok') {
+          goalInfo.goBiblePlan(context);
+        } else {
+          Navigator.pushReplacementNamed(context, '/');
+        }
+      });
+    }
+  }
+
+  Future<void> _getTodaysBible() async {
+    await goalInfo.getTodaysBible(context).then((value) {
       setState(() {
-        _refresh();
+        todayBible = value;
       });
     });
   }
 
   void _setGoals() {
+    //print('_setGoals: ${GoalInfo.goalProgress.readingBible}');
     if (GoalInfo.goalProgress.thankDiary == 'y')
       _checkVars['thank_diary'] = true;
     else
@@ -344,6 +368,8 @@ class MainScreenState extends State<MainScreen> {
                 setState(() {
                   GoalInfo.goalProgress = value;
                   _setGoals();
+
+                  _getTodaysBible();
                 });
               });
             }));

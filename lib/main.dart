@@ -1,4 +1,5 @@
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,8 +66,9 @@ class MyApp extends StatelessWidget {
             break;
           case ReadingBible.routeName:
             {
+              final TodayBible args = routeSettings.arguments;
               return MaterialPageRoute(builder: (context) {
-                return ReadingBible();
+                return ReadingBible(args);
               });
             }
             break;

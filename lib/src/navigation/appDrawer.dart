@@ -1,4 +1,6 @@
+import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSetting.dart';
@@ -18,10 +20,13 @@ class AppDrawer extends StatefulWidget {
 
 class AppDrawerState extends State {
   UserInfo userInfo = new UserInfo();
+  GoalInfo goalInfo = new GoalInfo();
   Widget memberInfo;
+  TodayBible todayBible = new TodayBible();
 
   Widget _createDrawerItem(
-      {IconData icon,
+      {String target,
+      IconData icon,
       String text,
       GestureTapCallback onTap,
       String linkURL,
@@ -60,8 +65,27 @@ class AppDrawerState extends State {
                   });
                 }
               } else {
-                Navigator.pushReplacementNamed(context, linkURL,
-                    arguments: UserInfo.loginUser);
+                if (target != null && target == 'bible') {
+                  if (todayBible.result == 'success') {
+                    Navigator.pushReplacementNamed(context, linkURL,
+                        arguments: todayBible);
+                  } else {
+                    showConfirmDialog(
+                            context,
+                            Translations.of(context)
+                                .trans('no_bible_plan_ment'))
+                        .then((value) {
+                      if (value == 'ok') {
+                        goalInfo.goBiblePlan(context);
+                      } else {
+                        Navigator.pushReplacementNamed(context, '/');
+                      }
+                    });
+                  }
+                } else {
+                  Navigator.pushReplacementNamed(context, linkURL,
+                      arguments: UserInfo.loginUser);
+                }
               }
             },
     );
@@ -117,7 +141,7 @@ class AppDrawerState extends State {
         .trans('manOfGod', param1: UserInfo.loginUser.name)));
   }
 
-  void _getLoginInfo() async {
+  Future<void> _getLoginInfo() async {
     await userInfo.getUserInfo().then((value) {
       setState(() {
         UserInfo.loginUser = value;
@@ -125,10 +149,18 @@ class AppDrawerState extends State {
     });
   }
 
+  Future<void> _getTodaysBible() async {
+    await goalInfo.getTodaysBible(context).then((value) {
+      setState(() {
+        todayBible = value;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _getLoginInfo();
+    _getLoginInfo().then((value) => _getTodaysBible());
   }
 
   @override
@@ -205,6 +237,7 @@ class AppDrawerState extends State {
                   text: Translations.of(context).trans('menu_goal_setting'),
                   linkURL: GoalSetting.routeName),
               _createDrawerItem(
+                  target: 'bible',
                   icon: FontAwesomeIcons.bible,
                   text: Translations.of(context).trans('menu_reading_bible'),
                   linkURL: ReadingBible.routeName),

@@ -37,7 +37,7 @@
     "cancel": "취소",
     "next": "다음",
     "prev": "이전",
-    "complete_bible": "오늘의 성경읽기 완료",
+    "complete_bible": "#1일차 성경읽기 완료",
     "search": "검색",
     "init_ment": "말씀과 기도로\n하나님과 더 친밀한 삶을 사세요.",
     "goal_set_button": "목표설정하기",
@@ -123,6 +123,8 @@
     "read_up_to": "#1 #2 까지 읽음",
     "new_bible_plan_ment": "새로운 성경 통독 계획을 선택하셔서\n매일 말씀으로 승리하세요.",
     "choose_bible_plan": "통독계획 선택",
+    "no_bible_plan_ment": "선택하신 성경읽기 계획이 없습니다.\n새로운 계획을 선택하시겠습니까?",
+    "bible_version": "개역한글",
 
 
     "gen": "창세기",

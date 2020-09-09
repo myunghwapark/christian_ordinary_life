@@ -81,3 +81,19 @@ Widget appBarCustom(
     ]),
   );
 }
+
+Widget sliverAppBar(BuildContext context, String title, {Widget actionWidget}) {
+  return SliverAppBar(
+    title: Text(
+      title,
+      style: TextStyle(color: AppColors.darkGray, fontWeight: FontWeight.bold),
+    ),
+    backgroundColor: Colors.white,
+    iconTheme: new IconThemeData(
+      color: AppColors.lightGray,
+    ),
+    floating: true,
+    expandedHeight: 50,
+    actions: actionWidget != null ? <Widget>[actionWidget] : [],
+  );
+}
