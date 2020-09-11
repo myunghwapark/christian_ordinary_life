@@ -57,6 +57,21 @@ String getToday() {
   return template.format(now);
 }
 
+/*
+  return type: String
+  ex) 2020-08
+*/
+String getTodayYearMonth() {
+  var now = new DateTime.now();
+  final template = DateFormat('yyyy-MM');
+  return template.format(now);
+}
+
+DateTime convertDateFromString(String strDate) {
+  DateTime date = DateTime.parse(strDate);
+  return date;
+}
+
 List timepickerChanged(List timeArray) {
   int hour = timeArray[0], minute = timeArray[1];
   List<String> timeStrings = new List<String>(2);
@@ -194,6 +209,5 @@ String getPlanPeriod(BuildContext context, String period) {
 Size getSizes(GlobalKey key) {
   final RenderBox renderBox = key.currentContext.findRenderObject();
   final size = renderBox.size;
-  print("SIZE of Object: $size");
   return size;
 }

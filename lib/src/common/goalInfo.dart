@@ -59,7 +59,7 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
-        //print('response getGoalProgress: $response');
+        // print('response getGoalProgress: $response');
         result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
           List<GoalProgress> goalInfo = result.goalProgress

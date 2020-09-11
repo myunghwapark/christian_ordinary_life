@@ -115,7 +115,32 @@ class ReadingBibleState extends State<ReadingBible> {
           int count = 0;
           for (int i = 0; i < todaysBible.length; i++) {
             List<String> volumeList;
-            if (todaysBible[i].volume.indexOf('-') != -1) {
+            if (todaysBible[i].volume.indexOf(',') != -1) {
+              volumeList = todaysBible[i].volume.split(',');
+              for (int z = 0; z < volumeList.length; z++) {
+                if (volumeList[z].indexOf('-') != -1) {
+                  List<String> volumeList2 = volumeList[z].split('-');
+                  int startNum = int.parse(volumeList2[0]);
+                  int endNum = int.parse(volumeList2[1]);
+
+                  for (int j = startNum; j <= endNum; j++) {
+                    count++;
+                    Chapter chapterObj = new Chapter();
+                    chapterObj.no = count;
+                    chapterObj.book = todaysBible[i].book;
+                    chapterObj.volume = j.toString();
+                    _setChapterReadYn(chapterObj, count);
+                  }
+                } else {
+                  count++;
+                  Chapter chapterObj = new Chapter();
+                  chapterObj.no = count;
+                  chapterObj.book = todaysBible[i].book;
+                  chapterObj.volume = volumeList[z];
+                  _setChapterReadYn(chapterObj, count);
+                }
+              }
+            } else if (todaysBible[i].volume.indexOf('-') != -1) {
               volumeList = todaysBible[i].volume.split('-');
               int startNum = int.parse(volumeList[0]);
               int endNum = int.parse(volumeList[1]);

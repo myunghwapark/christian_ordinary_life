@@ -85,6 +85,7 @@ class GoalSettingState extends State<GoalSetting> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => GoalSettingBible(
+                          newBiblePlan: false,
                           goal: GoalInfo.goal,
                           bibleUserPlan: bibleUserPlan,
                         ))).then((value) {
