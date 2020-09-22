@@ -12,6 +12,7 @@ import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/thankDiaryInfo.dart';
 
 class ThankDiary extends StatefulWidget {
   static const routeName = '/thankDiary';
@@ -21,6 +22,7 @@ class ThankDiary extends StatefulWidget {
 }
 
 class ThankDiaryState extends State<ThankDiary> {
+  ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
   var diaryList = new List<Diary>();
   Diary diary = new Diary();
   TextEditingController searchController = TextEditingController();
@@ -60,6 +62,12 @@ class ThankDiaryState extends State<ThankDiary> {
               diary.diaryList.map((model) => Diary.fromJson(model)).toList();
           for (int i = 0; i < tempList.length; i++) {
             diaryList.add(tempList[i]);
+            if (diaryList[i].imageURL != null && diaryList[i].imageURL != '') {
+              final theImage = Image.network(
+                  API.diaryImageURL + diaryList[i].imageURL,
+                  fit: BoxFit.cover);
+              precacheImage(theImage.image, context);
+            }
           }
         });
       });
@@ -78,11 +86,8 @@ class ThankDiaryState extends State<ThankDiary> {
 
   Future<void> _goThankDiaryWrite() async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ThankDiaryWrite(
-                  loginUser: UserInfo.loginUser,
-                ))).then((value) {
+            context, MaterialPageRoute(builder: (context) => ThankDiaryWrite()))
+        .then((value) {
       setState(() {
         _refresh();
       });
@@ -136,36 +141,64 @@ class ThankDiaryState extends State<ThankDiary> {
         },
         itemBuilder: (context, index) {
           Diary curDiary = diaryList[index];
+          String imageURL = API.diaryImageURL + curDiary.imageURL;
           return Dismissible(
             key: UniqueKey(),
             child: GestureDetector(
               child: Container(
                   padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            curDiary.title,
-                            style:
-                                TextStyle(color: AppColors.black, fontSize: 18),
+                  child: Row(
+                    children: [
+                      (curDiary.imageURL != null && curDiary.imageURL != '')
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(50.0),
+                              child: FadeInImage.assetNetwork(
+                                image: imageURL,
+                                width: 70,
+                                height: 70,
+                                fit: BoxFit.fill,
+                                placeholder: wrongImage(),
+                              ))
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(8.0),
+                              child: FadeInImage.assetNetwork(
+                                image: API.systemImageURL +
+                                    curDiary.categoryImageUrl,
+                                width: 70,
+                                height: 70,
+                                fit: BoxFit.fill,
+                                placeholder: wrongImage(),
+                              )),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                curDiary.title,
+                                style: TextStyle(
+                                    color: AppColors.black, fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              )),
+                          Container(
+                              padding: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                getDate(DateTime.parse(curDiary.diaryDate)),
+                                style: TextStyle(color: AppColors.pastelPink),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              )),
+                          Text(
+                            curDiary.content,
+                            style: TextStyle(color: AppColors.darkGray),
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                          )),
-                      Container(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            getDate(DateTime.parse(curDiary.diaryDate)),
-                            style: TextStyle(color: AppColors.pastelPink),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          )),
-                      Text(
-                        curDiary.content,
-                        style: TextStyle(color: AppColors.darkGray),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                          )
+                        ],
                       )
                     ],
                   )),
@@ -214,7 +247,7 @@ class ThankDiaryState extends State<ThankDiary> {
   initState() {
     super.initState();
     _refreshController = new RefreshController();
-    _refresh();
+    thankDiaryInfo.getThankCategory(context).then((value) => _refresh());
   }
 
   @override

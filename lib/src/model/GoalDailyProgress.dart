@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 class GoalDailyProgress {
+  String goalDate;
   String title;
   String target;
   String progress;
   IconData targetIcon;
 
-  GoalDailyProgress({this.title, this.target, this.progress, this.targetIcon});
+  GoalDailyProgress(
+      {this.goalDate, this.title, this.target, this.progress, this.targetIcon});
 }

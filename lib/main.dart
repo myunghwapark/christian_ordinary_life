@@ -86,6 +86,13 @@ class MyApp extends StatelessWidget {
               });
             }
             break;
+          case Settings.routeName:
+            {
+              return MaterialPageRoute(builder: (context) {
+                return Settings();
+              });
+            }
+            break;
           default:
             {
               return MaterialPageRoute(builder: (context) {

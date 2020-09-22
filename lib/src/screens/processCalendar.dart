@@ -1,13 +1,15 @@
 import 'dart:convert';
+import 'package:christian_ordinary_life/src/model/Diary.dart';
+import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryList.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/GoalDailyProgress.dart';
 import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -82,19 +84,31 @@ class ProcessCalendarState extends State<ProcessCalendar>
 
               if (_goalProgress[i].qtRecord != '-')
                 goalDailyProgress.add(_makeDailyProgressList(
-                    'qt', _goalProgress[i].qtRecord, FontAwesomeIcons.pen));
+                    _goalProgress[i].goalDate,
+                    'qt',
+                    _goalProgress[i].qtRecord,
+                    FontAwesomeIcons.pen));
 
               if (_goalProgress[i].praying != '-')
-                goalDailyProgress.add(_makeDailyProgressList('praying',
-                    _goalProgress[i].praying, FontAwesomeIcons.pray));
+                goalDailyProgress.add(_makeDailyProgressList(
+                    _goalProgress[i].goalDate,
+                    'praying',
+                    _goalProgress[i].praying,
+                    FontAwesomeIcons.pray));
 
               if (_goalProgress[i].readingBible != '-')
-                goalDailyProgress.add(_makeDailyProgressList('reading_bible',
-                    _goalProgress[i].readingBible, FontAwesomeIcons.bible));
+                goalDailyProgress.add(_makeDailyProgressList(
+                    _goalProgress[i].goalDate,
+                    'reading_bible',
+                    _goalProgress[i].readingBible,
+                    FontAwesomeIcons.bible));
 
               if (_goalProgress[i].thankDiary != '-')
-                goalDailyProgress.add(_makeDailyProgressList('thank_diary',
-                    _goalProgress[i].thankDiary, FontAwesomeIcons.heart));
+                goalDailyProgress.add(_makeDailyProgressList(
+                    _goalProgress[i].goalDate,
+                    'thank_diary',
+                    _goalProgress[i].thankDiary,
+                    FontAwesomeIcons.heart));
 
               var original = _events[createTime];
               if (original == null) {
@@ -116,8 +130,9 @@ class ProcessCalendarState extends State<ProcessCalendar>
   }
 
   GoalDailyProgress _makeDailyProgressList(
-      String target, String progress, IconData targetIcon) {
+      String goalDate, String target, String progress, IconData targetIcon) {
     GoalDailyProgress dailyProgress = new GoalDailyProgress();
+    dailyProgress.goalDate = goalDate;
     dailyProgress.target = target;
     dailyProgress.progress = progress;
     dailyProgress.targetIcon = targetIcon;
@@ -314,7 +329,21 @@ class ProcessCalendarState extends State<ProcessCalendar>
                   ),
                 ],
               ),
-              onTap: () => print('$event tapped!'),
+              onTap: () {
+                if (dailyProgress.progress == 'y') {
+                  switch (dailyProgress.target) {
+                    case 'thank_diary':
+                      Diary diary = new Diary();
+                      diary.diaryDate = dailyProgress.goalDate;
+                      Navigator.pushNamed(
+                        context,
+                        ThankDiary.routeName,
+                      );
+                      break;
+                    default:
+                  }
+                }
+              },
             ));
       }).toList(),
     );

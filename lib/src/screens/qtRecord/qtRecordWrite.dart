@@ -46,7 +46,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         'bible': newQt.bible,
         'content': newQt.content,
         'qtRecord': 'y',
-        'goalDate': getToday()
+        'goalDate': newQt.qtDate
       }).then((response) {
         print('response: $response');
         QT writeResult = QT.fromJson(json.decode(response));
@@ -253,9 +253,10 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         resizeToAvoidBottomInset: false,
         resizeToAvoidBottomPadding: false,
         backgroundColor: AppColors.lightSky,
-        appBar: appBarComponent(
+        appBar: appBarBack(
             context, Translations.of(context).trans('menu_qt_record'),
-            actionWidget: actionIcon()),
+            actionWidget: actionIcon(),
+            onBackTap: () => Navigator.pop(context, widget.qt)),
         body: SingleChildScrollView(
             controller: _scroll,
             padding: EdgeInsets.all(10),

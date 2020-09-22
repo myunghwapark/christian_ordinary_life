@@ -19,6 +19,7 @@ class Goal {
   List goalInfo;
   bool goalSet;
 
+  bool oldBiblePlan;
   String biblePlanId;
   String planPeriod;
   String customBible;
@@ -42,6 +43,7 @@ class Goal {
       this.errorMessage,
       this.errorCode,
       this.goalInfo,
+      this.oldBiblePlan,
       this.biblePlanId,
       this.planPeriod,
       this.customBible,

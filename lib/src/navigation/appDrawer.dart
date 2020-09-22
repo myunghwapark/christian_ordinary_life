@@ -83,8 +83,7 @@ class AppDrawerState extends State {
                     });
                   }
                 } else {
-                  Navigator.pushReplacementNamed(context, linkURL,
-                      arguments: UserInfo.loginUser);
+                  Navigator.pushReplacementNamed(context, linkURL);
                 }
               }
             },

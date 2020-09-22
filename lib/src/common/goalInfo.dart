@@ -32,10 +32,15 @@ class GoalInfo {
           if (!goal.readingBible &&
               !goal.praying &&
               !goal.qtRecord &&
-              !goal.thankDiary)
+              !goal.thankDiary) {
             goal.goalSet = false;
-          else
+          } else {
             goal.goalSet = true;
+            if (goal.userBiblePlanSeqNo != null &&
+                goal.userBiblePlanSeqNo != '') {
+              goal.oldBiblePlan = true;
+            }
+          }
         } else if (result.errorCode == '01') {
           goal.goalSet = false;
         } else {
@@ -93,7 +98,6 @@ class GoalInfo {
     Goal result = new Goal();
 
     try {
-      showLoading(context);
       await API.transaction(context, API.setUserGoal, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'readingBible': GoalInfo.goal.readingBible,
@@ -178,7 +182,6 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
-        //print('todayBible response: $response');
         todayBible = TodayBible.fromJson(json.decode(response));
       });
     } on Exception catch (exception) {

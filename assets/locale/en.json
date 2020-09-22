@@ -125,7 +125,12 @@
     "new_bible_plan_ment": "Choose a new Bible Reading Plan\nand win with the Word every day.",
     "choose_bible_plan": "Choose a bible plan",
     "no_bible_plan_ment": "There is no Bible reading plan you have chosen.\nWould you like to choose a new plan?",
+    "replace_bible_plan_ment": "Would you like to stop the ongoing Bible reading plan and start a new one?",
     "bible_version": "KJV",
+    "image_upload": "Image upload",
+    "camera": "Take a photo",
+    "gallery": "Pick Image from the gallery",
+    "image_delete_confirm": "Would you like to delete the image?",
 
     "gen": "Genesis",
     "ex": "Exodus",

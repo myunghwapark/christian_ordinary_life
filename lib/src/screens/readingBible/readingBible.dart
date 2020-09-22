@@ -45,6 +45,7 @@ class ReadingBibleState extends State<ReadingBible> {
   String _dropDownValue;
   String _dropDownSelectedTitle;
   GlobalKey _keyTodaysBible = GlobalKey();
+  int _currentChapter;
   bool _first = true;
 
   void _moveContent() {
@@ -102,68 +103,14 @@ class ReadingBibleState extends State<ReadingBible> {
             .map((model) => Chapter.fromJson(model))
             .toList();
 
-        setState(() {
-          todaysBible = new List<Chapter>();
-          goalProgress.bibleProgressNo = int.parse(todayBible.bibleProgress);
-          goalProgress.bibleProgress = todayBible.bibleProgress;
-          for (int i = 0; i < tempList.length; i++) {
-            todaysBible.add(tempList[i]);
-          }
-          todaysBibleChapters = new List<Chapter>();
-          chapterDropDown = new List<Chapter>();
-
-          int count = 0;
-          for (int i = 0; i < todaysBible.length; i++) {
-            List<String> volumeList;
-            if (todaysBible[i].volume.indexOf(',') != -1) {
-              volumeList = todaysBible[i].volume.split(',');
-              for (int z = 0; z < volumeList.length; z++) {
-                if (volumeList[z].indexOf('-') != -1) {
-                  List<String> volumeList2 = volumeList[z].split('-');
-                  int startNum = int.parse(volumeList2[0]);
-                  int endNum = int.parse(volumeList2[1]);
-
-                  for (int j = startNum; j <= endNum; j++) {
-                    count++;
-                    Chapter chapterObj = new Chapter();
-                    chapterObj.no = count;
-                    chapterObj.book = todaysBible[i].book;
-                    chapterObj.volume = j.toString();
-                    _setChapterReadYn(chapterObj, count);
-                  }
-                } else {
-                  count++;
-                  Chapter chapterObj = new Chapter();
-                  chapterObj.no = count;
-                  chapterObj.book = todaysBible[i].book;
-                  chapterObj.volume = volumeList[z];
-                  _setChapterReadYn(chapterObj, count);
-                }
-              }
-            } else if (todaysBible[i].volume.indexOf('-') != -1) {
-              volumeList = todaysBible[i].volume.split('-');
-              int startNum = int.parse(volumeList[0]);
-              int endNum = int.parse(volumeList[1]);
-
-              for (int j = startNum; j <= endNum; j++) {
-                count++;
-                Chapter chapterObj = new Chapter();
-                chapterObj.no = count;
-                chapterObj.book = todaysBible[i].book;
-                chapterObj.volume = j.toString();
-                _setChapterReadYn(chapterObj, count);
-              }
-            } else {
-              count++;
-              Chapter chapterObj = new Chapter();
-              chapterObj.no = count;
-              chapterObj.book = todaysBible[i].book;
-              chapterObj.volume = todaysBible[i].volume;
-
-              _setChapterReadYn(chapterObj, count);
-            }
-          }
-        });
+        todaysBible = new List<Chapter>();
+        goalProgress.bibleProgressNo = int.parse(todayBible.bibleProgress);
+        goalProgress.bibleProgress = todayBible.bibleProgress;
+        _currentChapter = goalProgress.bibleProgressNo;
+        for (int i = 0; i < tempList.length; i++) {
+          todaysBible.add(tempList[i]);
+        }
+        _setBibleProgress();
 
         getBible();
       }
@@ -178,8 +125,8 @@ class ReadingBibleState extends State<ReadingBible> {
     try {
       await API.transaction(context, API.getBible, param: {
         'language': UserInfo.language,
-        'book': todaysBibleChapters[goalProgress.bibleProgressNo].book,
-        'chapter': todaysBibleChapters[goalProgress.bibleProgressNo].volume
+        'book': todaysBibleChapters[_currentChapter].book,
+        'chapter': todaysBibleChapters[_currentChapter].volume
       }).then((response) {
         setState(() {
           Book book = Book.fromJson(json.decode(response));
@@ -226,7 +173,8 @@ class ReadingBibleState extends State<ReadingBible> {
           } else {
             goalInfo.getTodaysBible(context).then((value) {
               todayBible = value;
-              getTodaysBible().then((value) => getBible());
+              _setBibleProgress();
+              getBible();
             });
           }
         } else {
@@ -245,6 +193,66 @@ class ReadingBibleState extends State<ReadingBible> {
     await Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => ReadingBibleComplete()))
         .then((value) {});
+  }
+
+  void _setBibleProgress() {
+    setState(() {
+      todaysBibleChapters = new List<Chapter>();
+      chapterDropDown = new List<Chapter>();
+
+      int count = 0;
+      for (int i = 0; i < todaysBible.length; i++) {
+        List<String> volumeList;
+        // 오늘 읽을 성경을 배열에 담기. 성경 별로 연결된 부분은 -, 끊어진 부분은 , 로 구분되어 있어서 그에 맞게 배열에 담아준다. ex) {'volume': '1-3,5'}
+        if (todaysBible[i].volume.indexOf(',') != -1) {
+          volumeList = todaysBible[i].volume.split(',');
+          for (int z = 0; z < volumeList.length; z++) {
+            if (volumeList[z].indexOf('-') != -1) {
+              List<String> volumeList2 = volumeList[z].split('-');
+              int startNum = int.parse(volumeList2[0]);
+              int endNum = int.parse(volumeList2[1]);
+
+              for (int j = startNum; j <= endNum; j++) {
+                count++;
+                Chapter chapterObj = new Chapter();
+                chapterObj.no = count;
+                chapterObj.book = todaysBible[i].book;
+                chapterObj.volume = j.toString();
+                _setChapterReadYn(chapterObj, count);
+              }
+            } else {
+              count++;
+              Chapter chapterObj = new Chapter();
+              chapterObj.no = count;
+              chapterObj.book = todaysBible[i].book;
+              chapterObj.volume = volumeList[z];
+              _setChapterReadYn(chapterObj, count);
+            }
+          }
+        } else if (todaysBible[i].volume.indexOf('-') != -1) {
+          volumeList = todaysBible[i].volume.split('-');
+          int startNum = int.parse(volumeList[0]);
+          int endNum = int.parse(volumeList[1]);
+
+          for (int j = startNum; j <= endNum; j++) {
+            count++;
+            Chapter chapterObj = new Chapter();
+            chapterObj.no = count;
+            chapterObj.book = todaysBible[i].book;
+            chapterObj.volume = j.toString();
+            _setChapterReadYn(chapterObj, count);
+          }
+        } else {
+          count++;
+          Chapter chapterObj = new Chapter();
+          chapterObj.no = count;
+          chapterObj.book = todaysBible[i].book;
+          chapterObj.volume = todaysBible[i].volume;
+
+          _setChapterReadYn(chapterObj, count);
+        }
+      }
+    });
   }
 
   @override
@@ -282,13 +290,20 @@ class ReadingBibleState extends State<ReadingBible> {
           ));
     }
 
-    _todaysChapters() {
+    _todaysChapters(String book) {
+      List<Chapter> chapterList = new List<Chapter>();
+      for (int i = 0; i < todaysBibleChapters.length; i++) {
+        Chapter chapter = todaysBibleChapters[i];
+        if (book == chapter.book) {
+          chapterList.add(chapter);
+        }
+      }
       return GridView.count(
         crossAxisCount: 4,
         childAspectRatio: 2,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        children: todaysBibleChapters.map((Chapter chapter) {
+        children: chapterList.map((Chapter chapter) {
           Widget iconType;
           Color borderColor;
           Color textColor;
@@ -317,11 +332,17 @@ class ReadingBibleState extends State<ReadingBible> {
             borderColor = Colors.grey[400];
             textColor = Colors.grey[600];
           }
+          String chapterText = '';
+          if (chapter.book == 'ps') {
+            chapterText = Translations.of(context).trans('chapter_ps');
+          } else {
+            chapterText = Translations.of(context).trans('chapter');
+          }
 
           return Center(
             child: InkWell(
                 child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                     margin: EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(
@@ -329,17 +350,18 @@ class ReadingBibleState extends State<ReadingBible> {
                       ),
                       border: Border.all(color: borderColor, width: 1),
                     ),
-                    child: Row(children: [
-                      Container(
-                          width: 26,
-                          padding: EdgeInsets.only(right: 5),
-                          child: iconType),
-                      Text(
-                        chapter.volume +
-                            Translations.of(context).trans('chapter'),
-                        style: TextStyle(color: textColor),
-                      ),
-                    ]))),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              width: 24,
+                              padding: EdgeInsets.only(right: 5),
+                              child: iconType),
+                          Text(
+                            chapter.volume + chapterText,
+                            style: TextStyle(color: textColor),
+                          ),
+                        ]))),
           );
         }).toList(),
       );
@@ -391,6 +413,7 @@ class ReadingBibleState extends State<ReadingBible> {
                   _dropDownValue = val;
                   goalProgress.bibleProgress = val;
                   goalProgress.bibleProgressNo = int.parse(val);
+                  _currentChapter = goalProgress.bibleProgressNo;
                   if (goalProgress.bibleProgressNo ==
                       todaysBibleChapters.length) {
                     goalProgress.readingBible = 'y';
@@ -431,7 +454,7 @@ class ReadingBibleState extends State<ReadingBible> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _chapterTitle(todaysBible[index].book),
-                            _todaysChapters(),
+                            _todaysChapters(todaysBible[index].book),
                           ],
                         );
                       }),
@@ -447,16 +470,16 @@ class ReadingBibleState extends State<ReadingBible> {
       String _title = '';
       String _chapter = '';
       if (todaysBibleChapters.length != 0 &&
-          goalProgress.bibleProgressNo != todaysBibleChapters.length) {
-        if (todaysBibleChapters[goalProgress.bibleProgressNo].book == 'ps')
+          _currentChapter != todaysBibleChapters.length) {
+        if (todaysBibleChapters[_currentChapter].book == 'ps')
           _chapter = Translations.of(context).trans('chapter_ps');
         else
           _chapter = Translations.of(context).trans('chapter');
 
         _title = Translations.of(context)
-                .trans(todaysBibleChapters[goalProgress.bibleProgressNo].book) +
+                .trans(todaysBibleChapters[_currentChapter].book) +
             ' ' +
-            todaysBibleChapters[goalProgress.bibleProgressNo].volume +
+            todaysBibleChapters[_currentChapter].volume +
             _chapter;
       }
 
@@ -516,35 +539,43 @@ class ReadingBibleState extends State<ReadingBible> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          goalProgress.bibleProgressNo != 0
+          _currentChapter != 0
               ? Container(
                   height: 40,
                   width: 100,
                   margin: EdgeInsets.all(10),
                   child: appButtons.filledGreyButton(
-                      Translations.of(context).trans('prev'), () {}))
+                      Translations.of(context).trans('prev'), () {
+                    _currentChapter--;
+                    getBible();
+                  }))
               : Container(),
           Container(
               height: 40,
               width: 200,
               margin: EdgeInsets.all(10),
-              child: goalProgress.bibleProgressNo != null
+              child: _currentChapter != null
                   ? appButtons.filledOrangeButton(
-                      todaysBibleChapters.length ==
-                              (goalProgress.bibleProgressNo + 1)
+                      todaysBibleChapters.length == (_currentChapter + 1)
                           ? Translations.of(context).trans('complete_bible',
                               param1: goalProgress.bibleDays)
                           : Translations.of(context).trans('next'), () {
-                      goalProgress.bibleProgressNo++;
-                      goalProgress.bibleProgress =
-                          goalProgress.bibleProgressNo.toString();
+                      if (_currentChapter == goalProgress.bibleProgressNo) {
+                        _currentChapter++;
+                        goalProgress.bibleProgressNo++;
+                        goalProgress.bibleProgress =
+                            goalProgress.bibleProgressNo.toString();
 
-                      if (goalProgress.bibleProgressNo ==
-                          todaysBibleChapters.length) {
-                        goalProgress.readingBible = 'y';
-                        goalProgress.bibleProgressDone = 'y';
+                        if (goalProgress.bibleProgressNo ==
+                            todaysBibleChapters.length) {
+                          goalProgress.readingBible = 'y';
+                          goalProgress.bibleProgressDone = 'y';
+                        }
+                        setBibleProgress();
+                      } else {
+                        _currentChapter++;
+                        getBible();
                       }
-                      setBibleProgress();
                     })
                   : Container()),
         ],

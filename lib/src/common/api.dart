@@ -7,6 +7,8 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 
 class API {
   static String serverURL = 'http://192.168.64.2/col/apis/';
+  static final String systemImageURL = 'http://192.168.64.2/col/images/system/';
+  static final String diaryImageURL = 'http://192.168.64.2/col/images/diary/';
 
   static String register = serverURL + 'user/register.php';
   static String login = serverURL + 'user/login.php';
@@ -30,8 +32,12 @@ class API {
       serverURL + 'reading_bible/bible_plan_detail.php';
   static String todayBible = serverURL + 'reading_bible/get_today_bible.php';
 
+  static String getThankCategoryList =
+      serverURL + 'thank_diary/get_thank_category_list.php';
   static String thanksDiaryList =
       serverURL + 'thank_diary/thank_diary_list.php';
+  static String thanksDiaryDetail =
+      serverURL + 'thank_diary/thank_diary_detail.php';
   static String thanksDiaryWrite =
       serverURL + 'thank_diary/thank_diary_write.php';
   static String thanksDiaryDelete =
@@ -43,6 +49,7 @@ class API {
 
   static Future<dynamic> transaction(BuildContext context, String url,
       {Object param}) async {
+    //showLoading(context);
     final response = await http
         .post(url,
             headers: <String, String>{

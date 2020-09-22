@@ -1,8 +1,8 @@
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
 import 'package:flutter/material.dart';
-import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -13,9 +13,8 @@ import 'goalSettingPraying.dart';
 class GoalSetting extends StatefulWidget {
   static const routeName = '/goalSetting';
 
-  final Goal goal;
   final BibleUserPlan bibleUserPlan;
-  GoalSetting({this.goal, this.bibleUserPlan});
+  GoalSetting({this.bibleUserPlan});
 
   @override
   GoalSettingState createState() => GoalSettingState();
@@ -26,25 +25,36 @@ class GoalSettingState extends State<GoalSetting> {
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
 
   Future<void> setUserGoal() async {
-    if (!goalInfo.checkContent(context, bibleUserPlan)) return;
+    bool saveAvailable = true;
+    if (!goalInfo.checkContent(context, bibleUserPlan)) saveAvailable = false;
 
-    goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
-      if (value.result == 'success') {
-        bool nothingSelected = false;
+    if (GoalInfo.goal.oldBiblePlan) {
+      await showConfirmDialog(context,
+              Translations.of(context).trans('replace_bible_plan_ment'))
+          .then((value) {
+        if (value == 'cancel') saveAvailable = false;
+      });
+    }
 
-        // For the case of when a user chooses nothing, next page must show a different message.
-        if (!GoalInfo.goal.readingBible &&
-            !GoalInfo.goal.thankDiary &&
-            !GoalInfo.goal.qtRecord &&
-            !GoalInfo.goal.praying) {
-          nothingSelected = true;
+    if (saveAvailable) {
+      goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
+        if (value.result == 'success') {
+          bool nothingSelected = false;
+
+          // For the case of when a user chooses nothing, next page must show a different message.
+          if (!GoalInfo.goal.readingBible &&
+              !GoalInfo.goal.thankDiary &&
+              !GoalInfo.goal.qtRecord &&
+              !GoalInfo.goal.praying) {
+            nothingSelected = true;
+          }
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GoalSettingComplete(nothingSelected)));
         }
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => GoalSettingComplete(nothingSelected)));
-      }
-    });
+      });
+    }
   }
 
   _goToSettingDetail(String title) {

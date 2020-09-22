@@ -18,7 +18,6 @@ class UserInfo {
     loginUser.name = prefs.getString("userName");
     loginUser.email = prefs.getString("userEmail");
     loginUser.seqNo = prefs.getString("userSeqNo");
-    print('userSeqNo: ${loginUser.seqNo}');
 
     return loginUser;
   }

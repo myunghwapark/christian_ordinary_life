@@ -125,7 +125,12 @@
     "new_bible_plan_ment": "새로운 성경 통독 계획을 선택하셔서\n매일 말씀으로 승리하세요.",
     "choose_bible_plan": "통독계획 선택",
     "no_bible_plan_ment": "선택하신 성경읽기 계획이 없습니다.\n새로운 계획을 선택하시겠습니까?",
+    "replace_bible_plan_ment": "진행중이던 성경 통독 계획을 중단하고 새로운 계획을 시작 하시겠습니까?",
     "bible_version": "개역한글",
+    "image_upload": "이미지 업로드",
+    "camera": "사진 촬영",
+    "gallery": "갤러리에서 이미지 선택",
+    "image_delete_confirm": "이미지를 삭제하시겠습니까?",
 
 
     "gen": "창세기",

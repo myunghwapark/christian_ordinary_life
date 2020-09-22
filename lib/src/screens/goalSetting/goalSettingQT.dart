@@ -160,7 +160,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
         backgroundColor: AppColors.blueSky,
         appBar: appBarBack(
             context, Translations.of(context).trans('qt_notice_setting_title'),
-            onTap: _backAction),
+            onBackTap: _backAction),
         body: GestureDetector(
           child: SingleChildScrollView(
             child: Container(

@@ -167,7 +167,7 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
             : appBarBack(
                 context,
                 Translations.of(context).trans('bible_reading_plan'),
-                onTap: _backScreen,
+                onBackTap: _backScreen,
               ),
         body: ListView.builder(
             itemCount: biblePlanList.length,

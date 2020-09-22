@@ -17,7 +17,7 @@ Widget appBarComponent(BuildContext context, String title,
 }
 
 Widget appBarBack(BuildContext context, String title,
-    {GestureTapCallback onTap, Widget actionWidget}) {
+    {GestureTapCallback onBackTap, Widget actionWidget}) {
   return AppBar(
     title: Text(
       title,
@@ -29,7 +29,7 @@ Widget appBarBack(BuildContext context, String title,
     ),
     leading: new IconButton(
       icon: new Icon(Icons.arrow_back_ios),
-      onPressed: onTap == null ? () => Navigator.pop(context) : onTap,
+      onPressed: onBackTap == null ? () => Navigator.pop(context) : onBackTap,
     ),
     actions: actionWidget != null ? <Widget>[actionWidget] : [],
   );

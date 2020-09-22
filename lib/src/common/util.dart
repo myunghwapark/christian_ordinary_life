@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 
+String wrongImage() {
+  return 'assets/images/wrong_image.png';
+}
+
 /*
   return type: String
   ex) 7월 22일 수요일 or Wednesday, July 22
@@ -164,6 +168,70 @@ void showToast(GlobalKey<ScaffoldState> scaffordKey, String toastText,
     content: Text(toastText),
     action: action != null ? action : null,
   ));
+}
+
+Future<String> showImageDialog(BuildContext context, Image image) async {
+  AlertDialog alert = AlertDialog(
+    content: new SingleChildScrollView(
+      child: new ListBody(children: <Widget>[
+        GestureDetector(
+          child: Container(child: image != null ? image : null),
+          onTap: () => Navigator.pop(context),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+                fit: FlexFit.loose,
+                flex: 1,
+                child: IconButton(
+                  icon: Icon(Icons.delete),
+                  color: Colors.grey,
+                  onPressed: () {
+                    Navigator.pop(context, "delete");
+                  },
+                )),
+            Flexible(
+              fit: FlexFit.loose,
+              flex: 1,
+              child: IconButton(
+                icon: Icon(Icons.edit),
+                color: Colors.grey,
+                onPressed: () {
+                  Navigator.pop(context, "edit");
+                },
+              ),
+            ),
+            Spacer(
+              flex: 1,
+            ),
+            Flexible(
+                fit: FlexFit.tight,
+                flex: 1,
+                child: FlatButton(
+                  child: Text(
+                    Translations.of(context).trans('close'),
+                    textAlign: TextAlign.right,
+                  ),
+                  color: Colors.grey.withOpacity(0.0),
+                  onPressed: () {
+                    Navigator.pop(context, "close");
+                  },
+                ))
+          ],
+        )
+      ]),
+    ),
+  );
+
+  String result = await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      });
+
+  return result;
 }
 
 bool validatePassword(String value) {

@@ -192,7 +192,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
         backgroundColor: AppColors.mint,
         appBar: appBarBack(context,
             Translations.of(context).trans('pray_notice_setting_title'),
-            onTap: _backAction),
+            onBackTap: _backAction),
         body: GestureDetector(
           child: SingleChildScrollView(
             child: Container(

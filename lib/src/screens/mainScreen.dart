@@ -134,11 +134,8 @@ class MainScreenState extends State<MainScreen> {
 
   Future<void> _goThankDiaryWrite() async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ThankDiaryWrite(
-                  loginUser: UserInfo.loginUser,
-                ))).then((value) {
+            context, MaterialPageRoute(builder: (context) => ThankDiaryWrite()))
+        .then((value) {
       setState(() {
         _refresh();
       });
