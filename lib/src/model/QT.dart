@@ -8,6 +8,9 @@ class QT {
   String errorMessage;
   String errorCode;
   String searchKeyword;
+  String searchStartDate;
+  String searchEndDate;
+  bool searchByDate;
   int totalCnt;
   List qtList;
 
@@ -18,6 +21,9 @@ class QT {
       this.bible,
       this.content,
       this.searchKeyword,
+      this.searchStartDate,
+      this.searchEndDate,
+      this.searchByDate,
       this.result,
       this.errorCode,
       this.errorMessage,

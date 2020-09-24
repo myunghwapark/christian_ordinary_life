@@ -1,4 +1,5 @@
 import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class GoalSettingCompleteState extends State<GoalSettingComplete> {
               height: 30,
             ),
             Image(
-              image: AssetImage(UserInfo.language == "ko"
+              image: AssetImage(CommonSettings.language == "ko"
                   ? "assets/images/cheers_ko.png"
                   : "assets/images/cheers_en.png"),
               width: MediaQuery.of(context).copyWith().size.width - 100,

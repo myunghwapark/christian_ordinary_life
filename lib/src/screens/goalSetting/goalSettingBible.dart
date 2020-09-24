@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/radioBox.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlan.dart';
@@ -39,7 +39,7 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     BiblePlan result;
     try {
       await API.transaction(context, API.biblePlanList,
-          param: {'language': UserInfo.language}).then((response) {
+          param: {'language': CommonSettings.language}).then((response) {
         result = BiblePlan.fromJson(json.decode(response));
 
         if (result.result == 'success') {

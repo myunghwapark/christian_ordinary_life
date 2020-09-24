@@ -131,6 +131,12 @@
     "camera": "Take a photo",
     "gallery": "Pick Image from the gallery",
     "image_delete_confirm": "Would you like to delete the image?",
+    "font_size": "Font Size",
+    "all_periods": "All periods",
+    "audit_classification": "Audit classification",
+    "all_category": "All category",
+    "search_with_criteria": "Search by search criteria",
+    "query_date_wrong": "The query end date is earlier than the start date.",
 
     "gen": "Genesis",
     "ex": "Exodus",

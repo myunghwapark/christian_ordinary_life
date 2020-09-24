@@ -125,17 +125,6 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     });
   }
 
-  void _showCalendar() async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Calendar(qtDate);
-        });
-
-    if (result != null) _setDate(result);
-  }
-
   @override
   void initState() {
     if (widget.qt != null) {
@@ -173,7 +162,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         child: IconButton(
           icon: Icon(Icons.calendar_today),
           color: AppColors.marine,
-          onPressed: _showCalendar,
+          onPressed: () {
+            showCalendar(context, qtDate).then((result) {
+              if (result != null) _setDate(result);
+            });
+          },
         ));
 
     final _qtDate = Flexible(
@@ -183,7 +176,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
           qtDateForm,
           style: TextStyle(fontSize: 18),
         ),
-        onTap: _showCalendar,
+        onTap: () {
+          showCalendar(context, qtDate).then((result) {
+            if (result != null) _setDate(result);
+          });
+        },
       ),
     );
 

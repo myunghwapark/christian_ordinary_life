@@ -36,4 +36,10 @@ class ComponentStyle {
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
         ));
   }
+
+  BoxDecoration radius5() {
+    return BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5.0)));
+  }
 }

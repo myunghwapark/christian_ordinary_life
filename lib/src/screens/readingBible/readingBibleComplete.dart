@@ -1,11 +1,11 @@
 import 'dart:convert';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlan.dart';
@@ -65,7 +65,7 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
     BiblePlan result;
     try {
       await API.transaction(context, API.getBiblePlan, param: {
-        'language': UserInfo.language,
+        'language': CommonSettings.language,
         'biblePlanId': GoalInfo.goal.biblePlanId
       }).then((response) {
         print('response: $response');
@@ -126,7 +126,7 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
     );
 
     final _congratulationImg = Image(
-      image: AssetImage(UserInfo.language == "ko"
+      image: AssetImage(CommonSettings.language == "ko"
           ? "assets/images/bible_congratulation_ko.png"
           : "assets/images/bible_congratulation_en.png"),
       width: MediaQuery.of(context).copyWith().size.width - 100,

@@ -131,6 +131,12 @@
     "camera": "사진 촬영",
     "gallery": "갤러리에서 이미지 선택",
     "image_delete_confirm": "이미지를 삭제하시겠습니까?",
+    "font_size": "폰트 크기",
+    "all_periods": "모든기간",
+    "audit_classification": "감사분류",
+    "all_category": "모든 카테고리",
+    "search_with_criteria": "검색조건으로 검색",
+    "query_date_wrong": "조회 종료일이 시작일보다 이전입니다.",
 
 
     "gen": "창세기",

@@ -14,6 +14,8 @@ class AppColors {
   static Color moss = HexColor('#018181');
   static Color gradientStart = HexColor('#43c6ac');
   static Color gradientEnd = HexColor('#f8ffae');
+  static Color fontGradientStart = HexColor('#FFB75E');
+  static Color fontGradientEnd = HexColor('#ED8F03');
 
   static Color blueSky = HexColor('#56d2d2');
   static Color lightSky = HexColor('#dff4f4');

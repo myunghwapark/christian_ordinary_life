@@ -1,4 +1,4 @@
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'package:flutter/cupertino.dart';
@@ -120,7 +120,7 @@ class MyApp extends StatelessWidget {
         for (Locale supportedLocale in supportedLocales) {
           if (supportedLocale.languageCode == locale.languageCode) {
             debugPrint("*language ok for launageCode $supportedLocale");
-            UserInfo.language = locale.languageCode;
+            CommonSettings.language = locale.languageCode;
             return supportedLocale;
           }
         }

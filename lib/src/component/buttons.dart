@@ -89,4 +89,21 @@ class AppButtons {
           child: Text(title, style: TextStyle(fontSize: 14)),
         ));
   }
+
+  Widget filledWhiteCustomButton(
+      String title, GestureTapCallback method, Color borderColor) {
+    return SizedBox(
+        width: double.infinity,
+        child: RaisedButton(
+          onPressed: method,
+          color: Colors.white,
+          textColor: AppColors.darkGray,
+          padding: const EdgeInsets.all(0.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            side: BorderSide(color: borderColor),
+          ),
+          child: Text(title, style: TextStyle(fontSize: 14)),
+        ));
+  }
 }

@@ -22,10 +22,11 @@ class ThankDiary extends StatefulWidget {
 }
 
 class ThankDiaryState extends State<ThankDiary> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
   var diaryList = new List<Diary>();
   Diary diary = new Diary();
-  TextEditingController searchController = TextEditingController();
+  TextEditingController keywordController = TextEditingController();
   String keyWord = '';
   FocusNode _searchFieldNode = FocusNode();
   int _startPageNum = 0;
@@ -46,10 +47,24 @@ class ThankDiaryState extends State<ThankDiary> {
       _refreshController.resetNoData();
     }
 
+    String _searchStartDate = '';
+    String _searchEndDate = '';
+    String _categoryNo = '';
+    if (SearchBox.searchDiary.searchByCategory) {
+      _categoryNo = SearchBox.searchDiary.categoryNo;
+    }
+    if (SearchBox.searchDiary.searchByDate) {
+      _searchStartDate = SearchBox.searchDiary.searchStartDate;
+      _searchEndDate = SearchBox.searchDiary.searchEndDate;
+    }
+
     try {
       await API.transaction(context, API.thanksDiaryList, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'searchKeyword': keyWord,
+        'searchStartDate': _searchStartDate,
+        'searchEndDate': _searchEndDate,
+        'categoryNo': _categoryNo,
         'startPageNum': _startPageNum,
         'rowCount': _rowCount
       }).then((response) {
@@ -114,6 +129,7 @@ class ThankDiaryState extends State<ThankDiary> {
   void _refresh() {
     _scrollUp = true;
     _pageNum = 0;
+    initLoad = true;
 
     diaryList = new List<Diary>();
     getThankDiaryList();
@@ -128,7 +144,7 @@ class ThankDiaryState extends State<ThankDiary> {
   Widget build(BuildContext context) {
     GestureTapCallback _onSubmitted = () {
       setState(() {
-        keyWord = searchController.text;
+        keyWord = keywordController.text;
         _refresh();
       });
     };
@@ -219,14 +235,21 @@ class ThankDiaryState extends State<ThankDiary> {
         });
 
     return Scaffold(
+        key: _scaffoldKey,
         backgroundColor: AppColors.lightPinks,
         appBar: appBarComponent(
             context, Translations.of(context).trans('menu_thank_diary'),
             actionWidget: actionIcon()),
         drawer: AppDrawer(),
         body: Column(children: <Widget>[
-          searchBox(context, AppColors.pastelPink, _searchFieldNode,
-              searchController, _onSubmitted),
+          SearchBox(
+            pointColor: AppColors.pastelPink,
+            searchFieldNode: _searchFieldNode,
+            keywordController: keywordController,
+            onSubmitted: _onSubmitted,
+            thankCategoryVisible: true,
+            scaffoldKey: _scaffoldKey,
+          ),
           Expanded(
               child: SmartRefresher(
             enablePullDown: true,

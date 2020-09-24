@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/fontSettingDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -30,6 +32,7 @@ class ReadingBible extends StatefulWidget {
 
 class ReadingBibleState extends State<ReadingBible> {
   ScrollController _scrollController;
+  CommonSettings commonSettings = new CommonSettings();
   TodayBible todayBible = new TodayBible();
   AppButtons appButtons = new AppButtons();
   GoalInfo goalInfo = new GoalInfo();
@@ -124,7 +127,7 @@ class ReadingBibleState extends State<ReadingBible> {
   Future<void> getBible() async {
     try {
       await API.transaction(context, API.getBible, param: {
-        'language': UserInfo.language,
+        'language': CommonSettings.language,
         'book': todaysBibleChapters[_currentChapter].book,
         'chapter': todaysBibleChapters[_currentChapter].volume
       }).then((response) {
@@ -253,6 +256,45 @@ class ReadingBibleState extends State<ReadingBible> {
         }
       }
     });
+  }
+
+  void _setBibleFont() {
+    commonSettings.getFontSize().then((value) {
+      setState(() {
+        print('font: $value');
+        if (value == null || value == 0.0) {
+          CommonSettings.fontSize = CommonSettings.defaultFontSize;
+        } else {
+          CommonSettings.fontSize = value;
+        }
+      });
+    });
+  }
+
+  void _showFontSizePickerDialog() async {
+    // this will contain the result from Navigator.pop(context, result)
+    final selectedFontSize = await showDialog<String>(
+      context: context,
+      builder: (context) =>
+          FontSizePickerDialog(initialFontSize: CommonSettings.fontSize),
+    ).then((value) {
+      if (value == 'ok') {
+        setState(() {
+          CommonSettings.fontSize = CommonSettings.tempFontSize;
+          commonSettings.setFontSize(CommonSettings.fontSize);
+        });
+      }
+    });
+
+    // execution of this code continues when the dialog was closed (popped)
+
+    // note that the result can also be null, so check it
+    // (back button or pressed outside of the dialog)
+    if (selectedFontSize != null) {
+      setState(() {
+        CommonSettings.fontSize = selectedFontSize;
+      });
+    }
   }
 
   @override
@@ -526,6 +568,7 @@ class ReadingBibleState extends State<ReadingBible> {
                     margin: EdgeInsets.only(right: 15, bottom: 7),
                     child: Text(
                       bookToRead[index].content,
+                      style: TextStyle(fontSize: CommonSettings.fontSize),
                     ),
                   ))
                 ],
@@ -598,6 +641,31 @@ class ReadingBibleState extends State<ReadingBible> {
       ),
     );
 
+    Widget actionIcon() {
+      return IconButton(
+        icon: Icon(
+          Icons.format_size,
+          color: Colors.grey,
+        ),
+        onPressed: () {
+          _showFontSizePickerDialog();
+          /* showSliderDialog(context,
+                  startNum: CommonSettings.minimumFontSize,
+                  endNum: CommonSettings.maximumFontSize,
+                  selectedNum: CommonSettings.fontSize)
+              .then((value) {
+            if (value == 'ok') {
+              setState(() {
+                CommonSettings.fontSize = CommonSettings.tempFontSize;
+              });
+              commonSettings.setFontSize(CommonSettings.fontSize);
+            }
+          }); */
+        },
+        color: AppColors.greenPoint,
+      );
+    }
+
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: AppDrawer(),
@@ -605,7 +673,8 @@ class ReadingBibleState extends State<ReadingBible> {
           controller: _scrollController,
           slivers: <Widget>[
             sliverAppBar(
-                context, Translations.of(context).trans('menu_reading_bible')),
+                context, Translations.of(context).trans('menu_reading_bible'),
+                actionWidget: actionIcon()),
             _todaysBible(),
             _bibleTitle,
             _bible,
@@ -618,6 +687,7 @@ class ReadingBibleState extends State<ReadingBible> {
   @override
   void initState() {
     _scrollController = new ScrollController();
+    _setBibleFont();
     _scrollController.addListener(_scrollListener);
     todayBible = widget.todayBible;
 

@@ -7,6 +7,10 @@ class Diary {
   String errorMessage;
   String errorCode;
   String searchKeyword;
+  String searchStartDate;
+  String searchEndDate;
+  bool searchByDate;
+  bool searchByCategory;
   String categoryNo;
   String imageURL;
   String image;
@@ -22,6 +26,10 @@ class Diary {
       this.diaryDate,
       this.content,
       this.searchKeyword,
+      this.searchStartDate,
+      this.searchEndDate,
+      this.searchByDate,
+      this.searchByCategory,
       this.categoryNo,
       this.imageURL,
       this.image,

@@ -1,3 +1,6 @@
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/calendar.dart';
+import 'package:christian_ordinary_life/src/component/loadingIndicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -57,6 +60,16 @@ String getYear(DateTime now) {
 */
 String getToday() {
   var now = new DateTime.now();
+  final template = DateFormat('yyyy-MM-dd');
+  return template.format(now);
+}
+
+/*
+  return type: String
+  ex) 2020-08-28
+*/
+String getCalDateFormat(DateTime now) {
+  if (now == null) return null;
   final template = DateFormat('yyyy-MM-dd');
   return template.format(now);
 }
@@ -124,15 +137,15 @@ Future<String> showConfirmDialog(BuildContext context, String alertText) async {
         content: Text(alertText),
         actions: <Widget>[
           FlatButton(
-            child: Text('OK'),
+            child: Text(Translations.of(context).trans('cancel')),
             onPressed: () {
-              Navigator.pop(context, "ok");
+              Navigator.pop(context, "cancel");
             },
           ),
           FlatButton(
-            child: Text('Cancel'),
+            child: Text(Translations.of(context).trans('confirm')),
             onPressed: () {
-              Navigator.pop(context, "cancel");
+              Navigator.pop(context, "ok");
             },
           ),
         ],
@@ -142,7 +155,7 @@ Future<String> showConfirmDialog(BuildContext context, String alertText) async {
 
   return result;
 }
-
+/* 
 void showLoading(BuildContext context) {
   AlertDialog alert = AlertDialog(
     content: new Row(
@@ -157,6 +170,27 @@ void showLoading(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return alert;
+    },
+  );
+} */
+
+Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
+  final result = await showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext builder) {
+        return Calendar(diaryDate);
+      });
+
+  return result;
+}
+
+void showLoading(BuildContext context) {
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return LoadingIndicator();
     },
   );
 }

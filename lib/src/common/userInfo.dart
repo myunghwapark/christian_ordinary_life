@@ -8,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfo {
   static User loginUser;
-  static String language;
   SharedPreferences prefs;
 
   Future<User> getUserInfo() async {

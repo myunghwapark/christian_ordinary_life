@@ -308,17 +308,6 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     }
   }
 
-  void _showCalendar() async {
-    final result = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext builder) {
-          return Calendar(diaryDate);
-        });
-
-    if (result != null) _setDate(result);
-  }
-
   @override
   void initState() {
     if (widget.diary != null) {
@@ -421,7 +410,11 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
         child: IconButton(
           icon: Icon(Icons.calendar_today),
           color: AppColors.pastelPink,
-          onPressed: _showCalendar,
+          onPressed: () {
+            showCalendar(context, diaryDate).then((result) {
+              if (result != null) _setDate(result);
+            });
+          },
         ));
 
     final _diaryDate = Flexible(
@@ -431,7 +424,11 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           diaryDateForm,
           style: TextStyle(fontSize: 18),
         ),
-        onTap: _showCalendar,
+        onTap: () {
+          showCalendar(context, diaryDate).then((result) {
+            if (result != null) _setDate(result);
+          });
+        },
       ),
     );
 

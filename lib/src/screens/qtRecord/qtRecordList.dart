@@ -24,7 +24,7 @@ class QTRecord extends StatefulWidget {
 class QTRecordState extends State<QTRecord> {
   var qtList = new List<QT>();
   QT qt = new QT();
-  TextEditingController searchController = TextEditingController();
+  TextEditingController keywordController = TextEditingController();
   String keyWord = '';
   FocusNode _searchFieldNode = FocusNode();
   int _startPageNum = 0;
@@ -45,10 +45,20 @@ class QTRecordState extends State<QTRecord> {
       _refreshController.resetNoData();
     }
 
+    String _searchStartDate = '';
+    String _searchEndDate = '';
+
+    if (SearchBox.searchDiary.searchByDate) {
+      _searchStartDate = SearchBox.searchDiary.searchStartDate;
+      _searchEndDate = SearchBox.searchDiary.searchEndDate;
+    }
+
     try {
       await API.transaction(context, API.qtRecordList, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'searchKeyword': keyWord,
+        'searchStartDate': _searchStartDate,
+        'searchEndDate': _searchEndDate,
         'startPageNum': _startPageNum,
         'rowCount': _rowCount
       }).then((response) {
@@ -109,6 +119,7 @@ class QTRecordState extends State<QTRecord> {
   void _refresh() {
     _scrollUp = true;
     _pageNum = 0;
+    initLoad = true;
 
     qtList = new List<QT>();
     getQtRecordList();
@@ -123,7 +134,7 @@ class QTRecordState extends State<QTRecord> {
   Widget build(BuildContext context) {
     GestureTapCallback _onSubmitted = () {
       setState(() {
-        keyWord = searchController.text;
+        keyWord = keywordController.text;
         _refresh();
       });
     };
@@ -194,8 +205,13 @@ class QTRecordState extends State<QTRecord> {
             actionWidget: actionIcon()),
         drawer: AppDrawer(),
         body: Column(children: <Widget>[
-          searchBox(context, AppColors.marine, _searchFieldNode,
-              searchController, _onSubmitted),
+          SearchBox(
+            pointColor: AppColors.marine,
+            searchFieldNode: _searchFieldNode,
+            keywordController: keywordController,
+            onSubmitted: _onSubmitted,
+            thankCategoryVisible: false,
+          ),
           Expanded(
               child: SmartRefresher(
             enablePullDown: true,

@@ -61,6 +61,7 @@ class API {
     });
 
     try {
+      // Navigator.of(context).pop();
       // Error
       if (response.statusCode != 200) {
         showAlertDialog(
