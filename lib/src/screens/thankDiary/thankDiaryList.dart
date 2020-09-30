@@ -1,7 +1,7 @@
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryDetail.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
@@ -50,12 +50,12 @@ class ThankDiaryState extends State<ThankDiary> {
     String _searchStartDate = '';
     String _searchEndDate = '';
     String _categoryNo = '';
-    if (SearchBox.searchDiary.searchByCategory) {
-      _categoryNo = SearchBox.searchDiary.categoryNo;
+    if (SearchBox.search.searchByCategory) {
+      _categoryNo = SearchBox.search.categoryNo;
     }
-    if (SearchBox.searchDiary.searchByDate) {
-      _searchStartDate = SearchBox.searchDiary.searchStartDate;
-      _searchEndDate = SearchBox.searchDiary.searchEndDate;
+    if (SearchBox.search.searchByDate) {
+      _searchStartDate = SearchBox.search.searchStartDate;
+      _searchEndDate = SearchBox.search.searchEndDate;
     }
 
     try {
@@ -148,6 +148,57 @@ class ThankDiaryState extends State<ThankDiary> {
         _refresh();
       });
     };
+
+    Widget _header() {
+      return CustomHeader(
+          height: 60,
+          refreshStyle: RefreshStyle.Behind,
+          onOffsetChange: (offset) {},
+          builder: (context, mode) {
+            return Container(
+              child: Image.asset(
+                "assets/images/loading.gif",
+              ),
+            );
+          });
+    }
+
+    Widget _footer() {
+      return CustomFooter(
+          height: 60,
+          builder: (context, mode) {
+            Widget child;
+            switch (mode) {
+              case LoadStatus.failed:
+                child = Center(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          Translations.of(context).trans('load_fail_retry'),
+                          style: TextStyle(color: Colors.grey[500]),
+                        )));
+                break;
+              case LoadStatus.noMore:
+                child = Center(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          Translations.of(context).trans('no_more_data'),
+                          style: TextStyle(color: Colors.grey[500]),
+                        )));
+                break;
+              default:
+                child = Container(
+                  child: Image.asset(
+                    "assets/images/loading.gif",
+                  ),
+                );
+                break;
+            }
+
+            return child;
+          });
+    }
 
     final _diaryList = ListView.separated(
         itemCount: diaryList?.length,
@@ -252,6 +303,8 @@ class ThankDiaryState extends State<ThankDiary> {
           ),
           Expanded(
               child: SmartRefresher(
+            header: _header(),
+            footer: _footer(),
             enablePullDown: true,
             enablePullUp: true,
             controller: _refreshController,
@@ -270,6 +323,9 @@ class ThankDiaryState extends State<ThankDiary> {
   initState() {
     super.initState();
     _refreshController = new RefreshController();
+
+    SearchBox.search.searchByDate = false;
+    SearchBox.search.searchByCategory = false;
     thankDiaryInfo.getThankCategory(context).then((value) => _refresh());
   }
 

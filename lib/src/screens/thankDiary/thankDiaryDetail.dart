@@ -30,10 +30,17 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       }).then((response) {
         Diary diary = Diary.fromJson(json.decode(response));
         List<Diary> tempList;
-        tempList = diary.detail.map((model) => Diary.fromJson(model)).toList();
-        setState(() {
-          detailDiary = tempList[0];
-        });
+        if (diary.detail.length != 0) {
+          tempList =
+              diary.detail.map((model) => Diary.fromJson(model)).toList();
+          setState(() {
+            detailDiary = tempList[0];
+          });
+        } else {
+          showAlertDialog(
+                  context, Translations.of(context).trans('no_data_detail'))
+              .then((value) => Navigator.pop(context));
+        }
       });
     } on Exception catch (exception) {
       errorMessage(context, exception);

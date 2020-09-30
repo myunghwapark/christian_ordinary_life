@@ -1,17 +1,22 @@
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
+import 'package:christian_ordinary_life/src/model/BiblePhrase.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordWrite.dart';
 import 'package:christian_ordinary_life/src/screens/readingBible/readingBible.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../common/translations.dart';
-import '../common/colors.dart';
-import '../common/util.dart';
-import 'goalSetting/goalSetting.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSetting.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -24,6 +29,7 @@ class MainScreenState extends State<MainScreen> {
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   AppButtons buttons = new AppButtons();
   TodayBible todayBible = new TodayBible();
+  BiblePhrase biblePhrase = new BiblePhrase();
 
   String _year = '';
   String _date = '';
@@ -44,9 +50,39 @@ class MainScreenState extends State<MainScreen> {
     });
   }
 
+  Future<void> getBiblePhrase() async {
+    try {
+      await API.transaction(context, API.biblePhrase,
+          param: {'language': CommonSettings.language}).then((response) {
+        biblePhrase = BiblePhrase.fromJson(json.decode(response));
+        List<BiblePhrase> tempList;
+        if (biblePhrase.biblePhrase.length != 0) {
+          tempList = biblePhrase.biblePhrase
+              .map((model) => BiblePhrase.fromJson(model))
+              .toList();
+          setState(() {
+            biblePhrase = tempList[0];
+            String content = '';
+            if (tempList.length > 1) {
+              for (int i = 0; i < tempList.length; i++) {
+                if (i != 0) content += ' ';
+                content += tempList[i].content;
+              }
+              biblePhrase.content = content;
+            }
+          });
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
+    }
+  }
+
   Widget _createMainItems({String item}) {
-    //print('item: $item');
-    //print('_checkVars: ${_checkVars[item]}');
     String text = Translations.of(context).trans('menu_$item');
     return ListTile(
         title: Row(
@@ -121,11 +157,8 @@ class MainScreenState extends State<MainScreen> {
 
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => QtRecordWrite(
-                  loginUser: UserInfo.loginUser,
-                ))).then((value) {
+            context, MaterialPageRoute(builder: (context) => QtRecordWrite()))
+        .then((value) {
       setState(() {
         _refresh();
       });
@@ -173,7 +206,6 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void _setGoals() {
-    //print('_setGoals: ${GoalInfo.goalProgress.readingBible}');
     if (GoalInfo.goalProgress.thankDiary == 'y')
       _checkVars['thank_diary'] = true;
     else
@@ -211,22 +243,6 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    /* final _leftArrow = GestureDetector(
-      child: Icon(
-        Icons.arrow_back_ios,
-        color: AppColors.lightGray,
-        size: 35,
-      ),
-      onTap: () {
-        setState(() {
-          print('left button');
-          _currentDateTime = _currentDateTime.add(new Duration(days: -1));
-          _year = getYear(_currentDateTime);
-          _date = getDate(_currentDateTime);
-        });
-      },
-    ); */
-
     final _dateForm = Flexible(
       fit: FlexFit.tight,
       child: Column(
@@ -295,31 +311,16 @@ class MainScreenState extends State<MainScreen> {
       ],
     );
 
-    /* final _rightArrow = GestureDetector(
-      child: Icon(
-        Icons.arrow_forward_ios,
-        color: AppColors.lightGray,
-        size: 35,
-      ),
-      onTap: () {
-        setState(() {
-          print('right button');
-          _currentDateTime = _currentDateTime.add(new Duration(days: 1));
-          _year = getYear(_currentDateTime);
-          _date = getDate(_currentDateTime);
-        });
-      },
-    ); */
-
     final _scriptualPhrase = Flexible(
       fit: FlexFit.tight,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
-          //padding: EdgeInsets.all(10),
-          child: Text(
-            Translations.of(context).pharaseTrans('mark_9_23'),
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          child: (biblePhrase != null && biblePhrase.content != null)
+              ? Text(
+                  '${biblePhrase.content} [${biblePhrase.bookTitle} ${biblePhrase.chapter}:${biblePhrase.verses}]',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              : Container(),
         )
       ]),
       flex: 1,
@@ -329,7 +330,6 @@ class MainScreenState extends State<MainScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          //_leftArrow,
           SizedBox(
             width: 20,
           ),
@@ -343,7 +343,6 @@ class MainScreenState extends State<MainScreen> {
                 : _goalSet,
             _scriptualPhrase,
           ])),
-          //_rightArrow,
           SizedBox(
             width: 20,
           ),
@@ -366,7 +365,7 @@ class MainScreenState extends State<MainScreen> {
                   GoalInfo.goalProgress = value;
                   _setGoals();
 
-                  _getTodaysBible();
+                  getBiblePhrase().then((value) => _getTodaysBible());
                 });
               });
             }));

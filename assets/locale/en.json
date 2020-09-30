@@ -101,6 +101,7 @@
     "select_date": "Select Date",
     "apply": "Apply",
     "no_data": "There is no written article.",
+    "no_data_detail": "The article does not exist.",
     "delete_confirm": "Would you like to delete the article?",
     "validate_title": "Please enter the title.",
     "validate_content": "Please enter the content.",
@@ -137,6 +138,8 @@
     "all_category": "All category",
     "search_with_criteria": "Search by search criteria",
     "query_date_wrong": "The query end date is earlier than the start date.",
+    "no_more_data": "There is no more data.",
+    "load_fail_retry": "Load failed. please try again.",
 
     "gen": "Genesis",
     "ex": "Exodus",

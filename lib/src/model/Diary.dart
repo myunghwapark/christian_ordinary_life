@@ -6,11 +6,6 @@ class Diary {
   String result;
   String errorMessage;
   String errorCode;
-  String searchKeyword;
-  String searchStartDate;
-  String searchEndDate;
-  bool searchByDate;
-  bool searchByCategory;
   String categoryNo;
   String imageURL;
   String image;
@@ -25,11 +20,6 @@ class Diary {
       this.title,
       this.diaryDate,
       this.content,
-      this.searchKeyword,
-      this.searchStartDate,
-      this.searchEndDate,
-      this.searchByDate,
-      this.searchByCategory,
       this.categoryNo,
       this.imageURL,
       this.image,
@@ -53,7 +43,6 @@ class Diary {
         result = json['result'],
         errorMessage = json['errorMessage'],
         errorCode = json['errorCode'],
-        searchKeyword = json['searchKeyword'],
         diaryList = json['diaryList'],
         totalCnt = json['totalCnt'],
         detail = json['detail'];

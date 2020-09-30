@@ -244,7 +244,7 @@ packages:
       name: pull_to_refresh
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.1"
+    version: "1.6.2"
   settings_ui:
     dependency: "direct main"
     description:

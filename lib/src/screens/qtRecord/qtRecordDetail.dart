@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
@@ -19,13 +22,40 @@ class QtRecordDetail extends StatefulWidget {
 class QtRecordDetailState extends State<QtRecordDetail> {
   QT detailQt = new QT();
 
+  Future<void> getQtRecord() async {
+    try {
+      await API.transaction(context, API.qtRecordDetail, param: {
+        'qtRecordSeqNo': widget.qt.seqNo,
+        'qtDate': widget.qt.qtDate
+      }).then((response) {
+        QT qt = QT.fromJson(json.decode(response));
+        List<QT> tempList;
+        if (qt.detail.length != 0) {
+          tempList = qt.detail.map((model) => QT.fromJson(model)).toList();
+          setState(() {
+            detailQt = tempList[0];
+          });
+        } else {
+          showAlertDialog(
+                  context, Translations.of(context).trans('no_data_detail'))
+              .then((value) => Navigator.pop(context));
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+      return null;
+    } catch (error) {
+      errorMessage(context, error);
+      return null;
+    }
+  }
+
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => QtRecordWrite(
-                  qt: widget.qt,
-                  loginUser: widget.loginUser,
+                  qt: detailQt,
                 ))).then((value) {
       if (value == 'delete') {
         Navigator.pop(context);
@@ -47,23 +77,30 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final _qtDate = Text(
-      getDateOfWeek(DateTime.parse(detailQt.qtDate)),
-      style: TextStyle(color: AppColors.darkGray),
-    );
+    final _qtDate = detailQt.qtDate != null
+        ? Text(
+            getDateOfWeek(DateTime.parse(detailQt.qtDate)),
+            style: TextStyle(color: AppColors.darkGray),
+          )
+        : Container();
 
-    final _qtTitle = Text(
-      ((detailQt.bible != null && detailQt.bible != '')
-              ? '[${detailQt.bible}] '
-              : '') +
-          detailQt.title,
-      style: TextStyle(color: AppColors.black, fontSize: 18),
-    );
+    final _qtTitle = detailQt.bible != null
+        ? Text(
+            ((detailQt.bible != null && detailQt.bible != '')
+                    ? '[${detailQt.bible}] '
+                    : '') +
+                detailQt.title,
+            style: TextStyle(color: AppColors.black, fontSize: 18),
+          )
+        : Container();
 
-    final _qtContent = Container(
-        padding: EdgeInsets.only(top: 10, bottom: 10),
-        constraints: BoxConstraints(minHeight: 100),
-        child: Text(detailQt.content));
+    final _qtContent = detailQt.content != null
+        ? Container(
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            constraints: BoxConstraints(minHeight: 100),
+            child: Text(detailQt.content))
+        : Container();
+    ;
 
     return Scaffold(
         backgroundColor: AppColors.lightSky,
@@ -95,7 +132,8 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
   @override
   void initState() {
-    detailQt = widget.qt;
+    //detailQt = widget.qt;
+    getQtRecord();
     super.initState();
   }
 }

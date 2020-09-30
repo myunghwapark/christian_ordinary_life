@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
+import 'package:christian_ordinary_life/src/model/QT.dart';
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordDetail.dart';
+import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryDetail.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryList.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,11 +27,6 @@ class ProcessCalendar extends StatefulWidget {
 
 class ProcessCalendarState extends State<ProcessCalendar>
     with TickerProviderStateMixin {
-  /* static var today = new DateTime.now();
-  DateTime _currentDate = today;
-  DateTime _currentDate2 = today;
-  String _currentMonth = DateFormat.yMMM().format(today);
-  DateTime _targetDateTime = today; */
   bool _first = true;
   Map<DateTime, List> _events = {};
   List _selectedEvents;
@@ -36,32 +34,17 @@ class ProcessCalendarState extends State<ProcessCalendar>
   CalendarController _calendarController;
   List<GoalProgress> _goalProgress = new List<GoalProgress>();
 
-  // Example holidays
-  final Map<DateTime, List> _holidays = {
-    DateTime(2020, 1, 1): ['New Year\'s Day'],
-    DateTime(2020, 1, 6): ['Epiphany'],
-    DateTime(2020, 2, 14): ['Valentine\'s Day'],
-    DateTime(2020, 4, 21): ['Easter Sunday'],
-    DateTime(2020, 4, 22): ['Easter Monday'],
-    DateTime(2020, 9, 10): ['My Birthday'],
-  };
-
   void _onDaySelected(DateTime day, List events) {
-    print('CALLBACK: _onDaySelected');
     setState(() {
       _selectedEvents = events;
     });
   }
 
   void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onVisibleDaysChanged');
-  }
+      DateTime first, DateTime last, CalendarFormat format) {}
 
   void _onCalendarCreated(
-      DateTime first, DateTime last, CalendarFormat format) {
-    print('CALLBACK: _onCalendarCreated');
-  }
+      DateTime first, DateTime last, CalendarFormat format) {}
 
   Future<void> getProgress() async {
     try {
@@ -69,7 +52,6 @@ class ProcessCalendarState extends State<ProcessCalendar>
         'userSeqNo': UserInfo.loginUser.seqNo,
         'yearMonth': getTodayYearMonth()
       }).then((response) {
-        print(response);
         GoalProgress result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
           _goalProgress = result.goalProgress
@@ -241,16 +223,6 @@ class ProcessCalendarState extends State<ProcessCalendar>
               ),
             );
           }
-/* 
-          if (holidays.isNotEmpty) {
-            children.add(
-              Positioned(
-                right: -2,
-                top: -2,
-                child: _buildHolidaysMarker(),
-              ),
-            );
-          } */
 
           if (events.length == count) {
             children.add(
@@ -296,14 +268,6 @@ class ProcessCalendarState extends State<ProcessCalendar>
           ),
         ));
   }
-/* 
-  Widget _buildHolidaysMarker() {
-    return Icon(
-      Icons.add_box,
-      size: 20.0,
-      color: Colors.blueGrey[800],
-    );
-  } */
 
   Widget _buildEventList() {
     return ListView(
@@ -335,10 +299,19 @@ class ProcessCalendarState extends State<ProcessCalendar>
                     case 'thank_diary':
                       Diary diary = new Diary();
                       diary.diaryDate = dailyProgress.goalDate;
-                      Navigator.pushNamed(
-                        context,
-                        ThankDiary.routeName,
-                      );
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ThankDiaryDetail(diary: diary)));
+                      break;
+                    case 'qt':
+                      QT qt = new QT();
+                      qt.qtDate = dailyProgress.goalDate;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => QtRecordDetail(qt: qt)));
                       break;
                     default:
                   }

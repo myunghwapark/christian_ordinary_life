@@ -13,6 +13,7 @@ class QT {
   bool searchByDate;
   int totalCnt;
   List qtList;
+  List detail;
 
   QT(
       {this.seqNo,
@@ -27,7 +28,8 @@ class QT {
       this.result,
       this.errorCode,
       this.errorMessage,
-      this.totalCnt});
+      this.totalCnt,
+      this.detail});
 
   QT.fromJson(Map json)
       : title = json['title'],
@@ -40,5 +42,6 @@ class QT {
         errorCode = json['errorCode'],
         searchKeyword = json['searchKeyword'],
         qtList = json['qtList'],
-        totalCnt = json['totalCnt'];
+        totalCnt = json['totalCnt'],
+        detail = json['detail'];
 }

@@ -1,21 +1,19 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
-import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 
 class QtRecordWrite extends StatefulWidget {
   final QT qt;
-  final User loginUser;
-  const QtRecordWrite({this.qt, this.loginUser});
+  const QtRecordWrite({this.qt});
 
   @override
   QtRecordWriteStatus createState() => QtRecordWriteStatus();
@@ -38,8 +36,9 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
 
   void _writeQT() async {
     try {
+      print('save newQt.seqNo: ${newQt.seqNo}');
       await API.transaction(context, API.qtRecordWrite, param: {
-        'userSeqNo': widget.loginUser.seqNo,
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'qtRecordSeqNo': newQt.seqNo,
         'title': newQt.title,
         'qtDate': newQt.qtDate,
@@ -72,7 +71,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
 
       if (confirmResult == 'ok') {
         await API.transaction(context, API.qtRecordDelete, param: {
-          'userSeqNo': widget.loginUser.seqNo,
+          'userSeqNo': UserInfo.loginUser.seqNo,
           'qtRecordSeqNo': widget.qt.seqNo
         }).then((response) {
           QT deleteResult = QT.fromJson(json.decode(response));
@@ -98,7 +97,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
       onPressed: () {
         if (_formKey.currentState.validate()) {
           newQt = new QT(
-              seqNo: widget.qt != null ? widget.qt.seqNo : null,
+              seqNo: newQt != null ? newQt.seqNo : null,
               title: _titleController.text,
               content: _contentController.text,
               bible: _bibleController.text,
@@ -112,6 +111,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   }
 
   _setQtRecord() {
+    newQt = widget.qt;
     _titleController.text = widget.qt.title;
     _bibleController.text = widget.qt.bible;
     _contentController.text = widget.qt.content;
@@ -253,7 +253,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         appBar: appBarBack(
             context, Translations.of(context).trans('menu_qt_record'),
             actionWidget: actionIcon(),
-            onBackTap: () => Navigator.pop(context, widget.qt)),
+            onBackTap: () => Navigator.pop(context, newQt)),
         body: SingleChildScrollView(
             controller: _scroll,
             padding: EdgeInsets.all(10),

@@ -101,6 +101,7 @@
     "select_date": "날짜 선택",
     "apply": "적용",
     "no_data": "작성하신 글이 없습니다.",
+    "no_data_detail": "해당 글이 존재하지 않습니다.",
     "delete_confirm": "이 글을 삭제하시겠습니까?.",
     "validate_title": "제목을 입력해주세요.",
     "validate_content": "내용을 입력해주세요.",
@@ -137,7 +138,9 @@
     "all_category": "모든 카테고리",
     "search_with_criteria": "검색조건으로 검색",
     "query_date_wrong": "조회 종료일이 시작일보다 이전입니다.",
-
+    "no_more_data": "더 이상 글이 없습니다.",
+    "load_fail_retry": "로드에 실패하였습니다. 다시 시도해주세요.",
+    
 
     "gen": "창세기",
     "ex": "출애굽기",

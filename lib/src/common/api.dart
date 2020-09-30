@@ -44,8 +44,11 @@ class API {
       serverURL + 'thank_diary/thank_diary_delete.php';
 
   static String qtRecordList = serverURL + 'qt_record/qt_record_list.php';
+  static String qtRecordDetail = serverURL + 'qt_record/qt_record_detail.php';
   static String qtRecordWrite = serverURL + 'qt_record/qt_record_write.php';
   static String qtRecordDelete = serverURL + 'qt_record/qt_record_delete.php';
+
+  static String biblePhrase = serverURL + 'bible_phrase/bible_phrase.php';
 
   static Future<dynamic> transaction(BuildContext context, String url,
       {Object param}) async {

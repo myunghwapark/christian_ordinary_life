@@ -16,7 +16,6 @@ class Translations {
 
   Map<String, String> _sentences;
   Map<String, dynamic> _bible;
-  Map<String, String> _pharaseSentences;
 
   Future<bool> load() async {
     // App
@@ -39,17 +38,6 @@ class Translations {
     this._bible = new Map();
     _bibleResult.forEach((String key, dynamic value) {
       this._bible[key] = value;
-    });
-
-    // Phrase
-    String phraseData = await rootBundle
-        .loadString('assets/locale/phrase_${this.locale.languageCode}.json');
-
-    Map<String, dynamic> _pharaseResult = json.decode(phraseData);
-
-    this._pharaseSentences = new Map();
-    _pharaseResult.forEach((String key, dynamic value) {
-      this._pharaseSentences[key] = value;
     });
 
     return true;
@@ -75,10 +63,6 @@ class Translations {
 
   Map bibles() {
     return this._bible;
-  }
-
-  String pharaseTrans(String key) {
-    return this._pharaseSentences[key];
   }
 
   String localeLaunguageCode() {

@@ -48,9 +48,9 @@ class QTRecordState extends State<QTRecord> {
     String _searchStartDate = '';
     String _searchEndDate = '';
 
-    if (SearchBox.searchDiary.searchByDate) {
-      _searchStartDate = SearchBox.searchDiary.searchStartDate;
-      _searchEndDate = SearchBox.searchDiary.searchEndDate;
+    if (SearchBox.search.searchByDate) {
+      _searchStartDate = SearchBox.search.searchStartDate;
+      _searchEndDate = SearchBox.search.searchEndDate;
     }
 
     try {
@@ -88,11 +88,8 @@ class QTRecordState extends State<QTRecord> {
 
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => QtRecordWrite(
-                  loginUser: UserInfo.loginUser,
-                ))).then((value) {
+            context, MaterialPageRoute(builder: (context) => QtRecordWrite()))
+        .then((value) {
       setState(() {
         _refresh();
       });
@@ -138,6 +135,57 @@ class QTRecordState extends State<QTRecord> {
         _refresh();
       });
     };
+
+    Widget _header() {
+      return CustomHeader(
+          height: 60,
+          refreshStyle: RefreshStyle.Behind,
+          onOffsetChange: (offset) {},
+          builder: (c, m) {
+            return Container(
+              child: Image.asset(
+                "assets/images/loading.gif",
+              ),
+            );
+          });
+    }
+
+    Widget _footer() {
+      return CustomFooter(
+          height: 60,
+          builder: (context, mode) {
+            Widget child;
+            switch (mode) {
+              case LoadStatus.failed:
+                child = Center(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          Translations.of(context).trans('load_fail_retry'),
+                          style: TextStyle(color: Colors.grey[500]),
+                        )));
+                break;
+              case LoadStatus.noMore:
+                child = Center(
+                    child: Container(
+                        padding: EdgeInsets.only(top: 10),
+                        child: Text(
+                          Translations.of(context).trans('no_more_data'),
+                          style: TextStyle(color: Colors.grey[500]),
+                        )));
+                break;
+              default:
+                child = Container(
+                  child: Image.asset(
+                    "assets/images/loading.gif",
+                  ),
+                );
+                break;
+            }
+
+            return child;
+          });
+    }
 
     final _qtList = ListView.separated(
         itemCount: qtList?.length,
@@ -214,6 +262,8 @@ class QTRecordState extends State<QTRecord> {
           ),
           Expanded(
               child: SmartRefresher(
+            header: _header(),
+            footer: _footer(),
             enablePullDown: true,
             enablePullUp: true,
             controller: _refreshController,
@@ -232,6 +282,7 @@ class QTRecordState extends State<QTRecord> {
   initState() {
     super.initState();
     _refreshController = new RefreshController();
+    SearchBox.search.searchByDate = false;
     _refresh();
   }
 

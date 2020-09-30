@@ -5,13 +5,13 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
-import 'package:christian_ordinary_life/src/model/Diary.dart';
+import 'package:christian_ordinary_life/src/model/Search.dart';
 import 'package:christian_ordinary_life/src/model/ThankCategory.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SearchBox extends StatefulWidget {
-  static Diary searchDiary = new Diary();
+  static Search search = new Search();
 
   final Color pointColor;
   final FocusNode searchFieldNode;
@@ -39,7 +39,7 @@ class SearchBoxState extends State<SearchBox> {
   String searchEndDayForm = '';
   bool _searchSettingVisible = false;
   bool _searchDateVisible = false;
-  bool _isSwitched = true;
+  bool _dateSearch = true;
   final _formKey = GlobalKey<FormState>();
   ThankCategory _selectedCategory = ThankCategory();
   AppButtons appButtons = new AppButtons();
@@ -50,8 +50,8 @@ class SearchBoxState extends State<SearchBox> {
       searchEndDay = DateTime.now();
       searchStartDayForm = getCalDateFormat(searchStartDay);
       searchEndDayForm = getCalDateFormat(searchEndDay);
-      SearchBox.searchDiary.searchByCategory = false;
-      SearchBox.searchDiary.searchByDate = false;
+      SearchBox.search.searchByCategory = false;
+      SearchBox.search.searchByDate = false;
     });
   }
 
@@ -68,23 +68,25 @@ class SearchBoxState extends State<SearchBox> {
   }
 
   bool _checkDate() {
-    if (_selectedCategory == null || _selectedCategory.categoryNo == null) {
-      SearchBox.searchDiary.searchByCategory = false;
+    if (_selectedCategory == null ||
+        _selectedCategory.categoryNo == null ||
+        _selectedCategory.categoryNo == '0') {
+      SearchBox.search.searchByCategory = false;
     } else {
-      SearchBox.searchDiary.searchByCategory = true;
-      SearchBox.searchDiary.categoryNo = _selectedCategory.categoryNo;
+      SearchBox.search.searchByCategory = true;
+      SearchBox.search.categoryNo = _selectedCategory.categoryNo;
     }
 
-    if (_isSwitched) {
-      SearchBox.searchDiary.searchByDate = false;
+    if (_dateSearch) {
+      SearchBox.search.searchByDate = false;
     } else {
-      SearchBox.searchDiary.searchByDate = true;
-      SearchBox.searchDiary.searchStartDate = searchStartDay.toString();
-      SearchBox.searchDiary.searchEndDate = searchEndDay.toString();
+      SearchBox.search.searchByDate = true;
+      SearchBox.search.searchStartDate = searchStartDay.toString();
+      SearchBox.search.searchEndDate = searchEndDay.toString();
     }
 
     final differenceInDays = searchStartDay.difference(searchEndDay).inDays;
-    if (!_isSwitched && differenceInDays > 0) {
+    if (!_dateSearch && differenceInDays > 0) {
       showToast(widget.scaffoldKey,
           Translations.of(context).trans('query_date_wrong'));
       return false;
@@ -156,15 +158,15 @@ class SearchBoxState extends State<SearchBox> {
     );
 
     final _dateSwitchButton = Switch(
-      value: _isSwitched,
+      value: _dateSearch,
       onChanged: (value) {
         setState(() {
-          _isSwitched = value;
+          _dateSearch = value;
           _searchDateVisible = !value;
         });
       },
-      activeTrackColor: Colors.lightGreenAccent,
-      activeColor: Colors.green,
+      activeTrackColor: Colors.white,
+      activeColor: widget.pointColor,
     );
 
     final _searchStartDate = GestureDetector(

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSetting.dart';
 import 'package:christian_ordinary_life/src/screens/processCalendar.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordList.dart';
