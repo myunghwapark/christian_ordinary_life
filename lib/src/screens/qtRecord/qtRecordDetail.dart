@@ -100,7 +100,6 @@ class QtRecordDetailState extends State<QtRecordDetail> {
             constraints: BoxConstraints(minHeight: 100),
             child: Text(detailQt.content))
         : Container();
-    ;
 
     return Scaffold(
         backgroundColor: AppColors.lightSky,

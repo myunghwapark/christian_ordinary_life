@@ -1,4 +1,3 @@
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/component/loadingIndicator.dart';
 import 'package:flutter/material.dart';

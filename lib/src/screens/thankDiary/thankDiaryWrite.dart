@@ -15,7 +15,6 @@ import 'package:christian_ordinary_life/src/component/customPicker.dart';
 import 'package:christian_ordinary_life/src/model/ThankCategory.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -33,6 +32,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   Diary newDiary = new Diary();
   final TextEditingController _titleController = new TextEditingController();
   final TextEditingController _contentController = new TextEditingController();
+  ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
   ScrollController _scroll;
   FocusNode _focus = new FocusNode();
   ComponentStyle componentStyle = new ComponentStyle();
@@ -329,7 +329,14 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
       }
     });
 
-    _makeThankCategoryOption();
+    if (ThankDiaryInfo.thankCategoryList == null ||
+        ThankDiaryInfo.thankCategoryList.length == 0) {
+      thankDiaryInfo
+          .getThankCategory(context)
+          .then((value) => _makeThankCategoryOption());
+    } else {
+      _makeThankCategoryOption();
+    }
 
     super.initState();
   }

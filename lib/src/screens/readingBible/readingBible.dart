@@ -49,15 +49,15 @@ class ReadingBibleState extends State<ReadingBible> {
   String _dropDownSelectedTitle;
   GlobalKey _keyTodaysBible = GlobalKey();
   int _currentChapter;
-  bool _first = true;
+  //bool _first = true;
 
-  void _moveContent() {
+  /* void _moveContent() {
     if (_first) {
       Size size = getSizes(_keyTodaysBible);
       _scrollTo(size.height);
       _first = false;
     }
-  }
+  } */
 
   void _scrollTo(double moveHeight) {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -261,7 +261,6 @@ class ReadingBibleState extends State<ReadingBible> {
   void _setBibleFont() {
     commonSettings.getFontSize().then((value) {
       setState(() {
-        print('font: $value');
         if (value == null || value == 0.0) {
           CommonSettings.fontSize = CommonSettings.defaultFontSize;
         } else {

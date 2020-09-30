@@ -23,7 +23,6 @@ class GoalInfo {
       await API.transaction(context, API.getUserGoal,
           param: {'userSeqNo': UserInfo.loginUser.seqNo}).then((response) {
         result = Goal.fromJson(json.decode(response));
-        //print('response: $response');
         if (result.result == 'success') {
           List<Goal> goalInfo =
               result.goalInfo.map((model) => Goal.fromJson(model)).toList();
@@ -64,7 +63,6 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
-        // print('response getGoalProgress: $response');
         result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
           List<GoalProgress> goalInfo = result.goalProgress
@@ -114,7 +112,6 @@ class GoalInfo {
         'customBible': bibleUserPlan.customBible,
         'planEndDate': bibleUserPlan.planEndDate
       }).then((response) async {
-        //print('response: $response');
         result = Goal.fromJson(json.decode(response));
         if (result.result == 'success') {
         } else {

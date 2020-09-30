@@ -68,7 +68,6 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
         'language': CommonSettings.language,
         'biblePlanId': GoalInfo.goal.biblePlanId
       }).then((response) {
-        print('response: $response');
         result = BiblePlan.fromJson(json.decode(response));
 
         if (result.result == 'success') {

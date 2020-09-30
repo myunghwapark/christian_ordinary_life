@@ -36,7 +36,6 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
 
   void _writeQT() async {
     try {
-      print('save newQt.seqNo: ${newQt.seqNo}');
       await API.transaction(context, API.qtRecordWrite, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'qtRecordSeqNo': newQt.seqNo,
@@ -47,7 +46,6 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         'qtRecord': 'y',
         'goalDate': newQt.qtDate
       }).then((response) {
-        print('response: $response');
         QT writeResult = QT.fromJson(json.decode(response));
         if (writeResult.result == 'success') {
           Navigator.pop(context, newQt);
