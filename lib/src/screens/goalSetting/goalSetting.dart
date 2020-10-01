@@ -1,6 +1,7 @@
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -159,6 +160,7 @@ class GoalSettingState extends State<GoalSetting> {
 
   @override
   void initState() {
+    if (GoalInfo.goal == null) GoalInfo.goal = new Goal();
     GoalInfo.goal.qtRecord = false;
     GoalInfo.goal.readingBible = false;
     GoalInfo.goal.praying = false;

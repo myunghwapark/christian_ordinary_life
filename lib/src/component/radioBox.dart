@@ -42,14 +42,12 @@ class RadioBox extends StatelessWidget {
 
     final _period = Container(
         child: Text(
-      '${Translations.of(context).trans('period')}: ${getPlanPeriod(context, _item.planPeriod)}',
+      '${getPlanPeriod(context, _item.planPeriod)}',
       style: TextStyle(fontSize: 15),
     ));
 
     final _volume = Container(
-        child: Text(
-            '${Translations.of(context).trans('volume')}: ${_item.planVolume}',
-            style: TextStyle(fontSize: 15)));
+        child: Text('${_item.planVolume}', style: TextStyle(fontSize: 15)));
 
     final _planTitle = Container(
       child: Text(

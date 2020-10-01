@@ -648,18 +648,6 @@ class ReadingBibleState extends State<ReadingBible> {
         ),
         onPressed: () {
           _showFontSizePickerDialog();
-          /* showSliderDialog(context,
-                  startNum: CommonSettings.minimumFontSize,
-                  endNum: CommonSettings.maximumFontSize,
-                  selectedNum: CommonSettings.fontSize)
-              .then((value) {
-            if (value == 'ok') {
-              setState(() {
-                CommonSettings.fontSize = CommonSettings.tempFontSize;
-              });
-              commonSettings.setFontSize(CommonSettings.fontSize);
-            }
-          }); */
         },
         color: AppColors.greenPoint,
       );

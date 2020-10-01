@@ -206,6 +206,8 @@ class MainScreenState extends State<MainScreen> {
   }
 
   void _setGoals() {
+    if (!userInfo.loginCheck()) return;
+
     if (GoalInfo.goalProgress.thankDiary == 'y')
       _checkVars['thank_diary'] = true;
     else

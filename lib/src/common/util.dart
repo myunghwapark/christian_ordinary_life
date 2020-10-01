@@ -77,8 +77,7 @@ String getCalDateFormat(DateTime now) {
   return type: String
   ex) 2020-08
 */
-String getTodayYearMonth() {
-  var now = new DateTime.now();
+String getTodayYearMonth(DateTime now) {
   final template = DateFormat('yyyy-MM');
   return template.format(now);
 }

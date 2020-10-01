@@ -91,7 +91,10 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
 
   Widget actionIcon() {
     return FlatButton(
-      child: Text(Translations.of(context).trans('save')),
+      child: Text(
+        Translations.of(context).trans('save'),
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: () {
         if (_formKey.currentState.validate()) {
           newQt = new QT(

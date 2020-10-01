@@ -34,7 +34,8 @@ class CalendarState extends State<Calendar> {
 
   Widget actionIcon() {
     return FlatButton(
-      child: Text(Translations.of(context).trans('apply')),
+      child: Text(Translations.of(context).trans('apply'),
+          style: TextStyle(color: AppColors.darkGray)),
       onPressed: _apply,
       textColor: AppColors.greenPoint,
     );

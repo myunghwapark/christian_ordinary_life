@@ -48,33 +48,29 @@ Widget appBarCustom(
     padding: EdgeInsets.only(top: 15),
     color: Colors.teal,
     child: Row(children: [
-      Flexible(
-          fit: FlexFit.tight,
-          flex: 1,
+      Container(
+          width: 85,
           child: FlatButton(
             child: Text(
               leaderText,
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: Colors.white, fontSize: 14),
             ),
             onPressed: onLeaderTap == null
                 ? () => Navigator.pop(context)
                 : onLeaderTap,
           )),
-      Flexible(
-          fit: FlexFit.tight,
-          flex: 4,
+      Expanded(
           child: Text(
-            title,
-            style: TextStyle(color: Colors.white, fontSize: 20),
-            textAlign: TextAlign.center,
-          )),
-      Flexible(
-          fit: FlexFit.tight,
-          flex: 1,
+        title,
+        style: TextStyle(color: Colors.white, fontSize: 20),
+        textAlign: TextAlign.center,
+      )),
+      Container(
+          width: 85,
           child: FlatButton(
             child: Text(
               actionText,
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: Colors.white, fontSize: 14),
             ),
             onPressed: onActionTap,
           ))

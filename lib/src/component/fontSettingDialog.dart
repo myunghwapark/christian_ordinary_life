@@ -32,6 +32,7 @@ class _FontSizePickerDialogState extends State<FontSizePickerDialog> {
   void initState() {
     super.initState();
     _fontSize = widget.initialFontSize;
+    CommonSettings.tempFontSize = _fontSize;
   }
 
   @override

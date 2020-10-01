@@ -25,12 +25,12 @@ class ProcessCalendar extends StatefulWidget {
 
 class ProcessCalendarState extends State<ProcessCalendar>
     with TickerProviderStateMixin {
-  bool _first = true;
   Map<DateTime, List> _events = {};
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
   List<GoalProgress> _goalProgress = new List<GoalProgress>();
+  String _yearMonth;
 
   void _onDaySelected(DateTime day, List events) {
     setState(() {
@@ -38,17 +38,25 @@ class ProcessCalendarState extends State<ProcessCalendar>
     });
   }
 
-  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {}
-
   void _onCalendarCreated(
-      DateTime first, DateTime last, CalendarFormat format) {}
+      DateTime first, DateTime last, CalendarFormat format) {
+    getProgress();
+  }
+
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
+    setState(() {
+      _selectedEvents = [];
+    });
+    _yearMonth = getTodayYearMonth(first);
+    getProgress();
+  }
 
   Future<void> getProgress() async {
     try {
       await API.transaction(context, API.getMonthGoalProgress, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
-        'yearMonth': getTodayYearMonth()
+        'yearMonth': _yearMonth
       }).then((response) {
         GoalProgress result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
@@ -57,6 +65,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
               .toList();
 
           setState(() {
+            _events = {};
             List<GoalDailyProgress> goalDailyProgress;
             for (int i = 0; i < _goalProgress.length; i++) {
               var createTime = convertDateFromString(_goalProgress[i].goalDate);
@@ -98,7 +107,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
                   ..addAll(goalDailyProgress);
               }
             }
-            _selectedEvents = goalDailyProgress;
+            //_selectedEvents = goalDailyProgress;
           });
         }
       });
@@ -322,10 +331,6 @@ class ProcessCalendarState extends State<ProcessCalendar>
 
   @override
   Widget build(BuildContext context) {
-    if (_first) {
-      getProgress();
-      _first = false;
-    }
     return Scaffold(
       backgroundColor: AppColors.lightMint,
       appBar: appBarComponent(
@@ -353,6 +358,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
 
   @override
   void initState() {
+    _yearMonth = getTodayYearMonth(new DateTime.now());
     _selectedEvents = [];
     _calendarController = CalendarController();
 
