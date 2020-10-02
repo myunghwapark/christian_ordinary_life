@@ -15,6 +15,7 @@ class API {
 
   static String getUserGoal = serverURL + 'goal/get_user_goal.php';
   static String setUserGoal = serverURL + 'goal/set_user_goal.php';
+  static String resetUserGoal = serverURL + 'goal/reset_user_goal.php';
 
   static String setPrayingProgress =
       serverURL + 'goal/set_praying_progress.php';

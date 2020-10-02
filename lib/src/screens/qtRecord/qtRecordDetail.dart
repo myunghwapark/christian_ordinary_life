@@ -131,7 +131,6 @@ class QtRecordDetailState extends State<QtRecordDetail> {
 
   @override
   void initState() {
-    //detailQt = widget.qt;
     getQtRecord();
     super.initState();
   }

@@ -195,54 +195,54 @@ class QTRecordState extends State<QTRecord> {
         },
         itemBuilder: (context, index) {
           QT curQt = qtList[index];
-          return Dismissible(
+          return /* Dismissible(
             key: UniqueKey(),
-            child: GestureDetector(
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            (curQt.bible != null && curQt.bible != '')
-                                ? '[${curQt.bible}] ${curQt.title}'
-                                : curQt.title,
-                            style:
-                                TextStyle(color: AppColors.black, fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          )),
-                      Container(
-                          padding: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            getDate(DateTime.parse(curQt.qtDate)),
-                            style: TextStyle(color: AppColors.greenPointMild),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          )),
-                      Text(
-                        curQt.content,
-                        style: TextStyle(color: AppColors.darkGray),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      )
-                    ],
-                  )),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => QtRecordDetail(
-                          qt: curQt, loginUser: UserInfo.loginUser)),
-                ).then((value) {
-                  setState(() {
-                    _refresh();
-                  });
+            child:  */
+              GestureDetector(
+            child: Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          (curQt.bible != null && curQt.bible != '')
+                              ? '[${curQt.bible}] ${curQt.title}'
+                              : curQt.title,
+                          style:
+                              TextStyle(color: AppColors.black, fontSize: 18),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        )),
+                    Container(
+                        padding: EdgeInsets.only(bottom: 5),
+                        child: Text(
+                          getDate(DateTime.parse(curQt.qtDate)),
+                          style: TextStyle(color: AppColors.greenPointMild),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        )),
+                    Text(
+                      curQt.content,
+                      style: TextStyle(color: AppColors.darkGray),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    )
+                  ],
+                )),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => QtRecordDetail(
+                        qt: curQt, loginUser: UserInfo.loginUser)),
+              ).then((value) {
+                setState(() {
+                  _refresh();
                 });
-              },
-            ),
+              });
+            },
           );
         });
 

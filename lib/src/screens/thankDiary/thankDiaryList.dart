@@ -209,79 +209,76 @@ class ThankDiaryState extends State<ThankDiary> {
         itemBuilder: (context, index) {
           Diary curDiary = diaryList[index];
           String imageURL = API.diaryImageURL + curDiary.imageURL;
-          return Dismissible(
-            key: UniqueKey(),
-            child: GestureDetector(
-              child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    children: [
-                      (curDiary.imageURL != null && curDiary.imageURL != '')
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(50.0),
-                              child: FadeInImage.assetNetwork(
-                                image: imageURL,
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.fill,
-                                placeholder: wrongImage(),
-                              ))
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: FadeInImage.assetNetwork(
-                                image: API.systemImageURL +
-                                    curDiary.categoryImageUrl,
-                                width: 70,
-                                height: 70,
-                                fit: BoxFit.fill,
-                                placeholder: wrongImage(),
-                              )),
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                              padding: EdgeInsets.only(bottom: 5),
-                              child: Text(
-                                curDiary.title,
-                                style: TextStyle(
-                                    color: AppColors.black, fontSize: 18),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              )),
-                          Container(
-                              padding: EdgeInsets.only(bottom: 5),
-                              child: Text(
-                                getDate(DateTime.parse(curDiary.diaryDate)),
-                                style: TextStyle(color: AppColors.pastelPink),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              )),
-                          Text(
-                            curDiary.content,
-                            style: TextStyle(color: AppColors.darkGray),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          )
-                        ],
-                      )
-                    ],
-                  )),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ThankDiaryDetail(
-                          diary: curDiary, loginUser: UserInfo.loginUser)),
-                ).then((value) {
-                  setState(() {
-                    _refresh();
-                  });
+          return GestureDetector(
+            child: Container(
+                padding: EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    (curDiary.imageURL != null && curDiary.imageURL != '')
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(50.0),
+                            child: FadeInImage.assetNetwork(
+                              image: imageURL,
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.fill,
+                              placeholder: wrongImage(),
+                            ))
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: FadeInImage.assetNetwork(
+                              image: API.systemImageURL +
+                                  curDiary.categoryImageUrl,
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.fill,
+                              placeholder: wrongImage(),
+                            )),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            padding: EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              curDiary.title,
+                              style: TextStyle(
+                                  color: AppColors.black, fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            )),
+                        Container(
+                            padding: EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              getDate(DateTime.parse(curDiary.diaryDate)),
+                              style: TextStyle(color: AppColors.pastelPink),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            )),
+                        Text(
+                          curDiary.content,
+                          style: TextStyle(color: AppColors.darkGray),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        )
+                      ],
+                    )
+                  ],
+                )),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ThankDiaryDetail(
+                        diary: curDiary, loginUser: UserInfo.loginUser)),
+              ).then((value) {
+                setState(() {
+                  _refresh();
                 });
-              },
-            ),
+              });
+            },
           );
         });
 

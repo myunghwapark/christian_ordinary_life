@@ -1,4 +1,4 @@
-package com.example.christian_ordinary_life
+package com.alice.christian_ordinary_life
 
 import io.flutter.embedding.android.FlutterActivity
 
