@@ -23,16 +23,14 @@ class GetImage {
     }
   }
 
-  Widget previewImage(
-      BuildContext context,
-      IconButton _imageIcon,
-      Widget _savedImage,
-      PickedFile _imageFile,
-      dynamic _pickImageError,
-      String _retrieveDataError,
-      {GestureTapCallback callbackEdit,
-      GestureTapCallback callbackDelete}) {
-    final Text retrieveError = getRetrieveErrorWidget(_retrieveDataError);
+  Widget previewImage(BuildContext context, PickedFile _imageFile,
+      {IconButton imageIcon,
+      Widget savedImage,
+      GestureTapCallback callbackEdit,
+      GestureTapCallback callbackDelete,
+      dynamic pickImageError,
+      String retrieveDataError}) {
+    final Text retrieveError = getRetrieveErrorWidget(retrieveDataError);
     if (retrieveError != null) {
       return retrieveError;
     }
@@ -56,16 +54,52 @@ class GetImage {
           },
         );
       }
-    } else if (_pickImageError != null) {
+    } else if (pickImageError != null) {
       return Text(
-        'Pick image error: $_pickImageError',
+        'Pick image error: $pickImageError',
         textAlign: TextAlign.center,
       );
-    } else if (_savedImage != null) {
-      return _savedImage;
+    } else if (savedImage != null) {
+      return savedImage;
     } else {
-      return _imageIcon;
+      return imageIcon;
     }
+  }
+
+  Widget previewThumbnail(BuildContext context, PickedFile _imageFile,
+      {dynamic pickImageError, String retrieveDataError}) {
+    final Text retrieveError = getRetrieveErrorWidget(retrieveDataError);
+    if (retrieveError != null) {
+      return retrieveError;
+    }
+
+    Widget thumbnail;
+
+    if (_imageFile != null) {
+      if (kIsWeb) {
+        // Why network?
+        // See https://pub.dev/packages/image_picker#getting-ready-for-the-web-platform
+        return Image.network(_imageFile.path);
+      } else {
+        thumbnail = GestureDetector(
+          child: ClipRRect(
+              child: Image.file(
+                File(_imageFile.path),
+                width: 50,
+                height: 50,
+                fit: BoxFit.fill,
+              ),
+              borderRadius: BorderRadius.circular(8.0)),
+        );
+      }
+    } else if (pickImageError != null) {
+      return Text(
+        'Pick image error: $pickImageError',
+        textAlign: TextAlign.center,
+      );
+    }
+
+    return thumbnail;
   }
 
   Text getRetrieveErrorWidget(String _retrieveDataError) {

@@ -202,33 +202,32 @@ class LoginState extends State<Login> {
     return Stack(children: <Widget>[
       background,
       Positioned(
-        child: closeButton,
-      ),
-      Positioned(
-          child: Container(
-              padding: EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    loginLabel,
-                    Container(
-                      height: 20,
+          child: SingleChildScrollView(
+              child: Container(
+                  padding: EdgeInsets.all(20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        closeButton,
+                        loginLabel,
+                        Container(
+                          height: 20,
+                        ),
+                        email,
+                        SizedBox(height: 10.0),
+                        password,
+                        keepLogin,
+                        loginButton,
+                        labelOr,
+                        otherOption,
+                        SizedBox(height: 14.0),
+                      ],
                     ),
-                    email,
-                    SizedBox(height: 10.0),
-                    password,
-                    keepLogin,
-                    loginButton,
-                    labelOr,
-                    otherOption,
-                    SizedBox(height: 14.0),
-                  ],
-                ),
-              )))
+                  ))))
     ]);
   }
 }

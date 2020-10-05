@@ -20,8 +20,8 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" image="Image" id="YRO-k0-Ey4">
-                                <rect key="frame" x="-2" y="153" width="375" height="154"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <rect key="frame" x="32" y="153" width="311" height="95"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="NO" flexibleMinY="NO" flexibleMaxY="YES"/>
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default" weight="thin"/>
                             </imageView>
                         </subviews>
@@ -34,6 +34,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Image" width="621.5" height="240.5"/>
+        <image name="Image" width="375" height="117.5"/>
     </resources>
 </document>

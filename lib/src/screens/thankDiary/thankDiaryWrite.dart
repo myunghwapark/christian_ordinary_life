@@ -350,9 +350,13 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
       }
     }
 
-    return getImage.previewImage(context, _imageIcon(), _image(), _imageFile,
-        _pickImageError, _retrieveDataError,
-        callbackEdit: _showImageOption, callbackDelete: _callbackImgDelete);
+    return getImage.previewImage(context, _imageFile,
+        imageIcon: _imageIcon(),
+        savedImage: _image(),
+        pickImageError: _pickImageError,
+        retrieveDataError: _retrieveDataError,
+        callbackEdit: _showImageOption,
+        callbackDelete: _callbackImgDelete);
   }
 
   @override
