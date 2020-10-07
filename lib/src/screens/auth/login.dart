@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
+import 'package:christian_ordinary_life/src/screens/auth/resetPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -105,6 +106,8 @@ class LoginState extends State<Login> {
         validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_empty_email');
+          } else if (!validateEmail(value)) {
+            return Translations.of(context).trans('validate_wrong_email');
           }
           return null;
         },
@@ -190,11 +193,13 @@ class LoginState extends State<Login> {
         ),
         Text(' | '),
         GestureDetector(
-          onTap: () {},
           child: Text(
             Translations.of(context).trans('reset_password'),
             style: TextStyle(color: AppColors.greenPoint),
           ),
+          onTap: () {
+            Navigator.pop(context, 'resetPassword');
+          },
         ),
       ],
     );

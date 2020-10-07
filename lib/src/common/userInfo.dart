@@ -3,6 +3,7 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/screens/auth/login.dart';
 import 'package:christian_ordinary_life/src/screens/auth/register.dart';
+import 'package:christian_ordinary_life/src/screens/auth/resetPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,6 +51,8 @@ class UserInfo {
 
     if (result == 'register') {
       showRegister(context);
+    } else if (result == 'resetPassword') {
+      showResetPassword(context);
     } else if (result == 'success') {
       await SharedPreferences.getInstance().then((value) {
         loginUser = new User();
@@ -75,5 +78,12 @@ class UserInfo {
     if (result == 'login') {
       showLogin(context);
     }
+  }
+
+  void showResetPassword(BuildContext context) async {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext builder) => ResetPassword());
   }
 }
