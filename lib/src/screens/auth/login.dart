@@ -8,45 +8,12 @@ import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
   LoginState createState() => LoginState();
-}
-
-Future<User> loginUser(BuildContext context, User user) async {
-  User userResult;
-  try {
-    final response = await API.transaction(context, API.login,
-        param: {'userEmail': user.email, 'userPassword': user.password});
-
-    userResult = User.fromJson(json.decode(response));
-    if (userResult.result == 'success') {
-      // Save user information
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('userName', userResult.name);
-      prefs.setString('userEmail', userResult.email);
-      prefs.setString('userSeqNo', userResult.seqNo);
-
-      Navigator.pop(context, 'success');
-    } else if (userResult.errorCode == '01') {
-      showAlertDialog(
-          context, Translations.of(context).trans('wrong_information'));
-    } else {
-      showAlertDialog(
-          context,
-          (Translations.of(context).trans('login_fail_message') +
-              '\n' +
-              userResult.errorMessage));
-    }
-  } on Exception catch (exception) {
-    errorMessage(context, exception);
-  } catch (error) {
-    errorMessage(context, error);
-  }
-
-  return userResult;
 }
 
 class LoginState extends State<Login> {
@@ -57,6 +24,53 @@ class LoginState extends State<Login> {
 
   bool _keepMeLoginVar = false;
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  Future<User> loginUser(User user) async {
+    User userResult;
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await API.transaction(context, API.login,
+          param: {'userEmail': user.email, 'userPassword': user.password});
+
+      userResult = User.fromJson(json.decode(response));
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (userResult.result == 'success') {
+        // Save user information
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString('userName', userResult.name);
+        prefs.setString('userEmail', userResult.email);
+        prefs.setString('userSeqNo', userResult.seqNo);
+
+        Navigator.pop(context, 'success');
+      } else if (userResult.errorCode == '01') {
+        showAlertDialog(
+            context, Translations.of(context).trans('wrong_information'));
+      } else {
+        showAlertDialog(
+            context,
+            (Translations.of(context).trans('login_fail_message') +
+                '\n' +
+                userResult.errorMessage));
+      }
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    return userResult;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +164,7 @@ class LoginState extends State<Login> {
         User userInfo = User(
             email: emailController.text, password: passwordController.text);
 
-        loginUser(context, userInfo);
+        loginUser(userInfo);
       }
     });
 
@@ -207,32 +221,37 @@ class LoginState extends State<Login> {
     return Stack(children: <Widget>[
       background,
       Positioned(
-          child: SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        closeButton,
-                        loginLabel,
-                        Container(
-                          height: 20,
+          child: LoadingOverlay(
+              isLoading: _isLoading,
+              opacity: 0.5,
+              progressIndicator: CircularProgressIndicator(),
+              color: Colors.black,
+              child: SingleChildScrollView(
+                  child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            closeButton,
+                            loginLabel,
+                            Container(
+                              height: 20,
+                            ),
+                            email,
+                            SizedBox(height: 10.0),
+                            password,
+                            keepLogin,
+                            loginButton,
+                            labelOr,
+                            otherOption,
+                            SizedBox(height: 14.0),
+                          ],
                         ),
-                        email,
-                        SizedBox(height: 10.0),
-                        password,
-                        keepLogin,
-                        loginButton,
-                        labelOr,
-                        otherOption,
-                        SizedBox(height: 14.0),
-                      ],
-                    ),
-                  ))))
+                      )))))
     ]);
   }
 }

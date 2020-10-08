@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
@@ -18,6 +19,7 @@ class ResetPasswordState extends State<ResetPassword> {
   TextEditingController emailController = TextEditingController();
   AppButtons appButtons = new AppButtons();
   ComponentStyle componentStyle = new ComponentStyle();
+  bool _isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -31,6 +33,9 @@ class ResetPasswordState extends State<ResetPassword> {
           });
 
       userResult = User.fromJson(json.decode(response));
+      setState(() {
+        _isLoading = false;
+      });
       if (userResult.result == 'success') {
         showAlertDialog(context,
                 Translations.of(context).trans('reset_password_success'))
@@ -43,6 +48,10 @@ class ResetPasswordState extends State<ResetPassword> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
 
     return userResult;
@@ -111,37 +120,45 @@ class ResetPasswordState extends State<ResetPassword> {
     final _sendButton = appButtons
         .filledGreenButton(Translations.of(context).trans('send'), () {
       if (_formKey.currentState.validate()) {
+        setState(() {
+          _isLoading = true;
+        });
         _resetPassword();
       }
     });
 
-    return Stack(children: <Widget>[
-      _background,
-      Positioned(
-          child: SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        _closeButton,
-                        _resetPasswordLabel,
-                        SizedBox(height: 10.0),
-                        _ment,
-                        Container(
-                          height: 20,
+    return LoadingOverlay(
+        isLoading: _isLoading,
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+        color: Colors.black,
+        child: Stack(children: <Widget>[
+          _background,
+          Positioned(
+              child: SingleChildScrollView(
+                  child: Container(
+                      padding: EdgeInsets.all(20),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            _closeButton,
+                            _resetPasswordLabel,
+                            SizedBox(height: 10.0),
+                            _ment,
+                            Container(
+                              height: 20,
+                            ),
+                            _email,
+                            SizedBox(height: 10.0),
+                            _sendButton,
+                            SizedBox(height: 14.0),
+                          ],
                         ),
-                        _email,
-                        SizedBox(height: 10.0),
-                        _sendButton,
-                        SizedBox(height: 14.0),
-                      ],
-                    ),
-                  ))))
-    ]);
+                      ))))
+        ]));
   }
 }

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 
 String wrongImage() {
-  return 'assets/images/wrong_image.png';
+  return 'assets/images/temp_image.png';
 }
 
 /*

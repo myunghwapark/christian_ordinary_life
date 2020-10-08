@@ -50,7 +50,7 @@ class UserInfo {
         });
 
     if (result == 'register') {
-      showRegister(context);
+      showRegister(context, callBackMethod: method);
     } else if (result == 'resetPassword') {
       showResetPassword(context);
     } else if (result == 'success') {
@@ -67,7 +67,8 @@ class UserInfo {
     }
   }
 
-  void showRegister(BuildContext context) async {
+  void showRegister(BuildContext context,
+      {GestureTapCallback callBackMethod}) async {
     final result = await showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -76,7 +77,7 @@ class UserInfo {
         });
 
     if (result == 'login') {
-      showLogin(context);
+      showLogin(context, method: callBackMethod);
     }
   }
 

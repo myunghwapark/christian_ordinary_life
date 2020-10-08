@@ -19,6 +19,7 @@ import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class ThankDiaryWrite extends StatefulWidget {
   final Diary diary;
@@ -53,9 +54,13 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   final ImagePicker _picker = ImagePicker();
   String _savedImage = '';
   bool _first = true;
+  bool _isLoading = false;
 
   Future<void> _writeDiary() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
       await API.transaction(context, API.thanksDiaryWrite, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'thankDiarySeqNo': newDiary.seqNo,
@@ -70,6 +75,9 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
         'categoryNo': _selectedCategory.categoryNo,
         'imageStatus': newDiary.imageStatus
       }).then((response) {
+        setState(() {
+          _isLoading = false;
+        });
         // Delay to wait for the new image to be reflected
         Future.delayed(const Duration(milliseconds: 1000), () {
           Diary writeResult = Diary.fromJson(json.decode(response));
@@ -86,6 +94,10 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -95,11 +107,18 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           context, Translations.of(context).trans('delete_confirm'));
 
       if (confirmResult == 'ok') {
+        setState(() {
+          _isLoading = true;
+        });
+
         await API.transaction(context, API.thanksDiaryDelete, param: {
           'userSeqNo': UserInfo.loginUser.seqNo,
           'thankDiarySeqNo': widget.diary.seqNo,
           'imageURL': widget.diary.imageURL
         }).then((response) {
+          setState(() {
+            _isLoading = false;
+          });
           Diary deleteResult = Diary.fromJson(json.decode(response));
           if (deleteResult.result == 'success') {
             Navigator.pop(context, 'delete');
@@ -114,6 +133,10 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -533,35 +556,40 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
             context, Translations.of(context).trans('menu_thank_diary'),
             actionWidget: actionIcon(),
             onBackTap: () => Navigator.pop(context, widget.diary)),
-        body: SingleChildScrollView(
-            controller: _scroll,
-            padding: EdgeInsets.all(10),
-            child: Form(
-                key: _formKey,
-                child: new Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        _categoryButton,
-                        _calendarButton,
-                        _diaryDate,
-                        _deleteButton,
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: SingleChildScrollView(
+                controller: _scroll,
+                padding: EdgeInsets.all(10),
+                child: Form(
+                    key: _formKey,
+                    child: new Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            _categoryButton,
+                            _calendarButton,
+                            _diaryDate,
+                            _deleteButton,
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _imageButton,
+                            _diaryTitle,
+                          ],
+                        ),
+                        _diaryContent,
+                        Padding(
+                          padding: EdgeInsets.all(130),
+                        )
                       ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _imageButton,
-                        _diaryTitle,
-                      ],
-                    ),
-                    _diaryContent,
-                    Padding(
-                      padding: EdgeInsets.all(130),
-                    )
-                  ],
-                ))));
+                    )))));
   }
 }

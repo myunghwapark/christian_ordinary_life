@@ -19,6 +19,7 @@ import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class ReadingBible extends StatefulWidget {
   static const routeName = '/readingBible';
@@ -49,6 +50,7 @@ class ReadingBibleState extends State<ReadingBible> {
   String _dropDownSelectedTitle;
   GlobalKey _keyTodaysBible = GlobalKey();
   int _currentChapter;
+  bool _isLoading = false;
   //bool _first = true;
 
   /* void _moveContent() {
@@ -153,6 +155,9 @@ class ReadingBibleState extends State<ReadingBible> {
   }
 
   Future<String> setBibleProgress() async {
+    setState(() {
+      _isLoading = true;
+    });
     GoalProgress result = new GoalProgress();
 
     try {
@@ -166,6 +171,9 @@ class ReadingBibleState extends State<ReadingBible> {
         'lastDay': todayBible.lastDay,
         'userBiblePlanSeqNo': GoalInfo.goal.userBiblePlanSeqNo
       }).then((response) {
+        setState(() {
+          _isLoading = false;
+        });
         result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
           if (goalProgress.bibleProgressDone == 'y' &&
@@ -188,6 +196,10 @@ class ReadingBibleState extends State<ReadingBible> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
     return result.result;
   }
@@ -656,18 +668,23 @@ class ReadingBibleState extends State<ReadingBible> {
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: AppDrawer(),
-        body: CustomScrollView(
-          controller: _scrollController,
-          slivers: <Widget>[
-            sliverAppBar(
-                context, Translations.of(context).trans('menu_reading_bible'),
-                actionWidget: actionIcon()),
-            _todaysBible(),
-            _bibleTitle,
-            _bible,
-            _buttons
-          ],
-        ),
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: <Widget>[
+                sliverAppBar(context,
+                    Translations.of(context).trans('menu_reading_bible'),
+                    actionWidget: actionIcon()),
+                _todaysBible(),
+                _bibleTitle,
+                _bible,
+                _buttons
+              ],
+            )),
         floatingActionButton: _floatingButton);
   }
 

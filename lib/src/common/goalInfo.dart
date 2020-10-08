@@ -41,6 +41,11 @@ class GoalInfo {
             }
           }
         } else if (result.errorCode == '01') {
+          goal = new Goal();
+          goal.readingBible = false;
+          goal.praying = false;
+          goal.qtRecord = false;
+          goal.thankDiary = false;
           goal.goalSet = false;
         } else {
           errorMessage(context, result.errorMessage);

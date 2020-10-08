@@ -74,6 +74,124 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       _first = false;
     }
 
+    final _recipient = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextFormField(
+        readOnly: true,
+        controller: _recipientController,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: Translations.of(context).trans('recipient'),
+        ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_empty_email');
+          }
+          return null;
+        },
+      ),
+    );
+
+    final _replyEmail = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: _replyEmailController,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: Translations.of(context).trans('email_for_reply'),
+        ),
+      ),
+    );
+
+    final _subject = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: _subjectController,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: Translations.of(context).trans('subject'),
+        ),
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_title');
+          }
+          return null;
+        },
+      ),
+    );
+
+    final _content = Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: _bodyController,
+        maxLines: 15,
+        decoration: InputDecoration(
+            hintText: Translations.of(context).trans('contact_hint'),
+            border: OutlineInputBorder()),
+        validator: (value) {
+          if (value.isEmpty) {
+            return Translations.of(context).trans('validate_content');
+          }
+          return null;
+        },
+      ),
+    );
+
+    final _htmlCheckbox = CheckboxListTile(
+      title: Text('HTML'),
+      onChanged: (bool value) {
+        setState(() {
+          isHTML = value;
+        });
+      },
+      value: isHTML,
+    );
+
+    final _attachment = Row(
+      children: [
+        _imageFile != null ? Icon(Icons.attach_file) : Container(),
+        Container(
+            width: 50,
+            height: 50,
+            child: !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                ? FutureBuilder<void>(
+                    future: retrieveLostData(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<void> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Container();
+                        case ConnectionState.waiting:
+                          return Container();
+                        case ConnectionState.done:
+                          return _setImage();
+
+                        default:
+                          if (snapshot.hasError) {
+                            return Text(
+                              'Pick image/video error: ${snapshot.error}}',
+                              textAlign: TextAlign.center,
+                            );
+                          } else {
+                            return Container();
+                          }
+                      }
+                    },
+                  )
+                : _setImage()),
+        SizedBox(
+          width: 10,
+        ),
+        _imageFile != null
+            ? IconButton(
+                icon: Icon(Icons.delete),
+                color: Colors.grey,
+                onPressed: () => _deleteImage(),
+              )
+            : Container()
+      ],
+    );
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBarComponent(
@@ -86,139 +204,22 @@ class ContactDeveloperState extends State<ContactDeveloper> {
                 padding: EdgeInsets.all(8.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        readOnly: true,
-                        controller: _recipientController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText:
-                              Translations.of(context).trans('recipient'),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return Translations.of(context)
-                                .trans('validate_empty_email');
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: _replyEmailController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText:
-                              Translations.of(context).trans('email_for_reply'),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: _subjectController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: Translations.of(context).trans('subject'),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return Translations.of(context)
-                                .trans('validate_title');
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        controller: _bodyController,
-                        maxLines: 15,
-                        decoration: InputDecoration(
-                            hintText:
-                                Translations.of(context).trans('contant_hint'),
-                            border: OutlineInputBorder()),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return Translations.of(context)
-                                .trans('validate_content');
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    CheckboxListTile(
-                      title: Text('HTML'),
-                      onChanged: (bool value) {
-                        setState(() {
-                          isHTML = value;
-                        });
-                      },
-                      value: isHTML,
-                    ),
+                    _recipient,
+                    _replyEmail,
+                    _subject,
+                    _content,
+                    _htmlCheckbox,
                     ...attachments.map((item) {
-                      return Row(
-                        children: [
-                          _imageFile != null
-                              ? Icon(Icons.attach_file)
-                              : Container(),
-                          Container(
-                              width: 50,
-                              height: 50,
-                              child: !kIsWeb &&
-                                      defaultTargetPlatform ==
-                                          TargetPlatform.android
-                                  ? FutureBuilder<void>(
-                                      future: retrieveLostData(),
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot<void> snapshot) {
-                                        switch (snapshot.connectionState) {
-                                          case ConnectionState.none:
-                                            return Container();
-                                          case ConnectionState.waiting:
-                                            return Container();
-                                          case ConnectionState.done:
-                                            return _setImage();
-
-                                          default:
-                                            if (snapshot.hasError) {
-                                              return Text(
-                                                'Pick image/video error: ${snapshot.error}}',
-                                                textAlign: TextAlign.center,
-                                              );
-                                            } else {
-                                              return Container();
-                                            }
-                                        }
-                                      },
-                                    )
-                                  : _setImage()),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          _imageFile != null
-                              ? IconButton(
-                                  icon: Icon(Icons.delete),
-                                  color: Colors.grey,
-                                  onPressed: () => _deleteImage(),
-                                )
-                              : Container()
-                        ],
-                      );
+                      return _attachment;
                     }),
                   ],
                 ),
               ))),
       floatingActionButton: FloatingActionButton.extended(
         icon: Icon(Icons.camera),
-        label: Text('Add Image'),
+        label: Text(Translations.of(context).trans('add_image')),
         onPressed: _openImagePicker,
       ),
     );

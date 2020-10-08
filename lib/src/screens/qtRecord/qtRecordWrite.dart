@@ -10,6 +10,7 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class QtRecordWrite extends StatefulWidget {
   final QT qt;
@@ -33,9 +34,14 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   DateTime qtDate = new DateTime.now();
   bool _trashVisibility = false;
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   void _writeQT() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
+
       await API.transaction(context, API.qtRecordWrite, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'qtRecordSeqNo': newQt.seqNo,
@@ -46,6 +52,10 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
         'qtRecord': 'y',
         'goalDate': newQt.qtDate
       }).then((response) {
+        setState(() {
+          _isLoading = false;
+        });
+
         QT writeResult = QT.fromJson(json.decode(response));
         if (writeResult.result == 'success') {
           Navigator.pop(context, newQt);
@@ -59,6 +69,10 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -68,10 +82,17 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
           context, Translations.of(context).trans('delete_confirm'));
 
       if (confirmResult == 'ok') {
+        setState(() {
+          _isLoading = true;
+        });
         await API.transaction(context, API.qtRecordDelete, param: {
           'userSeqNo': UserInfo.loginUser.seqNo,
           'qtRecordSeqNo': widget.qt.seqNo
         }).then((response) {
+          setState(() {
+            _isLoading = false;
+          });
+
           QT deleteResult = QT.fromJson(json.decode(response));
           if (deleteResult.result == 'success') {
             Navigator.pop(context, 'delete');
@@ -86,6 +107,10 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -255,28 +280,33 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
             context, Translations.of(context).trans('menu_qt_record'),
             actionWidget: actionIcon(),
             onBackTap: () => Navigator.pop(context, newQt)),
-        body: SingleChildScrollView(
-            controller: _scroll,
-            padding: EdgeInsets.all(10),
-            child: Form(
-                key: _formKey,
-                child: new Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        _calendarButton,
-                        _qtDate,
-                        _deleteButton,
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: SingleChildScrollView(
+                controller: _scroll,
+                padding: EdgeInsets.all(10),
+                child: Form(
+                    key: _formKey,
+                    child: new Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            _calendarButton,
+                            _qtDate,
+                            _deleteButton,
+                          ],
+                        ),
+                        _qtTitle,
+                        _qtBible,
+                        _qtContent,
+                        Padding(
+                          padding: EdgeInsets.all(130),
+                        )
                       ],
-                    ),
-                    _qtTitle,
-                    _qtBible,
-                    _qtContent,
-                    Padding(
-                      padding: EdgeInsets.all(130),
-                    )
-                  ],
-                ))));
+                    )))));
   }
 }

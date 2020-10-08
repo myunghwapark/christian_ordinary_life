@@ -8,57 +8,71 @@ import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class Register extends StatefulWidget {
   @override
   RegisterState createState() => RegisterState();
 }
 
-Future<User> registerUser(BuildContext context, User user) async {
-  User userResult;
-
-  try {
-    final response = await API.transaction(context, API.register, param: {
-      'userName': user.name,
-      'userEmail': user.email,
-      'userPassword': user.password,
-      'userGrade': 'U002_002'
-    });
-
-    userResult = User.fromJson(json.decode(response));
-
-    // Success
-    if (userResult.result == 'success') {
-      showAlertDialog(
-              context, Translations.of(context).trans('success_register'))
-          .then((value) => Navigator.pop(context, 'login'));
-    } else if (userResult.errorCode == '01') {
-      final result = await showConfirmDialog(
-          context, Translations.of(context).trans('duplicate_email'));
-
-      if (result == 'ok') {
-        Navigator.pop(context, 'login');
-      }
-    } else {
-      showAlertDialog(
-          context,
-          (Translations.of(context).trans('register_fail_message') +
-              '\n' +
-              userResult.errorMessage));
-    }
-  } on Exception catch (exception) {
-    errorMessage(context, exception);
-  } catch (error) {
-    errorMessage(context, error);
-  }
-
-  return userResult;
-}
-
 class RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   AppButtons appButtons = new AppButtons();
   ComponentStyle componentStyle = new ComponentStyle();
+  bool _isLoading = false;
+
+  Future<User> registerUser(User user) async {
+    User userResult;
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await API.transaction(context, API.register, param: {
+        'userName': user.name,
+        'userEmail': user.email,
+        'userPassword': user.password,
+        'userGrade': 'U002_002'
+      });
+
+      userResult = User.fromJson(json.decode(response));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Success
+      if (userResult.result == 'success') {
+        showAlertDialog(
+                context, Translations.of(context).trans('success_register'))
+            .then((value) => Navigator.pop(context, 'login'));
+      } else if (userResult.errorCode == '01') {
+        final result = await showConfirmDialog(
+            context, Translations.of(context).trans('duplicate_email'));
+
+        if (result == 'ok') {
+          Navigator.pop(context, 'login');
+        }
+      } else {
+        showAlertDialog(
+            context,
+            (Translations.of(context).trans('register_fail_message') +
+                '\n' +
+                userResult.errorMessage));
+      }
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+    return userResult;
+  }
 
   @override
   void initState() {
@@ -78,7 +92,7 @@ class RegisterState extends State<Register> {
           name: nameController.text,
           password: passwordController.text);
 
-      registerUser(context, newUser);
+      registerUser(newUser);
     }
 
     final _background = Container(
@@ -189,42 +203,47 @@ class RegisterState extends State<Register> {
       }
     });
 
-    return GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: Stack(children: <Widget>[
-          _background,
-          Positioned(
-            child: _closeButton,
-          ),
-          Positioned(
-              child: Form(
-                  key: _formKey,
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        _registerLabel,
-                        Container(
-                          height: 20,
+    return LoadingOverlay(
+        isLoading: _isLoading,
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+        color: Colors.black,
+        child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Stack(children: <Widget>[
+              _background,
+              Positioned(
+                child: _closeButton,
+              ),
+              Positioned(
+                  child: Form(
+                      key: _formKey,
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: <Widget>[
+                            _registerLabel,
+                            Container(
+                              height: 20,
+                            ),
+                            _email,
+                            SizedBox(height: 10.0),
+                            _name,
+                            SizedBox(height: 10.0),
+                            _password,
+                            SizedBox(height: 10.0),
+                            _passwordConfirm,
+                            SizedBox(height: 14.0),
+                            _registerButton,
+                            SizedBox(height: 20.0),
+                          ],
                         ),
-                        _email,
-                        SizedBox(height: 10.0),
-                        _name,
-                        SizedBox(height: 10.0),
-                        _password,
-                        SizedBox(height: 10.0),
-                        _passwordConfirm,
-                        SizedBox(height: 14.0),
-                        _registerButton,
-                        SizedBox(height: 20.0),
-                      ],
-                    ),
-                  )))
-        ]));
+                      )))
+            ])));
   }
 }

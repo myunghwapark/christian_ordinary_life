@@ -124,7 +124,13 @@ class AppDrawerState extends State {
               padding: EdgeInsets.all(0),
               splashColor: Colors.transparent,
               onPressed: () {
-                userInfo.showRegister(context);
+                userInfo.showRegister(context, callBackMethod: () {
+                  setState(() {
+                    memberInfo = user(context);
+
+                    Navigator.pushReplacementNamed(context, '/');
+                  });
+                });
               },
               child: Text(
                 Translations.of(context).trans('register'),

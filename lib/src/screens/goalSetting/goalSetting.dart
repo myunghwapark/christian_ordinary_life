@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'goalSettingQT.dart';
 import 'goalSettingBible.dart';
 import 'goalSettingPraying.dart';
@@ -24,12 +25,13 @@ class GoalSetting extends StatefulWidget {
 class GoalSettingState extends State<GoalSetting> {
   GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
+  bool _isLoading = false;
 
   Future<void> setUserGoal() async {
     bool saveAvailable = true;
     if (!goalInfo.checkContent(context, bibleUserPlan)) saveAvailable = false;
 
-    if (GoalInfo.goal.oldBiblePlan) {
+    if (GoalInfo.goal.oldBiblePlan != null && GoalInfo.goal.oldBiblePlan) {
       await showConfirmDialog(context,
               Translations.of(context).trans('replace_bible_plan_ment'))
           .then((value) {
@@ -38,7 +40,13 @@ class GoalSettingState extends State<GoalSetting> {
     }
 
     if (saveAvailable) {
+      setState(() {
+        _isLoading = true;
+      });
       goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
+        setState(() {
+          _isLoading = false;
+        });
         if (value.result == 'success') {
           bool nothingSelected = false;
 
@@ -180,21 +188,35 @@ class GoalSettingState extends State<GoalSetting> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(children: [
-      appBarCustom(
-          context, Translations.of(context).trans('title_goal_setting'),
-          leaderText: Translations.of(context).trans('cancel'),
-          onLeaderTap: _goToMain,
-          actionText: Translations.of(context).trans('save'),
-          onActionTap: setUserGoal),
-      _createGoal('qt', Translations.of(context).trans('daily_qt'),
-          AppColors.blueSky, GoalInfo.goal.qtRecord),
-      _createGoal('praying', Translations.of(context).trans('daily_praying'),
-          AppColors.mint, GoalInfo.goal.praying),
-      _createGoal('bible', Translations.of(context).trans('daily_bible'),
-          AppColors.lightOrange, GoalInfo.goal.readingBible),
-      _createGoal('diary', Translations.of(context).trans('daily_thank'),
-          AppColors.pastelPink, GoalInfo.goal.thankDiary),
-    ]));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: Column(children: [
+              appBarCustom(
+                  context, Translations.of(context).trans('title_goal_setting'),
+                  leaderText: Translations.of(context).trans('cancel'),
+                  onLeaderTap: _goToMain,
+                  actionText: Translations.of(context).trans('save'),
+                  onActionTap: setUserGoal),
+              _createGoal('qt', Translations.of(context).trans('daily_qt'),
+                  AppColors.blueSky, GoalInfo.goal?.qtRecord),
+              _createGoal(
+                  'praying',
+                  Translations.of(context).trans('daily_praying'),
+                  AppColors.mint,
+                  GoalInfo.goal?.praying),
+              _createGoal(
+                  'bible',
+                  Translations.of(context).trans('daily_bible'),
+                  AppColors.lightOrange,
+                  GoalInfo.goal?.readingBible),
+              _createGoal(
+                  'diary',
+                  Translations.of(context).trans('daily_thank'),
+                  AppColors.pastelPink,
+                  GoalInfo.goal?.thankDiary),
+            ])));
   }
 }

@@ -6,13 +6,17 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 
 class API {
-  static String serverURL = 'http://192.168.64.2/col/apis/';
-  static final String systemImageURL = 'http://192.168.64.2/col/images/system/';
-  static final String diaryImageURL = 'http://192.168.64.2/col/images/diary/';
+  static String serverAddress = 'http://192.168.64.2/';
+  static String serverURL = serverAddress + 'col/apis/';
+  static final String systemImageURL = serverAddress + 'col/images/system/';
+  static final String diaryImageURL = serverAddress + 'col/images/diary/';
+  static final String privacyPolicy =
+      serverAddress + 'col/web/privacy_policy.php';
 
   static String register = serverURL + 'user/register.php';
   static String login = serverURL + 'user/login.php';
   static String resetPassword = serverURL + 'user/reset_password.php';
+  static String changePassword = serverURL + 'user/change_password.php';
 
   static String getUserGoal = serverURL + 'goal/get_user_goal.php';
   static String setUserGoal = serverURL + 'goal/set_user_goal.php';
