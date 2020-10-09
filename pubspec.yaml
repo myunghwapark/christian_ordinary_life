@@ -50,6 +50,7 @@ dependencies:
   admob_flutter: ^1.0.0
   flutter_email_sender: ^3.0.1
   loading_overlay: ^0.2.1
+  webview_flutter: ^1.0.1
   
 
 dev_dependencies:

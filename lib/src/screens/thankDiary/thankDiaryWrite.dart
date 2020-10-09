@@ -535,8 +535,8 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           keyboardType: TextInputType.multiline,
           minLines: 10,
           maxLines: 100,
-          decoration: componentStyle
-              .whiteGreyInput(Translations.of(context).trans('qt_hint')),
+          decoration: componentStyle.whiteGreyInput(
+              Translations.of(context).trans('thank_content_hint')),
           controller: _contentController,
           maxLength: 1000,
           focusNode: _focus,

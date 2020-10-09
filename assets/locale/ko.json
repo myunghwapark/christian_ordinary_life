@@ -118,6 +118,7 @@
     "title_hint": "제목을 입력해주세요.",
     "qt_hint": "묵상 내용을 입력해주세요.",
     "qt_bible_hint": "묵상하신 성경을 입력해주세요.",
+    "thank_content_hint": "감사 내용을 입력해주세요.",
     "select_date": "날짜 선택",
     "apply": "적용",
     "no_data": "작성하신 글이 없습니다.",
