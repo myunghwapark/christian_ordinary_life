@@ -1,13 +1,19 @@
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:flutter/material.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
-import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:loading_overlay/loading_overlay.dart';
+import 'goalSettingComplete.dart';
 import 'goalSettingQT.dart';
 import 'goalSettingBible.dart';
 import 'goalSettingPraying.dart';
@@ -26,6 +32,8 @@ class GoalSettingState extends State<GoalSetting> {
   GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   bool _isLoading = false;
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> setUserGoal() async {
     bool saveAvailable = true;
@@ -147,7 +155,8 @@ class GoalSettingState extends State<GoalSetting> {
                           child: Text(
                             title,
                             style: TextStyle(
-                              fontSize: 35,
+                              fontSize:
+                                  CommonSettings.language == 'ko' ? 35 : 28,
                               color: Colors.white,
                             ),
                           ))),
@@ -166,6 +175,58 @@ class GoalSettingState extends State<GoalSetting> {
     Navigator.pushReplacementNamed(context, '/');
   }
 
+  Future<void> _dailyQtTimeNotification(Time alarmTime) async {
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('qt_time')}',
+        Translations.of(context)
+            .trans('qt_time_alarm_message', param1: UserInfo.loginUser.name),
+        _nextInstanceOfTenAM(alarmTime),
+        const NotificationDetails(
+          android: AndroidNotificationDetails('qt', 'colQt', 'Time to qt'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.daily);
+  }
+
+  Future<void> _dailyPrayingTimeNotification(Time alarmTime) async {
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        0,
+        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('praying_time')}',
+        Translations.of(context).trans('praying_time_alarm_message',
+            param1: UserInfo.loginUser.name),
+        _nextInstanceOfTenAM(alarmTime),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+              'praying', 'colPraying', 'Time to praying'),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        scheduledNotificationRepeatFrequency:
+            ScheduledNotificationRepeatFrequency.daily);
+  }
+
+  tz.TZDateTime _nextInstanceOfTenAM(Time alarmTime) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    print(
+        'TZDateTime:  ${tz.local}, ${now.year}, ${now.month}, ${now.day}, ${now.hour}, ${now.minute}');
+    tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month,
+        now.day, alarmTime.hour, alarmTime.minute);
+    //if (scheduledDate.isBefore(now)) {
+    print('schedule added');
+    scheduledDate = scheduledDate.add(const Duration(days: 1));
+    // }
+    return scheduledDate;
+  }
+
+  Future<void> _cancelAllNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   @override
   void initState() {
     if (GoalInfo.goal == null) GoalInfo.goal = new Goal();
@@ -182,6 +243,20 @@ class GoalSettingState extends State<GoalSetting> {
         bibleUserPlan.planPeriod = GoalInfo.goal.planPeriod;
       });
     });
+
+    // alarm function setting
+
+    tz.initializeTimeZones();
+
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = IOSInitializationSettings();
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
     super.initState();
   }
 

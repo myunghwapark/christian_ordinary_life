@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 class ChangePassword extends StatefulWidget {
+  @override
   ChangePasswordState createState() => ChangePasswordState();
 }
 

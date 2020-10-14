@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/notification.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
@@ -68,6 +69,11 @@ class SettingsState extends State<Settings> {
     }
   }
 
+  void _goNotification() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SetNotification()));
+  }
+
   void _goChangePassword() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ChangePassword()));
@@ -98,6 +104,13 @@ class SettingsState extends State<Settings> {
           leading: Icon(Icons.lock),
           onTap: () {
             _goChangePassword();
+          },
+        ),
+        SettingsTile(
+          title: 'Notification',
+          leading: Icon(Icons.lock),
+          onTap: () {
+            _goNotification();
           },
         ),
       ],

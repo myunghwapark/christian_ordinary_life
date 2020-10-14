@@ -6,7 +6,13 @@ class GoalDailyProgress {
   String target;
   String progress;
   IconData targetIcon;
+  String biblePlanID;
 
   GoalDailyProgress(
-      {this.goalDate, this.title, this.target, this.progress, this.targetIcon});
+      {this.goalDate,
+      this.title,
+      this.target,
+      this.progress,
+      this.targetIcon,
+      this.biblePlanID});
 }

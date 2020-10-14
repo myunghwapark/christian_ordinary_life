@@ -68,7 +68,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
             _events = {};
             List<GoalDailyProgress> goalDailyProgress;
             for (int i = 0; i < _goalProgress.length; i++) {
-              var createTime = convertDateFromString(_goalProgress[i].goalDate);
+              DateTime createTime =
+                  convertDateFromString(_goalProgress[i].goalDate);
               goalDailyProgress = new List<GoalDailyProgress>();
 
               if (_goalProgress[i].qtRecord != '-')
@@ -85,12 +86,14 @@ class ProcessCalendarState extends State<ProcessCalendar>
                     _goalProgress[i].praying,
                     FontAwesomeIcons.pray));
 
-              if (_goalProgress[i].readingBible != '-')
+              if (_goalProgress[i].readingBible != '-') {
                 goalDailyProgress.add(_makeDailyProgressList(
                     _goalProgress[i].goalDate,
                     'reading_bible',
                     _goalProgress[i].readingBible,
-                    FontAwesomeIcons.bible));
+                    FontAwesomeIcons.bible,
+                    biblePlanId: _goalProgress[i].biblePlanID));
+              }
 
               if (_goalProgress[i].thankDiary != '-')
                 goalDailyProgress.add(_makeDailyProgressList(
@@ -107,7 +110,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
                   ..addAll(goalDailyProgress);
               }
             }
-            //_selectedEvents = goalDailyProgress;
+            //_selectedEvents = goalDailyProgress; // 오늘자 선택
           });
         }
       });
@@ -119,7 +122,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
   }
 
   GoalDailyProgress _makeDailyProgressList(
-      String goalDate, String target, String progress, IconData targetIcon) {
+      String goalDate, String target, String progress, IconData targetIcon,
+      {String biblePlanId}) {
     GoalDailyProgress dailyProgress = new GoalDailyProgress();
     dailyProgress.goalDate = goalDate;
     dailyProgress.target = target;
@@ -201,13 +205,15 @@ class ProcessCalendarState extends State<ProcessCalendar>
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.only(top: 5.0, left: 18.0),
             decoration: BoxDecoration(
-                color: AppColors.marine.withOpacity(0.4),
-                borderRadius: BorderRadius.all(Radius.circular(50))),
+              color: Colors.grey[200],
+              //borderRadius: BorderRadius.all(Radius.circular(50))
+            ),
             width: 100,
             height: 100,
             child: Text(
               '${date.day}',
-              style: TextStyle().copyWith(fontSize: 16.0),
+              style: TextStyle()
+                  .copyWith(fontSize: 16.0, color: AppColors.greenPoint),
             ),
           );
         },
@@ -226,7 +232,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
               Positioned(
                 right: 2,
                 bottom: 0,
-                child: _buildEventsMarker(date, events),
+                child: _buildEventsMarker(date, count),
               ),
             );
           }
@@ -252,7 +258,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
     );
   }
 
-  Widget _buildEventsMarker(DateTime date, List events) {
+  Widget _buildEventsMarker(DateTime date, int count) {
     return AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
@@ -267,7 +273,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
         height: 16.0,
         child: Center(
           child: Text(
-            '${events.length}',
+            '$count',
             style: TextStyle().copyWith(
               color: Colors.white,
               fontSize: 12.0,
@@ -339,13 +345,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          // Switch out 2 lines below to play with TableCalendar's settings
-          //-----------------------
-          //_buildTableCalendar(),
           _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 8.0),
-          //_buildButtons(),
-          const SizedBox(height: 8.0),
+          const SizedBox(height: 16.0),
           Expanded(
               child: Container(
                   padding: EdgeInsets.only(top: 15),

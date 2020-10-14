@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
-import 'package:christian_ordinary_life/src/screens/auth/resetPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';

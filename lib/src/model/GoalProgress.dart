@@ -9,6 +9,7 @@ class GoalProgress {
   int bibleProgressNo;
   String bibleDays;
   String goalDate;
+  String biblePlanID;
   String result;
   String errorCode;
   String errorMessage;
@@ -25,6 +26,7 @@ class GoalProgress {
       this.bibleProgressNo,
       this.bibleDays,
       this.goalDate,
+      this.biblePlanID,
       this.result,
       this.errorCode,
       this.errorMessage,
@@ -40,6 +42,7 @@ class GoalProgress {
         bibleProgressDone = json['bibleProgressDone'],
         bibleDays = json['bibleDays'],
         goalDate = json['goalDate'],
+        biblePlanID = json['biblePlanID'],
         result = json['result'],
         errorCode = json['errorCode'],
         errorMessage = json['errorMessage'],

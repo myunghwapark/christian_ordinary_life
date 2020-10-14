@@ -8,6 +8,7 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ContactDeveloper extends StatefulWidget {
+  @override
   ContactDeveloperState createState() => ContactDeveloperState();
 }
 

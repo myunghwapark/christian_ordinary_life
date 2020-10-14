@@ -9,6 +9,7 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 
 class PrivacyPolicy extends StatefulWidget {
+  @override
   PrivcyPolicyState createState() => PrivcyPolicyState();
 }
 

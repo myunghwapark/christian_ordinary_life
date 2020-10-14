@@ -49,11 +49,11 @@ Widget appBarCustom(
     color: Colors.teal,
     child: Row(children: [
       Container(
-          width: 85,
+          width: 86,
           child: FlatButton(
             child: Text(
               leaderText,
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: TextStyle(color: Colors.white, fontSize: 13),
             ),
             onPressed: onLeaderTap == null
                 ? () => Navigator.pop(context)
@@ -66,11 +66,11 @@ Widget appBarCustom(
         textAlign: TextAlign.center,
       )),
       Container(
-          width: 85,
+          width: 86,
           child: FlatButton(
             child: Text(
               actionText,
-              style: TextStyle(color: Colors.white, fontSize: 14),
+              style: TextStyle(color: Colors.white, fontSize: 13),
             ),
             onPressed: onActionTap,
           ))
