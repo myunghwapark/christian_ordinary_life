@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:share/share.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -8,7 +10,6 @@ import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryWrite.dart';
-import 'package:flutter/material.dart';
 
 class ThankDiaryDetail extends StatefulWidget {
   final Diary diary;
@@ -21,6 +22,10 @@ class ThankDiaryDetail extends StatefulWidget {
 
 class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   Diary detailDiary = new Diary();
+  String _imageURL;
+  List<String> imagePaths = [];
+  String _text = '';
+  String _subject = '';
 
   Future<void> getThankDiary() async {
     try {
@@ -35,6 +40,19 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
               diary.detail.map((model) => Diary.fromJson(model)).toList();
           setState(() {
             detailDiary = tempList[0];
+
+            // Set share items
+            if (detailDiary.imageURL != null) {
+              _imageURL = API.diaryImageURL + detailDiary.imageURL;
+              imagePaths.add(_imageURL);
+            }
+
+            _subject = '[' +
+                getDateOfWeek(DateTime.parse(detailDiary.diaryDate)) +
+                '] ' +
+                detailDiary.title;
+
+            _text = detailDiary.content;
           });
         } else {
           showAlertDialog(
@@ -75,10 +93,23 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     );
   }
 
+  void _share(BuildContext context) async {
+    final RenderBox box = context.findRenderObject();
+
+    if (imagePaths.isNotEmpty) {
+      await Share.shareFiles(imagePaths,
+          text: _text,
+          subject: _subject,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    } else {
+      await Share.share(_text,
+          subject: _subject,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    String imageURL = API.diaryImageURL +
-        (detailDiary.imageURL == null ? '' : detailDiary.imageURL);
     final _categoryIcon = detailDiary.categoryImageUrl != null
         ? FadeInImage.assetNetwork(
             image: API.systemImageURL + detailDiary.categoryImageUrl,
@@ -88,14 +119,14 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
             placeholder: wrongImage())
         : Container();
 
-    final _qtDate = detailDiary.diaryDate != null
+    final _diaryDate = detailDiary.diaryDate != null
         ? Text(
             getDateOfWeek(DateTime.parse(detailDiary.diaryDate)),
             style: TextStyle(color: AppColors.darkGray),
           )
         : Container();
 
-    final _qtTitle = detailDiary.title != null
+    final _diaryTitle = detailDiary.title != null
         ? Text(
             detailDiary.title,
             style: TextStyle(color: AppColors.black, fontSize: 18),
@@ -109,9 +140,14 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
         child: ClipRRect(
             borderRadius: BorderRadius.circular(10.0),
             child: FadeInImage.assetNetwork(
-                fit: BoxFit.fill, placeholder: wrongImage(), image: imageURL)));
+                fit: BoxFit.fill,
+                placeholder: wrongImage(),
+                image: API.diaryImageURL +
+                    (detailDiary.imageURL == null
+                        ? ''
+                        : detailDiary.imageURL))));
 
-    final _qtContent = detailDiary.content != null
+    final _diaryContent = detailDiary.content != null
         ? Container(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             constraints: BoxConstraints(minHeight: 100),
@@ -140,20 +176,34 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
                     SizedBox(
                       width: 10,
                     ),
-                    Column(
+                    Expanded(
+                        child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _qtDate,
-                        _qtTitle,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _diaryDate,
+                            IconButton(
+                                icon: Icon(
+                                  Icons.ios_share,
+                                  color: AppColors.pastelPink,
+                                ),
+                                onPressed: () {
+                                  _share(context);
+                                }),
+                          ],
+                        ),
+                        _diaryTitle,
                       ],
-                    )
+                    ))
                   ],
                 ),
                 Divider(
                   color: AppColors.pastelPink,
                 ),
                 _image,
-                _qtContent
+                _diaryContent
               ],
             ),
           ),

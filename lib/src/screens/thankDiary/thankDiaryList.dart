@@ -237,7 +237,8 @@ class ThankDiaryState extends State<ThankDiary> {
                     SizedBox(
                       width: 15,
                     ),
-                    Column(
+                    Expanded(
+                        child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
@@ -264,7 +265,7 @@ class ThankDiaryState extends State<ThankDiary> {
                           maxLines: 1,
                         )
                       ],
-                    )
+                    ))
                   ],
                 )),
             onTap: () {

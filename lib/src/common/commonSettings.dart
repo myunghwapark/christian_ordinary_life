@@ -8,6 +8,7 @@ class CommonSettings {
   static double fontSize;
   static double tempFontSize;
   static String language;
+  static String firstUser;
 
   static String donationAccount = '404601-01-168180\n국민은행 예금주: 박명화';
 
@@ -21,5 +22,17 @@ class CommonSettings {
 
   Future<void> setFontSize(double size) async {
     prefs.setDouble('fontSize', size);
+  }
+
+  Future<String> getFirstUser() async {
+    prefs = await SharedPreferences.getInstance();
+
+    firstUser = prefs.getString("firstUser");
+
+    return firstUser;
+  }
+
+  Future<void> setFirstUser() async {
+    prefs.setString('firstUser', 'n');
   }
 }

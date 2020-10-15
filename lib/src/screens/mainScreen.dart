@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -30,6 +31,7 @@ class MainScreenState extends State<MainScreen> {
   AppButtons buttons = new AppButtons();
   TodayBible todayBible = new TodayBible();
   BiblePhrase biblePhrase = new BiblePhrase();
+  CommonSettings commonSettings = new CommonSettings();
 
   String _year = '';
   String _date = '';
@@ -47,6 +49,17 @@ class MainScreenState extends State<MainScreen> {
       setState(() {
         UserInfo.loginUser = value;
       });
+    });
+  }
+
+  Future<void> _showHowToUse() async {
+    await commonSettings.getFirstUser().then((value) {
+      if (value == null || value != 'n') {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HowToUse()));
+
+        commonSettings.setFirstUser();
+      }
     });
   }
 
@@ -374,6 +387,9 @@ class MainScreenState extends State<MainScreen> {
     _currentDateTime = new DateTime.now();
     _year = getYear(_currentDateTime);
     _date = getDate(_currentDateTime);
+
+    _showHowToUse();
+
     super.initState();
   }
 }

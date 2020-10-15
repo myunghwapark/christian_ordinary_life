@@ -49,6 +49,7 @@ dependencies:
   webview_flutter: ^1.0.1
   flutter_local_notifications: ^2.0.0
   timezone: ^0.5.7
+  share: ^0.6.5+2
   
 
 dev_dependencies:

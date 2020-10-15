@@ -8,6 +8,7 @@ import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/screens/settings/changePassword.dart';
 import 'package:christian_ordinary_life/src/screens/settings/contactDeveloper.dart';
 import 'package:christian_ordinary_life/src/screens/settings/donation.dart';
+import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:christian_ordinary_life/src/screens/settings/privacyPolicy.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -74,6 +75,11 @@ class SettingsState extends State<Settings> {
         context, MaterialPageRoute(builder: (context) => SetNotification()));
   }
 
+  void _goHowToUse() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => HowToUse()));
+  }
+
   void _goChangePassword() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => ChangePassword()));
@@ -123,7 +129,9 @@ class SettingsState extends State<Settings> {
           title: Translations.of(context).trans('usage_guide'),
           //subtitle: 'English',
           leading: Icon(Icons.description),
-          onTap: () {},
+          onTap: () {
+            _goHowToUse();
+          },
         ),
         SettingsTile(
           title: Translations.of(context).trans('privacy_policy'),
@@ -145,7 +153,7 @@ class SettingsState extends State<Settings> {
       tiles: [
         SettingsTile(
           title: Translations.of(context).trans('contact_developer'),
-          leading: Icon(FontAwesomeIcons.bug),
+          leading: Icon(Icons.send),
           onTap: () {
             _goContactDeveloper();
           },

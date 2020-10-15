@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:share/share.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
@@ -21,6 +22,8 @@ class QtRecordDetail extends StatefulWidget {
 
 class QtRecordDetailState extends State<QtRecordDetail> {
   QT detailQt = new QT();
+  String _text = '';
+  String _subject = '';
 
   Future<void> getQtRecord() async {
     try {
@@ -34,6 +37,15 @@ class QtRecordDetailState extends State<QtRecordDetail> {
           tempList = qt.detail.map((model) => QT.fromJson(model)).toList();
           setState(() {
             detailQt = tempList[0];
+
+            _subject = '[' +
+                getDateOfWeek(DateTime.parse(detailQt.qtDate)) +
+                '/' +
+                detailQt.bible +
+                '] ' +
+                detailQt.title;
+
+            _text = detailQt.content;
           });
         } else {
           showAlertDialog(
@@ -73,6 +85,14 @@ class QtRecordDetailState extends State<QtRecordDetail> {
       onPressed: _goQtRecordWrite,
       textColor: AppColors.darkGray,
     );
+  }
+
+  void _share(BuildContext context) async {
+    final RenderBox box = context.findRenderObject();
+
+    await Share.share(_text,
+        subject: _subject,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
   }
 
   @override
@@ -117,7 +137,19 @@ class QtRecordDetailState extends State<QtRecordDetail> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                _qtDate,
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _qtDate,
+                      IconButton(
+                          icon: Icon(
+                            Icons.ios_share,
+                            color: AppColors.sky,
+                          ),
+                          onPressed: () {
+                            _share(context);
+                          }),
+                    ]),
                 _qtTitle,
                 Divider(
                   color: AppColors.greenPoint,
