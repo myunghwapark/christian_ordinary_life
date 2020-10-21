@@ -4,6 +4,8 @@ class User {
   String email;
   String grade;
   String password;
+  String jwt;
+  bool keepLogin;
   String result;
   String errorMessage;
   String errorCode;
@@ -14,6 +16,8 @@ class User {
       this.email,
       this.grade,
       this.password,
+      this.jwt,
+      this.keepLogin,
       this.result,
       this.errorMessage,
       this.errorCode});

@@ -6,6 +6,7 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -22,12 +23,14 @@ class ChangePasswordState extends State<ChangePassword> {
   TextEditingController _newPasswordController = new TextEditingController();
   TextEditingController _confirmNewPasswordController =
       new TextEditingController();
+  ComponentStyle componentStyle = new ComponentStyle();
 
   Future<User> _changePassword() async {
     User userResult;
     try {
       final response =
           await API.transaction(context, API.changePassword, param: {
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'userEmail': UserInfo.loginUser.email,
         'oldPassword': _curPasswordController.text,
         'newPassword': _newPasswordController.text
@@ -87,10 +90,8 @@ class ChangePasswordState extends State<ChangePassword> {
           maxLength: 20,
           obscureText: true,
           controller: _curPasswordController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: Translations.of(context).trans('current_password'),
-          ),
+          decoration: componentStyle.whiteGreyInput(
+              Translations.of(context).trans('current_password')),
           validator: (value) {
             if (value.isEmpty) {
               return Translations.of(context).trans('validate_empty_password');
@@ -108,10 +109,8 @@ class ChangePasswordState extends State<ChangePassword> {
           maxLength: 20,
           obscureText: true,
           controller: _newPasswordController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: Translations.of(context).trans('new_password'),
-          ),
+          decoration: componentStyle
+              .whiteGreyInput(Translations.of(context).trans('new_password')),
           validator: (value) {
             if (value.isEmpty) {
               return Translations.of(context).trans('validate_empty_password');
@@ -129,10 +128,8 @@ class ChangePasswordState extends State<ChangePassword> {
           maxLength: 20,
           obscureText: true,
           controller: _confirmNewPasswordController,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            labelText: Translations.of(context).trans('new_password_confirm'),
-          ),
+          decoration: componentStyle.whiteGreyInput(
+              Translations.of(context).trans('new_password_confirm')),
           validator: (value) {
             if (value.isEmpty) {
               return Translations.of(context).trans('validate_empty_password');

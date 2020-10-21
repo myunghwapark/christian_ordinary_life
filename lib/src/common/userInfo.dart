@@ -1,23 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/screens/auth/login.dart';
 import 'package:christian_ordinary_life/src/screens/auth/register.dart';
 import 'package:christian_ordinary_life/src/screens/auth/resetPassword.dart';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfo {
   static User loginUser;
   SharedPreferences prefs;
 
   Future<User> getUserInfo() async {
-    prefs = await SharedPreferences.getInstance();
-
     loginUser = new User();
-    loginUser.name = prefs.getString("userName");
-    loginUser.email = prefs.getString("userEmail");
-    loginUser.seqNo = prefs.getString("userSeqNo");
+    final storage = new FlutterSecureStorage();
+    String jwt = await storage.read(key: "jwt");
+
+    if (jwt != null) {
+      loginUser.jwt = jwt;
+      prefs = await SharedPreferences.getInstance();
+
+      loginUser = new User();
+      loginUser.name = prefs.getString("userName");
+      loginUser.email = prefs.getString("userEmail");
+      loginUser.seqNo = prefs.getString("userSeqNo");
+      loginUser.keepLogin = prefs.getBool("keepLogin");
+    }
 
     return loginUser;
   }
@@ -27,10 +36,21 @@ class UserInfo {
         context, Translations.of(context).trans('confirm_logout'));
 
     if (result == 'ok') {
-      prefs.setString('userName', '');
-      prefs.setString('userEmail', '');
-      prefs.setString('userSeqNo', '');
+      logtOutProcess(context);
     }
+  }
+
+  Future<void> logtOutProcess(BuildContext context) async {
+    final storage = new FlutterSecureStorage();
+    await storage.delete(key: "jwt");
+
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString('userName', '');
+    prefs.setString('userEmail', '');
+    prefs.setString('userSeqNo', '');
+    prefs.setBool('keepLogin', false);
+
+    loginUser = null;
   }
 
   bool loginCheck() {
@@ -54,12 +74,18 @@ class UserInfo {
     } else if (result == 'resetPassword') {
       showResetPassword(context);
     } else if (result == 'success') {
-      await SharedPreferences.getInstance().then((value) {
-        loginUser = new User();
-        loginUser.name = value.getString('userName') ?? '';
-        loginUser.email = value.getString('userEmail') ?? '';
-        loginUser.seqNo = value.getString('userSeqNo') ?? '';
-      });
+      final storage = new FlutterSecureStorage();
+
+      // Read value
+      String jwt = await storage.read(key: "jwt");
+
+      prefs = await SharedPreferences.getInstance();
+
+      loginUser = new User();
+      loginUser.jwt = jwt;
+      loginUser.name = prefs.getString("userName");
+      loginUser.email = prefs.getString("userEmail");
+      loginUser.seqNo = prefs.getString("userSeqNo");
 
       if (method != null) {
         method();

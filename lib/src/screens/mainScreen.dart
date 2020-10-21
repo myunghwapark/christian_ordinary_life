@@ -44,7 +44,7 @@ class MainScreenState extends State<MainScreen> {
     'thank_diary': false,
   };
 
-  Future<void> getSharedPrefs() async {
+  Future<void> getUserInfo() async {
     await userInfo.getUserInfo().then((value) {
       setState(() {
         UserInfo.loginUser = value;
@@ -369,21 +369,20 @@ class MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     GoalInfo.goal?.goalSet = false;
-    getSharedPrefs()
-        .then((value) => goalInfo.getUserGoal(context).then((value) {
-              setState(() {
-                GoalInfo.goal = value;
-              });
+    getUserInfo().then((value) => goalInfo.getUserGoal(context).then((value) {
+          setState(() {
+            GoalInfo.goal = value;
+          });
 
-              goalInfo.getGoalProgress(context).then((value) {
-                setState(() {
-                  GoalInfo.goalProgress = value;
-                  _setGoals();
+          goalInfo.getGoalProgress(context).then((value) {
+            setState(() {
+              GoalInfo.goalProgress = value;
+              _setGoals();
 
-                  getBiblePhrase().then((value) => _getTodaysBible());
-                });
-              });
-            }));
+              getBiblePhrase().then((value) => _getTodaysBible());
+            });
+          });
+        }));
     _currentDateTime = new DateTime.now();
     _year = getYear(_currentDateTime);
     _date = getDate(_currentDateTime);

@@ -131,6 +131,8 @@ class GoalSettingState extends State<GoalSetting> {
 
   Widget _createGoal(
       String target, String title, Color bgColor, bool checkboxVar) {
+    if (checkboxVar == null) checkboxVar = false;
+
     return Flexible(
         fit: FlexFit.tight,
         flex: 1,
@@ -268,30 +270,35 @@ class GoalSettingState extends State<GoalSetting> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: Column(children: [
-              appBarCustom(
-                  context, Translations.of(context).trans('title_goal_setting'),
-                  leaderText: Translations.of(context).trans('cancel'),
-                  onLeaderTap: _goToMain,
-                  actionText: Translations.of(context).trans('save'),
-                  onActionTap: setUserGoal),
-              _createGoal('qt', Translations.of(context).trans('daily_qt'),
-                  AppColors.blueSky, GoalInfo.goal?.qtRecord),
-              _createGoal(
-                  'praying',
-                  Translations.of(context).trans('daily_praying'),
-                  AppColors.mint,
-                  GoalInfo.goal?.praying),
-              _createGoal(
-                  'bible',
-                  Translations.of(context).trans('daily_bible'),
-                  AppColors.lightOrange,
-                  GoalInfo.goal?.readingBible),
-              _createGoal(
-                  'diary',
-                  Translations.of(context).trans('daily_thank'),
-                  AppColors.pastelPink,
-                  GoalInfo.goal?.thankDiary),
-            ])));
+            child: UserInfo.loginUser != null
+                ? Column(children: [
+                    appBarCustom(context,
+                        Translations.of(context).trans('title_goal_setting'),
+                        leaderText: Translations.of(context).trans('cancel'),
+                        onLeaderTap: _goToMain,
+                        actionText: Translations.of(context).trans('save'),
+                        onActionTap: setUserGoal),
+                    _createGoal(
+                        'qt',
+                        Translations.of(context).trans('daily_qt'),
+                        AppColors.blueSky,
+                        GoalInfo.goal?.qtRecord),
+                    _createGoal(
+                        'praying',
+                        Translations.of(context).trans('daily_praying'),
+                        AppColors.mint,
+                        GoalInfo.goal?.praying),
+                    _createGoal(
+                        'bible',
+                        Translations.of(context).trans('daily_bible'),
+                        AppColors.lightOrange,
+                        GoalInfo.goal?.readingBible),
+                    _createGoal(
+                        'diary',
+                        Translations.of(context).trans('daily_thank'),
+                        AppColors.pastelPink,
+                        GoalInfo.goal?.thankDiary),
+                  ])
+                : Container()));
   }
 }

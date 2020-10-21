@@ -1,10 +1,11 @@
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
-import 'package:christian_ordinary_life/src/model/TodayBible.dart';
-import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/model/TodayBible.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'src/navigation/appDrawer.dart';
 import 'src/common/translations.dart';
 import 'src/common/colors.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           errorColor: Colors.orange[600]),
-      home: MyHomePage(title: ''),
+      home: Main(title: ''),
       initialRoute: '/',
       routes: {
         GoalSettingBible.routeName: (context) => GoalSettingBible(),
@@ -100,7 +101,7 @@ class MyApp extends StatelessWidget {
           default:
             {
               return MaterialPageRoute(builder: (context) {
-                return GoalSetting();
+                return Main();
               });
             }
             break;
@@ -136,16 +137,16 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class Main extends StatefulWidget {
+  Main({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MainState createState() => MainState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MainState extends State<Main> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

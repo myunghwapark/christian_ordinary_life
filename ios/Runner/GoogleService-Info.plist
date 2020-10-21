@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>195513654442-79opvl49k0nd42080k86pvti6ahcp4vu.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.195513654442-79opvl49k0nd42080k86pvti6ahcp4vu</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAH4QzGKEBA-nzpw9-pOq0gAEkUma_XOYM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>195513654442</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.alice.christianOrdinaryLife</string>
+	<key>PROJECT_ID</key>
+	<string>christian-ordinary-life</string>
+	<key>STORAGE_BUCKET</key>
+	<string>christian-ordinary-life.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:195513654442:ios:5fe1d2e17f85bcfe85c4d3</string>
+	<key>DATABASE_URL</key>
+	<string>https://christian-ordinary-life.firebaseio.com</string>
+</dict>
+</plist>

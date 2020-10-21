@@ -1,9 +1,13 @@
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/model/TransactionResult.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   static String serverAddress = 'http://192.168.64.2/';
@@ -57,8 +61,12 @@ class API {
   static String biblePhrase = serverURL + 'bible_phrase/bible_phrase.php';
 
   static Future<dynamic> transaction(BuildContext context, String url,
-      {Object param}) async {
-    //showLoading(context);
+      {Map param}) async {
+    final storage = new FlutterSecureStorage();
+    String jwt = await storage.read(key: "jwt");
+    param['jwt'] = jwt;
+    param['keepLogin'] = UserInfo.loginUser.keepLogin;
+
     final response = await http
         .post(url,
             headers: <String, String>{
@@ -70,12 +78,21 @@ class API {
     });
 
     try {
-      // Navigator.of(context).pop();
       // Error
       if (response.statusCode != 200) {
         showAlertDialog(
             context, Translations.of(context).trans('error_message'));
         return null;
+      }
+      //print(response.body);
+      TransactionResult transactionResult =
+          TransactionResult.fromJson(json.decode(response.body));
+
+      if (transactionResult.errorMessage == 'Expired token') {
+        logout(context);
+      } else {
+        Map<String, dynamic> map = json.decode(response.body);
+        if (map['jwt'] != null) storage.write(key: "jwt", value: map['jwt']);
       }
     } on Exception catch (exception) {
       errorMessage(context, exception);
@@ -86,5 +103,15 @@ class API {
     }
 
     return response.body;
+  }
+
+  static Future<void> logout(BuildContext context) async {
+    showAlertDialog(context, Translations.of(context).trans('login_expired'))
+        .then((value) async {
+      UserInfo userInfo = new UserInfo();
+      userInfo.logtOutProcess(context);
+
+      Navigator.pushReplacementNamed(context, '/');
+    });
   }
 }

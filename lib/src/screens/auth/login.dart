@@ -1,14 +1,18 @@
-import 'dart:convert';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert' show json, base64, ascii;
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
-import 'package:loading_overlay/loading_overlay.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -20,21 +24,27 @@ class LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
   AppButtons appButtons = new AppButtons();
   ComponentStyle componentStyle = new ComponentStyle();
+  CommonSettings commonSettings = new CommonSettings();
 
   bool _keepMeLoginVar = false;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   Future<User> loginUser(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('keepLogin', _keepMeLoginVar);
+
     User userResult;
     try {
       setState(() {
         _isLoading = true;
       });
 
-      final response = await API.transaction(context, API.login,
-          param: {'userEmail': user.email, 'userPassword': user.password});
-
+      final response = await API.transaction(context, API.login, param: {
+        'userEmail': user.email,
+        'userPassword': user.password,
+        'keepLogin': _keepMeLoginVar
+      });
       userResult = User.fromJson(json.decode(response));
       setState(() {
         _isLoading = false;
@@ -42,7 +52,6 @@ class LoginState extends State<Login> {
 
       if (userResult.result == 'success') {
         // Save user information
-        final prefs = await SharedPreferences.getInstance();
         prefs.setString('userName', userResult.name);
         prefs.setString('userEmail', userResult.email);
         prefs.setString('userSeqNo', userResult.seqNo);
@@ -69,6 +78,14 @@ class LoginState extends State<Login> {
     }
 
     return userResult;
+  }
+
+  void getKeepLogin() async {
+    setState(() {
+      _keepMeLoginVar = UserInfo.loginUser.keepLogin == null
+          ? false
+          : UserInfo.loginUser.keepLogin;
+    });
   }
 
   @override
@@ -252,5 +269,11 @@ class LoginState extends State<Login> {
                         ),
                       )))))
     ]);
+  }
+
+  @override
+  void initState() {
+    getKeepLogin();
+    super.initState();
   }
 }

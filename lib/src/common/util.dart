@@ -285,8 +285,12 @@ bool validateEmail(String value) {
 }
 
 void errorMessage(BuildContext context, dynamic e) {
-  showAlertDialog(context,
-      (Translations.of(context).trans('error_message') + '\n' + e.toString()));
+  if (e.toString() != 'Expired token')
+    showAlertDialog(
+        context,
+        (Translations.of(context).trans('error_message') +
+            '\n' +
+            e.toString()));
 }
 
 String getPlanPeriod(BuildContext context, String period) {

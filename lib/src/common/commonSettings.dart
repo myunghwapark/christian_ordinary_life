@@ -9,6 +9,7 @@ class CommonSettings {
   static double tempFontSize;
   static String language;
   static String firstUser;
+  static bool keepLogin;
 
   static String donationAccount = '404601-01-168180\n국민은행 예금주: 박명화';
 
