@@ -20,6 +20,10 @@ class RegisterState extends State<Register> {
   AppButtons appButtons = new AppButtons();
   ComponentStyle componentStyle = new ComponentStyle();
   bool _isLoading = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController passwordConfirmController = TextEditingController();
 
   Future<User> registerUser(User user) async {
     User userResult;
@@ -80,12 +84,16 @@ class RegisterState extends State<Register> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController emailController = TextEditingController();
-    TextEditingController nameController = TextEditingController();
-    TextEditingController passwordController = TextEditingController();
-    TextEditingController passwordConfirmController = TextEditingController();
+  void dispose() {
+    emailController.dispose();
+    nameController.dispose();
+    passwordController.dispose();
+    passwordConfirmController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     _register(BuildContext context) {
       User newUser = User(
           email: emailController.text,

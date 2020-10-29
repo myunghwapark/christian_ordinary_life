@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/searchBox.dart';
 import 'package:christian_ordinary_life/src/screens/thankDiary/thankDiaryDetail.dart';
@@ -36,6 +38,7 @@ class ThankDiaryState extends State<ThankDiary> {
   bool initLoad = true;
   RefreshController _refreshController;
   bool _scrollUp;
+  bool _isLoading = false;
 
   Future<void> getThankDiaryList() async {
     _startPageNum = _pageNum * _rowCount;
@@ -58,6 +61,12 @@ class ThankDiaryState extends State<ThankDiary> {
       _searchEndDate = SearchBox.search.searchEndDate;
     }
 
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     try {
       await API.transaction(context, API.thanksDiaryList, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
@@ -72,6 +81,8 @@ class ThankDiaryState extends State<ThankDiary> {
         _totalCnt = diary.totalCnt;
 
         setState(() {
+          _isLoading = false;
+
           List<Diary> tempList;
           tempList =
               diary.diaryList.map((model) => Diary.fromJson(model)).toList();
@@ -90,7 +101,12 @@ class ThankDiaryState extends State<ThankDiary> {
       _errorHandle(exception);
     } catch (exception) {
       _errorHandle(exception);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
+
     _pageNum++;
     initLoad = false;
     if (_scrollUp)
@@ -290,31 +306,36 @@ class ThankDiaryState extends State<ThankDiary> {
             context, Translations.of(context).trans('menu_thank_diary'),
             actionWidget: actionIcon()),
         drawer: AppDrawer(),
-        body: Column(children: <Widget>[
-          SearchBox(
-            pointColor: AppColors.pastelPink,
-            searchFieldNode: _searchFieldNode,
-            keywordController: keywordController,
-            onSubmitted: _onSubmitted,
-            thankCategoryVisible: true,
-            scaffoldKey: _scaffoldKey,
-          ),
-          Expanded(
-              child: SmartRefresher(
-            header: _header(),
-            footer: _footer(),
-            enablePullDown: true,
-            enablePullUp: true,
-            controller: _refreshController,
-            onRefresh: _refresh,
-            onLoading: _load,
-            child: _totalCnt == 0
-                ? Center(
-                    child: Text(Translations.of(context).trans('no_data')),
-                  )
-                : _diaryList,
-          ))
-        ]));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: Column(children: <Widget>[
+              SearchBox(
+                pointColor: AppColors.pastelPink,
+                searchFieldNode: _searchFieldNode,
+                keywordController: keywordController,
+                onSubmitted: _onSubmitted,
+                thankCategoryVisible: true,
+                scaffoldKey: _scaffoldKey,
+              ),
+              Expanded(
+                  child: SmartRefresher(
+                header: _header(),
+                footer: _footer(),
+                enablePullDown: true,
+                enablePullUp: true,
+                controller: _refreshController,
+                onRefresh: _refresh,
+                onLoading: _load,
+                child: _totalCnt == 0
+                    ? Center(
+                        child: Text(Translations.of(context).trans('no_data')),
+                      )
+                    : _diaryList,
+              ))
+            ])));
   }
 
   @override
@@ -324,7 +345,19 @@ class ThankDiaryState extends State<ThankDiary> {
 
     SearchBox.search.searchByDate = false;
     SearchBox.search.searchByCategory = false;
-    thankDiaryInfo.getThankCategory(context).then((value) => _refresh());
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+    thankDiaryInfo.getThankCategory(context).then((value) {
+      if (this.mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      _refresh();
+    });
   }
 
   @override

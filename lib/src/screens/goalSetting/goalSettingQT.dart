@@ -1,7 +1,8 @@
-import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:flutter/material.dart';
-import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/component/timeBox.dart';
@@ -111,12 +112,8 @@ class GoalSettingQTState extends State<GoalSettingQT> {
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Translations.of(context).localeLaunguageCode() != 'ko'
-                ? _qtTimeBox
-                : Container(),
-            Translations.of(context).localeLaunguageCode() == 'ko'
-                ? _preposition
-                : Container(),
+            CommonSettings.language != 'ko' ? _qtTimeBox : Container(),
+            CommonSettings.language == 'ko' ? _preposition : Container(),
           ]),
         ],
       ),
@@ -184,5 +181,10 @@ class GoalSettingQTState extends State<GoalSettingQT> {
     _init();
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

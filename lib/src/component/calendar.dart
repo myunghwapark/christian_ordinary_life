@@ -41,7 +41,7 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  void _onDaySelected(DateTime day, List events) {
+  void _onDaySelected(DateTime day, List events, List holidays) {
     returnDate = day;
   }
 
@@ -87,7 +87,9 @@ class CalendarState extends State<Calendar> {
         ),
       ),
 
-      onDaySelected: _onDaySelected,
+      onDaySelected: (date, events, holidays) {
+        _onDaySelected(date, events, holidays);
+      },
       //onVisibleDaysChanged: _onVisibleDaysChanged,
       //onCalendarCreated: _onCalendarCreated,
     );

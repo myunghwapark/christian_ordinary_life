@@ -161,4 +161,10 @@ class ResetPasswordState extends State<ResetPassword> {
                       ))))
         ]));
   }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    super.dispose();
+  }
 }

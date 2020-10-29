@@ -1,8 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:badges/badges.dart';
+
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
@@ -11,7 +11,7 @@ import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/Bible.dart';
-import 'goalBibleCustom2.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalBibleCustom2.dart';
 
 class GoalBibleCustom1 extends StatefulWidget {
   @override
@@ -142,10 +142,10 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       child: Badge(
         badgeColor: Colors.orange,
         shape: BadgeShape.circle,
-        borderRadius: 20,
+        borderRadius: BorderRadius.circular(20),
         toAnimate: true,
         animationType: BadgeAnimationType.slide,
-        position: BadgePosition.topLeft(top: 2, left: -6),
+        position: BadgePosition.topEnd(top: 0, end: -6),
         badgeContent: Text(
           bible.getCheckOrder().toString(),
           style: TextStyle(color: Colors.white),
@@ -282,7 +282,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
               onActionTap: _nextSetting),
           Container(
             height: (MediaQuery.of(context).copyWith().size.height - 70),
-            padding: EdgeInsets.only(top: 5, left: 20, right: 20),
+            padding: EdgeInsets.only(top: 5, left: 12, right: 12),
             child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: <Widget>[
@@ -304,5 +304,10 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
   initState() {
     bibleUserPlan = widget.bibleUserPlan;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

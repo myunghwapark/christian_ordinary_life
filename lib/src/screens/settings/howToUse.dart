@@ -13,6 +13,7 @@ class HowToUseState extends State<HowToUse> {
   int _index = 0;
   PageController _pageController = PageController(viewportFraction: 0.9);
   List<Widget> _titleList = new List<Widget>();
+  bool _first = true;
 
   void nextPage() {
     _pageController.animateToPage(_pageController.page.toInt() + 1,
@@ -291,8 +292,30 @@ class HowToUseState extends State<HowToUse> {
     );
   }
 
+  void _imageCache() {
+    for (int i = 1; i <= 6; i++) {
+      String imageUrl = "";
+      if (i == 1) {
+        imageUrl = "how_to_use" + i.toString() + ".jpg";
+      } else {
+        imageUrl = "how_to_use" +
+            i.toString() +
+            "_" +
+            CommonSettings.language +
+            ".jpg";
+      }
+      Image theImage =
+          Image.network(API.systemImageURL + imageUrl, fit: BoxFit.cover);
+      precacheImage(theImage.image, context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_first) {
+      _imageCache();
+      _first = false;
+    }
     _titleList = [
       _title1(),
       _title2(),
@@ -303,7 +326,7 @@ class HowToUseState extends State<HowToUse> {
     ];
     final _cloudBg = Positioned.fill(
       child: Image.network(
-        API.systemImageURL + "cloud_bg.jpg",
+        API.systemImageURL + "cloud_bg.gif",
         fit: BoxFit.fitWidth,
         alignment: Alignment.topLeft,
       ),

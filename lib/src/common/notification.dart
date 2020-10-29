@@ -104,13 +104,18 @@ class SetNotificationState extends State<SetNotification> {
         '${UserInfo.loginUser.name}님, 오늘도 말씀으로 승리하세요.',
         _nextInstanceOfTenAM(alarmTime),
         const NotificationDetails(
-          android: AndroidNotificationDetails('qt', 'colQt', 'Time to qt'),
+          android: AndroidNotificationDetails(
+            'qt',
+            'colQt',
+            'Time to qt',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   Future<void> _dailyPrayingTimeNotification(Time alarmTime) async {
@@ -121,13 +126,17 @@ class SetNotificationState extends State<SetNotification> {
         _nextInstanceOfTenAM(alarmTime),
         const NotificationDetails(
           android: AndroidNotificationDetails(
-              'praying', 'colPraying', 'Time to praying'),
+            'praying',
+            'colPraying',
+            'Time to praying',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM(Time alarmTime) {

@@ -1,10 +1,11 @@
-import 'dart:convert';
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
-import 'package:christian_ordinary_life/src/component/fontSettingDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:convert';
+import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/fontSettingDialog.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/readingBible/readingBibleComplete.dart';
@@ -19,7 +20,6 @@ import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 
 class ReadingBible extends StatefulWidget {
   static const routeName = '/readingBible';
@@ -51,7 +51,6 @@ class ReadingBibleState extends State<ReadingBible> {
   GlobalKey _keyTodaysBible = GlobalKey();
   int _currentChapter;
   bool _isLoading = false;
-  //bool _first = true;
 
   /* void _moveContent() {
     if (_first) {
@@ -127,6 +126,12 @@ class ReadingBibleState extends State<ReadingBible> {
   }
 
   Future<void> getBible() async {
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     try {
       await API.transaction(context, API.getBible, param: {
         'language': CommonSettings.language,
@@ -134,6 +139,8 @@ class ReadingBibleState extends State<ReadingBible> {
         'chapter': todaysBibleChapters[_currentChapter].volume
       }).then((response) {
         setState(() {
+          _isLoading = false;
+
           Book book = Book.fromJson(json.decode(response));
 
           List<Book> tempList;
@@ -151,6 +158,10 @@ class ReadingBibleState extends State<ReadingBible> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

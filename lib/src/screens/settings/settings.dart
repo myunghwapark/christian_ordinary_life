@@ -11,6 +11,7 @@ import 'package:christian_ordinary_life/src/screens/settings/donation.dart';
 import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:christian_ordinary_life/src/screens/settings/privacyPolicy.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -91,13 +92,25 @@ class SettingsState extends State<Settings> {
   }
 
   void _goContactDeveloper() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ContactDeveloper()));
+    _sendEmil();
   }
 
   void _goPrivacyPolicy() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => PrivacyPolicy()));
+  }
+
+  Future<void> _sendEmil() async {
+    final Email email = Email(
+      subject: Translations.of(context).trans('contact_title'),
+      recipients: ['christianlifemanager@gmail.com'],
+    );
+
+    try {
+      await FlutterEmailSender.send(email);
+    } catch (error) {
+      print(error.toString());
+    }
   }
 
   @override

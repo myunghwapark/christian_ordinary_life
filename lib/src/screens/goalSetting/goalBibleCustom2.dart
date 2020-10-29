@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
-import 'goalSettingComplete.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
 
 class GoalBibleCustom2 extends StatefulWidget {
   final BibleUserPlan bibleUserPlan;
@@ -27,27 +27,46 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
   String _periodMent = '';
   int period = 0;
   int totalChapters = 0;
+  bool _isLoading = false;
 
   Future<void> setUserGoal() async {
     if (!goalInfo.checkContent(context, bibleUserPlan)) return;
 
-    goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
-      if (value.result == 'success') {
-        bool nothingSelected = false;
-
-        // For the case of when a user chooses nothing, next page must show a different message.
-        if (!GoalInfo.goal.readingBible &&
-            !GoalInfo.goal.thankDiary &&
-            !GoalInfo.goal.qtRecord &&
-            !GoalInfo.goal.praying) {
-          nothingSelected = true;
-        }
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => GoalSettingComplete(nothingSelected)));
-      }
+    setState(() {
+      _isLoading = true;
     });
+
+    try {
+      goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (value.result == 'success') {
+          bool nothingSelected = false;
+
+          // For the case of when a user chooses nothing, next page must show a different message.
+          if (!GoalInfo.goal.readingBible &&
+              !GoalInfo.goal.thankDiary &&
+              !GoalInfo.goal.qtRecord &&
+              !GoalInfo.goal.praying) {
+            nothingSelected = true;
+          }
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GoalSettingComplete(nothingSelected)));
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _complete() {
@@ -152,22 +171,27 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
 
     return Scaffold(
         key: scaffoldKey,
-        body: GestureDetector(
-            child: Column(
-              children: [
-                appBarCustom(context,
-                    Translations.of(context).trans('bible_plan_custom'),
-                    leaderText: Translations.of(context).trans('prev'),
-                    actionText: Translations.of(context).trans('done'),
-                    onActionTap: _complete),
-                Container(
-                    padding: EdgeInsets.all(20),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [_label, _customDate, _periodDetail]))
-              ],
-            ),
-            onTap: () => FocusScope.of(context).unfocus()));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: GestureDetector(
+                child: Column(
+                  children: [
+                    appBarCustom(context,
+                        Translations.of(context).trans('bible_plan_custom'),
+                        leaderText: Translations.of(context).trans('prev'),
+                        actionText: Translations.of(context).trans('done'),
+                        onActionTap: _complete),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [_label, _customDate, _periodDetail]))
+                  ],
+                ),
+                onTap: () => FocusScope.of(context).unfocus())));
   }
 
   @override
@@ -179,5 +203,11 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
       _daysController.text = bibleUserPlan.planPeriod;
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _daysController.dispose();
+    super.dispose();
   }
 }

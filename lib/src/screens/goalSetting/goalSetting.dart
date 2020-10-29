@@ -1,10 +1,10 @@
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
@@ -13,10 +13,10 @@ import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'goalSettingComplete.dart';
-import 'goalSettingQT.dart';
-import 'goalSettingBible.dart';
-import 'goalSettingPraying.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingQT.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingPraying.dart';
 
 class GoalSetting extends StatefulWidget {
   static const routeName = '/goalSetting';
@@ -185,13 +185,18 @@ class GoalSettingState extends State<GoalSetting> {
             .trans('qt_time_alarm_message', param1: UserInfo.loginUser.name),
         _nextInstanceOfTenAM(alarmTime),
         const NotificationDetails(
-          android: AndroidNotificationDetails('qt', 'colQt', 'Time to qt'),
+          android: AndroidNotificationDetails(
+            'qt',
+            'colQt',
+            'Time to qt',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   Future<void> _dailyPrayingTimeNotification(Time alarmTime) async {
@@ -203,13 +208,17 @@ class GoalSettingState extends State<GoalSetting> {
         _nextInstanceOfTenAM(alarmTime),
         const NotificationDetails(
           android: AndroidNotificationDetails(
-              'praying', 'colPraying', 'Time to praying'),
+            'praying',
+            'colPraying',
+            'Time to praying',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
         ),
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
-        scheduledNotificationRepeatFrequency:
-            ScheduledNotificationRepeatFrequency.daily);
+        matchDateTimeComponents: DateTimeComponents.time);
   }
 
   tz.TZDateTime _nextInstanceOfTenAM(Time alarmTime) {
@@ -237,13 +246,21 @@ class GoalSettingState extends State<GoalSetting> {
     GoalInfo.goal.praying = false;
     GoalInfo.goal.thankDiary = false;
 
-    goalInfo.getUserGoal(context).then((value) {
+    if (this.mounted) {
       setState(() {
-        GoalInfo.goal = value;
-        bibleUserPlan.biblePlanId = GoalInfo.goal.biblePlanId;
-        bibleUserPlan.customBible = GoalInfo.goal.customBible;
-        bibleUserPlan.planPeriod = GoalInfo.goal.planPeriod;
+        _isLoading = true;
       });
+    }
+    goalInfo.getUserGoal(context).then((value) {
+      if (this.mounted) {
+        setState(() {
+          _isLoading = false;
+          GoalInfo.goal = value;
+          bibleUserPlan.biblePlanId = GoalInfo.goal.biblePlanId;
+          bibleUserPlan.customBible = GoalInfo.goal.customBible;
+          bibleUserPlan.planPeriod = GoalInfo.goal.planPeriod;
+        });
+      }
     });
 
     // alarm function setting

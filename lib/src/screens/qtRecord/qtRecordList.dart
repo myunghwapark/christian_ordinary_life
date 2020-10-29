@@ -2,6 +2,7 @@ import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/component/searchBox.dart';
@@ -34,6 +35,7 @@ class QTRecordState extends State<QTRecord> {
   bool initLoad = true;
   RefreshController _refreshController;
   bool _scrollUp;
+  bool _isLoading = false;
 
   Future<void> getQtRecordList() async {
     _startPageNum = _pageNum * _rowCount;
@@ -52,7 +54,11 @@ class QTRecordState extends State<QTRecord> {
       _searchStartDate = SearchBox.search.searchStartDate;
       _searchEndDate = SearchBox.search.searchEndDate;
     }
-
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     try {
       await API.transaction(context, API.qtRecordList, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
@@ -66,6 +72,7 @@ class QTRecordState extends State<QTRecord> {
         _totalCnt = qt.totalCnt;
 
         setState(() {
+          _isLoading = false;
           List<QT> tempList;
           tempList = qt.qtList.map((model) => QT.fromJson(model)).toList();
           for (int i = 0; i < tempList.length; i++) {
@@ -77,6 +84,10 @@ class QTRecordState extends State<QTRecord> {
       _errorHandle(exception);
     } catch (exception) {
       _errorHandle(exception);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
     _pageNum++;
     initLoad = false;
@@ -252,30 +263,35 @@ class QTRecordState extends State<QTRecord> {
             context, Translations.of(context).trans('menu_qt_record'),
             actionWidget: actionIcon()),
         drawer: AppDrawer(),
-        body: Column(children: <Widget>[
-          SearchBox(
-            pointColor: AppColors.marine,
-            searchFieldNode: _searchFieldNode,
-            keywordController: keywordController,
-            onSubmitted: _onSubmitted,
-            thankCategoryVisible: false,
-          ),
-          Expanded(
-              child: SmartRefresher(
-            header: _header(),
-            footer: _footer(),
-            enablePullDown: true,
-            enablePullUp: true,
-            controller: _refreshController,
-            onRefresh: _refresh,
-            onLoading: _load,
-            child: _totalCnt == 0
-                ? Center(
-                    child: Text(Translations.of(context).trans('no_data')),
-                  )
-                : _qtList,
-          ))
-        ]));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: Column(children: <Widget>[
+              SearchBox(
+                pointColor: AppColors.marine,
+                searchFieldNode: _searchFieldNode,
+                keywordController: keywordController,
+                onSubmitted: _onSubmitted,
+                thankCategoryVisible: false,
+              ),
+              Expanded(
+                  child: SmartRefresher(
+                header: _header(),
+                footer: _footer(),
+                enablePullDown: true,
+                enablePullUp: true,
+                controller: _refreshController,
+                onRefresh: _refresh,
+                onLoading: _load,
+                child: _totalCnt == 0
+                    ? Center(
+                        child: Text(Translations.of(context).trans('no_data')),
+                      )
+                    : _qtList,
+              ))
+            ])));
   }
 
   @override

@@ -1,10 +1,9 @@
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert' show json, base64, ascii;
+import 'dart:convert' show json;
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/buttons.dart';
@@ -275,5 +274,12 @@ class LoginState extends State<Login> {
   void initState() {
     getKeepLogin();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 }

@@ -148,17 +148,21 @@ class AppDrawerState extends State {
 
   Future<void> _getLoginInfo() async {
     await userInfo.getUserInfo().then((value) {
-      setState(() {
-        UserInfo.loginUser = value;
-      });
+      if (this.mounted) {
+        setState(() {
+          UserInfo.loginUser = value;
+        });
+      }
     });
   }
 
   Future<void> _getTodaysBible() async {
     await goalInfo.getTodaysBible(context).then((value) {
-      setState(() {
-        todayBible = value;
-      });
+      if (this.mounted) {
+        setState(() {
+          todayBible = value;
+        });
+      }
     });
   }
 
@@ -166,6 +170,11 @@ class AppDrawerState extends State {
   void initState() {
     super.initState();
     _getLoginInfo().then((value) => _getTodaysBible());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlan.dart';
 import 'package:christian_ordinary_life/src/model/BiblePlanDetail.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -19,14 +20,24 @@ class GoalBiblePlanDetail extends StatefulWidget {
 
 class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
   List<BiblePlanDetail> biblePlanDetailList = new List<BiblePlanDetail>();
+  bool _isLoading = false;
 
   Future<void> _getBiblePlanDetail() async {
     BiblePlanDetail data;
+
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await API.transaction(context, API.biblePlanDetail, param: {
         'biblePlanId': widget.biblePlan.biblePlanId
       }).then((response) {
         data = BiblePlanDetail.fromJson(json.decode(response));
+
+        setState(() {
+          _isLoading = false;
+        });
 
         if (data.result == 'success') {
           setState(() {
@@ -61,6 +72,10 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -173,15 +188,25 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
           context,
           Translations.of(context).trans('bible_reading_plan'),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [_titleBox, _list],
-        ));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [_titleBox, _list],
+            )));
   }
 
   @override
   void initState() {
     _getBiblePlanDetail();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

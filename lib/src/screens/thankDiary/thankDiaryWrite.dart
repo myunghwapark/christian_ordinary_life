@@ -1,14 +1,14 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:io';
-import 'package:christian_ordinary_life/src/common/thankDiaryInfo.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:christian_ordinary_life/src/common/getImage.dart';
-import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'dart:convert';
+import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/common/thankDiaryInfo.dart';
+import 'package:christian_ordinary_life/src/common/getImage.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:christian_ordinary_life/src/component/customPicker.dart';
@@ -19,7 +19,6 @@ import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/Diary.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 
 class ThankDiaryWrite extends StatefulWidget {
   final Diary diary;

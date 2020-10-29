@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
@@ -14,12 +13,13 @@ class UserInfo {
 
   Future<User> getUserInfo() async {
     loginUser = new User();
-    final storage = new FlutterSecureStorage();
-    String jwt = await storage.read(key: "jwt");
+    //final storage = new FlutterSecureStorage();
+    // String jwt = await storage.read(key: "jwt");
+    prefs = await SharedPreferences.getInstance();
+    String jwt = prefs.getString("jwt");
 
     if (jwt != null) {
       loginUser.jwt = jwt;
-      prefs = await SharedPreferences.getInstance();
 
       loginUser = new User();
       loginUser.name = prefs.getString("userName");
@@ -41,14 +41,12 @@ class UserInfo {
   }
 
   Future<void> logtOutProcess(BuildContext context) async {
-    final storage = new FlutterSecureStorage();
-    await storage.delete(key: "jwt");
-
     prefs = await SharedPreferences.getInstance();
     prefs.setString('userName', '');
     prefs.setString('userEmail', '');
     prefs.setString('userSeqNo', '');
     prefs.setBool('keepLogin', false);
+    prefs.setString('jwt', '');
 
     loginUser = null;
   }
@@ -74,15 +72,10 @@ class UserInfo {
     } else if (result == 'resetPassword') {
       showResetPassword(context);
     } else if (result == 'success') {
-      final storage = new FlutterSecureStorage();
-
-      // Read value
-      String jwt = await storage.read(key: "jwt");
-
       prefs = await SharedPreferences.getInstance();
 
       loginUser = new User();
-      loginUser.jwt = jwt;
+      loginUser.jwt = prefs.getString("jwt");
       loginUser.name = prefs.getString("userName");
       loginUser.email = prefs.getString("userEmail");
       loginUser.seqNo = prefs.getString("userSeqNo");

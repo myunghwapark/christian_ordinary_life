@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
@@ -10,7 +12,6 @@ import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingComplete.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
@@ -34,13 +35,22 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   List<BiblePlan> biblePlanList = <BiblePlan>[];
   GoalInfo goalInfo = new GoalInfo();
+  bool _isLoading = false;
 
   Future<void> _getBiblePlan() async {
     BiblePlan result;
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       await API.transaction(context, API.biblePlanList,
           param: {'language': CommonSettings.language}).then((response) {
         result = BiblePlan.fromJson(json.decode(response));
+
+        setState(() {
+          _isLoading = false;
+        });
 
         if (result.result == 'success') {
           setState(() {
@@ -68,6 +78,10 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
 
     return result;
@@ -169,16 +183,21 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                 Translations.of(context).trans('bible_reading_plan'),
                 onBackTap: _backScreen,
               ),
-        body: ListView.builder(
-            itemCount: biblePlanList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                onTap: () {
-                  _onRadioChanged(index);
-                },
-                title: RadioBox(biblePlanList[index]),
-              );
-            }));
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: ListView.builder(
+                itemCount: biblePlanList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    onTap: () {
+                      _onRadioChanged(index);
+                    },
+                    title: RadioBox(biblePlanList[index]),
+                  );
+                })));
   }
 
   @override
@@ -186,5 +205,10 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     super.initState();
     bibleUserPlan = widget.bibleUserPlan;
     _getBiblePlan();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

@@ -32,7 +32,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
   List<GoalProgress> _goalProgress = new List<GoalProgress>();
   String _yearMonth;
 
-  void _onDaySelected(DateTime day, List events) {
+  void _onDaySelected(DateTime day, List events, List holidays) {
     setState(() {
       _selectedEvents = events;
     });
@@ -249,8 +249,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
           return children;
         },
       ),
-      onDaySelected: (date, events) {
-        _onDaySelected(date, events);
+      onDaySelected: (date, events, holidays) {
+        _onDaySelected(date, events, holidays);
         _animationController.forward(from: 0.0);
       },
       onVisibleDaysChanged: _onVisibleDaysChanged,

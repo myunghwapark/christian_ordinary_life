@@ -2,6 +2,7 @@ import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
@@ -32,6 +33,7 @@ class MainScreenState extends State<MainScreen> {
   TodayBible todayBible = new TodayBible();
   BiblePhrase biblePhrase = new BiblePhrase();
   CommonSettings commonSettings = new CommonSettings();
+  bool _isLoading = false;
 
   String _year = '';
   String _date = '';
@@ -212,9 +214,11 @@ class MainScreenState extends State<MainScreen> {
 
   Future<void> _getTodaysBible() async {
     await goalInfo.getTodaysBible(context).then((value) {
-      setState(() {
-        todayBible = value;
-      });
+      if (this.mounted) {
+        setState(() {
+          todayBible = value;
+        });
+      }
     });
   }
 
@@ -341,34 +345,45 @@ class MainScreenState extends State<MainScreen> {
       flex: 1,
     );
 
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 20,
+    return LoadingOverlay(
+        isLoading: _isLoading,
+        opacity: 0.5,
+        progressIndicator: CircularProgressIndicator(),
+        color: Colors.black,
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(
+                  child: Column(children: [
+                _dateForm,
+                (userInfo.loginCheck() &&
+                        GoalInfo.goal != null &&
+                        GoalInfo.goal.goalSet)
+                    ? _goalCheck()
+                    : _goalSet,
+                _scriptualPhrase,
+              ])),
+              SizedBox(
+                width: 20,
+              ),
+            ],
           ),
-          Expanded(
-              child: Column(children: [
-            _dateForm,
-            (userInfo.loginCheck() &&
-                    GoalInfo.goal != null &&
-                    GoalInfo.goal.goalSet)
-                ? _goalCheck()
-                : _goalSet,
-            _scriptualPhrase,
-          ])),
-          SizedBox(
-            width: 20,
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   @override
   void initState() {
     GoalInfo.goal?.goalSet = false;
+
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     getUserInfo().then((value) => goalInfo.getUserGoal(context).then((value) {
           setState(() {
             GoalInfo.goal = value;
@@ -380,6 +395,7 @@ class MainScreenState extends State<MainScreen> {
               _setGoals();
 
               getBiblePhrase().then((value) => _getTodaysBible());
+              _isLoading = false;
             });
           });
         }));
@@ -390,5 +406,10 @@ class MainScreenState extends State<MainScreen> {
     _showHowToUse();
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

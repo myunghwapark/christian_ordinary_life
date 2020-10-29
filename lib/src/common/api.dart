@@ -1,7 +1,6 @@
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/model/TransactionResult.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -10,12 +9,12 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
-  static String serverAddress = 'http://192.168.64.2/';
-  static String serverURL = serverAddress + 'col/apis/';
-  static final String systemImageURL = serverAddress + 'col/images/system/';
-  static final String diaryImageURL = serverAddress + 'col/images/diary/';
-  static final String privacyPolicy =
-      serverAddress + 'col/web/privacy_policy.php';
+  //static String serverAddress = 'http://192.168.64.2/col/';
+  static String serverAddress = 'http://christian-life.xyz/';
+  static String serverURL = serverAddress + 'apis/';
+  static final String systemImageURL = serverAddress + 'images/system/';
+  static final String diaryImageURL = serverAddress + 'images/diary/';
+  static final String privacyPolicy = serverAddress + 'web/privacy_policy.php';
 
   static String register = serverURL + 'user/register.php';
   static String login = serverURL + 'user/login.php';
@@ -62,8 +61,8 @@ class API {
 
   static Future<dynamic> transaction(BuildContext context, String url,
       {Map param}) async {
-    final storage = new FlutterSecureStorage();
-    String jwt = await storage.read(key: "jwt");
+    final prefs = await SharedPreferences.getInstance();
+    String jwt = prefs.getString("jwt");
     param['jwt'] = jwt;
     param['keepLogin'] = UserInfo.loginUser.keepLogin;
 
@@ -92,7 +91,11 @@ class API {
         logout(context);
       } else {
         Map<String, dynamic> map = json.decode(response.body);
-        if (map['jwt'] != null) storage.write(key: "jwt", value: map['jwt']);
+
+        if (map['jwt'] != null) {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setString('jwt', map['jwt']);
+        }
       }
     } on Exception catch (exception) {
       errorMessage(context, exception);

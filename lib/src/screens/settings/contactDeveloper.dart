@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:christian_ordinary_life/src/common/getImage.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 
 class ContactDeveloper extends StatefulWidget {
   @override
@@ -23,6 +25,8 @@ class ContactDeveloperState extends State<ContactDeveloper> {
   PickedFile _imageFile;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  ComponentStyle componentStyle = new ComponentStyle();
+  bool _isLoading = false;
 
   TextEditingController _replyEmailController = new TextEditingController();
   final _recipientController = TextEditingController(
@@ -34,6 +38,10 @@ class ContactDeveloperState extends State<ContactDeveloper> {
 
   Future<void> send() async {
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
       final Email email = Email(
         body: _bodyController.text,
         subject: _subjectController.text,
@@ -47,8 +55,15 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       try {
         await FlutterEmailSender.send(email);
         platformResponse = 'success';
+        setState(() {
+          _isLoading = false;
+        });
       } catch (error) {
         platformResponse = error.toString();
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
 
       if (!mounted) return;
@@ -80,10 +95,8 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       child: TextFormField(
         readOnly: true,
         controller: _recipientController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: Translations.of(context).trans('recipient'),
-        ),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('recipient')),
         validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_empty_email');
@@ -97,10 +110,8 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       padding: EdgeInsets.all(8.0),
       child: TextFormField(
         controller: _replyEmailController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: Translations.of(context).trans('email_for_reply'),
-        ),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('email_for_reply')),
       ),
     );
 
@@ -108,10 +119,8 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       padding: EdgeInsets.all(8.0),
       child: TextFormField(
         controller: _subjectController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: Translations.of(context).trans('subject'),
-        ),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('subject')),
         validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_title');
@@ -126,9 +135,8 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       child: TextFormField(
         controller: _bodyController,
         maxLines: 15,
-        decoration: InputDecoration(
-            hintText: Translations.of(context).trans('contact_hint'),
-            border: OutlineInputBorder()),
+        decoration: componentStyle
+            .whiteGreyInput(Translations.of(context).trans('contact_hint')),
         validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_content');
@@ -198,26 +206,31 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       appBar: appBarComponent(
           context, Translations.of(context).trans('contact_developer'),
           actionWidget: _actionIcon()),
-      body: SingleChildScrollView(
-          child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    _recipient,
-                    _replyEmail,
-                    _subject,
-                    _content,
-                    _htmlCheckbox,
-                    ...attachments.map((item) {
-                      return _attachment;
-                    }),
-                  ],
-                ),
-              ))),
+      body: LoadingOverlay(
+          isLoading: _isLoading,
+          opacity: 0.5,
+          progressIndicator: CircularProgressIndicator(),
+          color: Colors.black,
+          child: SingleChildScrollView(
+              child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _recipient,
+                        _replyEmail,
+                        _subject,
+                        _content,
+                        _htmlCheckbox,
+                        ...attachments.map((item) {
+                          return _attachment;
+                        }),
+                      ],
+                    ),
+                  )))),
       floatingActionButton: FloatingActionButton.extended(
         icon: Icon(Icons.camera),
         label: Text(Translations.of(context).trans('add_image')),

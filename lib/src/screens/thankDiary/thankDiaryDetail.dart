@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:share/share.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -26,13 +27,23 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   List<String> imagePaths = [];
   String _text = '';
   String _subject = '';
+  bool _isLoading = false;
 
   Future<void> getThankDiary() async {
     try {
+      if (this.mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+
       await API.transaction(context, API.thanksDiaryDetail, param: {
         'thankDiarySeqNo': widget.diary.seqNo,
         'diaryDate': widget.diary.diaryDate
       }).then((response) {
+        setState(() {
+          _isLoading = false;
+        });
         Diary diary = Diary.fromJson(json.decode(response));
         List<Diary> tempList;
         if (diary.detail.length != 0) {
@@ -66,6 +77,10 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -159,55 +174,60 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
         appBar: appBarComponent(
             context, Translations.of(context).trans('menu_thank_diary'),
             actionWidget: actionIcon()),
-        body: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.all(15),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Row(
-                  children: [
-                    _categoryIcon,
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Row(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _diaryDate,
-                            IconButton(
-                                icon: Icon(
-                                  Icons.ios_share,
-                                  color: AppColors.pastelPink,
-                                ),
-                                onPressed: () {
-                                  _share(context);
-                                }),
-                          ],
+                        _categoryIcon,
+                        SizedBox(
+                          width: 10,
                         ),
-                        _diaryTitle,
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _diaryDate,
+                                IconButton(
+                                    icon: Icon(
+                                      Icons.ios_share,
+                                      color: AppColors.pastelPink,
+                                    ),
+                                    onPressed: () {
+                                      _share(context);
+                                    }),
+                              ],
+                            ),
+                            _diaryTitle,
+                          ],
+                        ))
                       ],
-                    ))
+                    ),
+                    Divider(
+                      color: AppColors.pastelPink,
+                    ),
+                    _image,
+                    _diaryContent
                   ],
                 ),
-                Divider(
-                  color: AppColors.pastelPink,
-                ),
-                _image,
-                _diaryContent
-              ],
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 
   @override

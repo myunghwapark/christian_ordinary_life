@@ -1,12 +1,13 @@
-import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:flutter/material.dart';
-import 'package:christian_ordinary_life/src/common/colors.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:flutter/cupertino.dart';
-import '../../common/translations.dart';
-import '../../component/appBarComponent.dart';
-import '../../component/timeBox.dart';
-import '../../common/util.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
+import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/translations.dart';
+import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/component/timeBox.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
 
 class GoalSettingPraying extends StatefulWidget {
   final Goal goal;
@@ -49,10 +50,6 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
     DateTime _dateTime = new DateTime(today.year, today.month, today.day,
         int.parse(_setHour), int.parse(_setMinute));
     return _dateTime;
-  }
-
-  void _handleSubmitted(String text) {
-    _prayingTimeController.clear();
   }
 
   void _onRadioChanged(int value) {
@@ -100,7 +97,6 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
         child: TextField(
             textAlign: TextAlign.center,
             controller: _prayingTimeController,
-            onSubmitted: _handleSubmitted,
             keyboardType: TextInputType.number,
             maxLength: 3,
             decoration: InputDecoration(
@@ -138,9 +134,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Translations.of(context).localeLaunguageCode() != 'ko'
-                ? _preposition
-                : Container(),
+            CommonSettings.language != 'ko' ? _preposition : Container(),
             _prayingTime,
             Text(Translations.of(context).trans('purposeful_prayer_time_3'),
                 style: TextStyle(
@@ -210,5 +204,11 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
   void initState() {
     _init();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _prayingTimeController.dispose();
+    super.dispose();
   }
 }

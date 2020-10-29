@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
-import 'package:flutter/material.dart';
 
 class GoalSettingComplete extends StatefulWidget {
   final bool nothingSelected;
@@ -33,6 +33,7 @@ class GoalSettingCompleteState extends State<GoalSettingComplete> {
           ),
         )
       ],
+      leading: Container(),
     );
 
     String normarMent = Translations.of(context).trans('goal_setted');
@@ -83,5 +84,10 @@ class GoalSettingCompleteState extends State<GoalSettingComplete> {
         ),
       ))
     ]);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
