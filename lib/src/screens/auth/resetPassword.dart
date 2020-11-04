@@ -120,6 +120,7 @@ class ResetPasswordState extends State<ResetPassword> {
     final _sendButton = appButtons
         .filledGreenButton(Translations.of(context).trans('send'), () {
       if (_formKey.currentState.validate()) {
+        hideKeyboard(context);
         setState(() {
           _isLoading = true;
         });

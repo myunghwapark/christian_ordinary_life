@@ -20,6 +20,7 @@ class ComponentStyle {
         icon,
         color: AppColors.greenPointMild,
       ),
+      errorMaxLines: 3,
     );
   }
 

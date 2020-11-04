@@ -66,6 +66,7 @@ class ThankDiaryState extends State<ThankDiary> {
         _isLoading = true;
       });
     }
+    if (!initLoad) hideKeyboard(context);
 
     try {
       await API.transaction(context, API.thanksDiaryList, param: {

@@ -264,6 +264,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           newDiary.diaryDate = diaryDate.toString();
           newDiary.categoryImageUrl = _selectedCategory.categoryImageUrl;
 
+          hideKeyboard(context);
           _writeDiary();
         }
       },
@@ -560,35 +561,39 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: SingleChildScrollView(
-                controller: _scroll,
-                padding: EdgeInsets.all(10),
-                child: Form(
-                    key: _formKey,
-                    child: new Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            _categoryButton,
-                            _calendarButton,
-                            _diaryDate,
-                            _deleteButton,
+            child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                child: SingleChildScrollView(
+                    controller: _scroll,
+                    padding: EdgeInsets.all(10),
+                    child: Form(
+                        key: _formKey,
+                        child: new Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                _categoryButton,
+                                _calendarButton,
+                                _diaryDate,
+                                _deleteButton,
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _imageButton,
+                                _diaryTitle,
+                              ],
+                            ),
+                            _diaryContent,
+                            Padding(
+                              padding: EdgeInsets.all(130),
+                            )
                           ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _imageButton,
-                            _diaryTitle,
-                          ],
-                        ),
-                        _diaryContent,
-                        Padding(
-                          padding: EdgeInsets.all(130),
-                        )
-                      ],
-                    )))));
+                        ))))));
   }
 }

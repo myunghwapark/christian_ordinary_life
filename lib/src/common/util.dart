@@ -1,7 +1,6 @@
-import 'package:christian_ordinary_life/src/component/calendar.dart';
-import 'package:christian_ordinary_life/src/component/loadingIndicator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 
 String wrongImage() {
@@ -154,22 +153,41 @@ Future<String> showConfirmDialog(BuildContext context, String alertText) async {
   return result;
 }
 /* 
-void showLoading(BuildContext context) {
-  AlertDialog alert = AlertDialog(
-    content: new Row(
-      children: [
-        CircularProgressIndicator(),
-        Container(margin: EdgeInsets.only(left: 5), child: Text("Loading")),
-      ],
-    ),
-  );
-  showDialog(
-    barrierDismissible: false,
+Future<String> showTimeConfirmDialog(BuildContext context, Alarm alarm) async {
+  List<String> time = alarm.time.split(':');
+
+  String result = await showDialog(
     context: context,
+    barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      return alert;
+      return AlertDialog(
+        content: Column(
+          children: [
+            Text(Translations.of(context).trans('alarm_confirm')),
+            Row(
+              children: [],
+            )
+          ],
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(Translations.of(context).trans('cancel')),
+            onPressed: () {
+              Navigator.pop(context, "cancel");
+            },
+          ),
+          FlatButton(
+            child: Text(Translations.of(context).trans('confirm')),
+            onPressed: () {
+              Navigator.pop(context, "ok");
+            },
+          ),
+        ],
+      );
     },
   );
+
+  return result;
 } */
 
 Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
@@ -181,16 +199,6 @@ Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
       });
 
   return result;
-}
-
-void showLoading(BuildContext context) {
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return LoadingIndicator();
-    },
-  );
 }
 
 void showToast(GlobalKey<ScaffoldState> scaffordKey, String toastText,
@@ -239,7 +247,7 @@ Future<String> showImageDialog(BuildContext context, Image image) async {
             ),
             Flexible(
                 fit: FlexFit.tight,
-                flex: 1,
+                flex: 2,
                 child: FlatButton(
                   child: Text(
                     Translations.of(context).trans('close'),
@@ -267,8 +275,8 @@ Future<String> showImageDialog(BuildContext context, Image image) async {
 }
 
 bool validatePassword(String value) {
-  Pattern pattern =
-      r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
+  Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$';
+  // r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
   RegExp regex = new RegExp(pattern);
 
   if (!regex.hasMatch(value))
@@ -314,4 +322,8 @@ Size getSizes(GlobalKey key) {
   final RenderBox renderBox = key.currentContext.findRenderObject();
   final size = renderBox.size;
   return size;
+}
+
+void hideKeyboard(BuildContext context) {
+  FocusScope.of(context).requestFocus(new FocusNode());
 }

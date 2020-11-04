@@ -13,15 +13,67 @@ class Donation extends StatefulWidget {
 
 class DonationState extends State<Donation> {
   AdmobBannerSize bannerSize;
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
 
   String getBannerAdUnitId() {
     if (Platform.isIOS) {
       return 'ca-app-pub-9598646327425938/3640376898';
-      //return 'ca-app-pub-3940256099942544/2934735716'; //test
     } else if (Platform.isAndroid) {
       return 'ca-app-pub-9598646327425938/6983713779';
+      //return 'ca-app-pub-3940256099942544/6300978111'; //test
     }
     return null;
+  }
+
+  void handleEvent(
+      AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+    switch (event) {
+      case AdmobAdEvent.loaded:
+        showSnackBar('New Admob $adType Ad loaded!');
+        break;
+      case AdmobAdEvent.opened:
+        showSnackBar('Admob $adType Ad opened!');
+        break;
+      case AdmobAdEvent.closed:
+        showSnackBar('Admob $adType Ad closed!');
+        break;
+      case AdmobAdEvent.failedToLoad:
+        showSnackBar('Admob $adType failed to load. :(');
+        break;
+      case AdmobAdEvent.rewarded:
+        showDialog(
+          context: scaffoldState.currentContext,
+          builder: (BuildContext context) {
+            return WillPopScope(
+              child: AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Reward callback fired. Thanks Andrew!'),
+                    Text('Type: ${args['type']}'),
+                    Text('Amount: ${args['amount']}'),
+                  ],
+                ),
+              ),
+              onWillPop: () async {
+                scaffoldState.currentState.hideCurrentSnackBar();
+                return true;
+              },
+            );
+          },
+        );
+        break;
+      default:
+    }
+  }
+
+  void showSnackBar(String content) {
+    scaffoldState.currentState.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: Duration(milliseconds: 1500),
+      ),
+    );
   }
 
   @override
@@ -166,6 +218,7 @@ class DonationState extends State<Donation> {
     );
 
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: Colors.white,
       appBar:
           appBarComponent(context, Translations.of(context).trans('donation')),

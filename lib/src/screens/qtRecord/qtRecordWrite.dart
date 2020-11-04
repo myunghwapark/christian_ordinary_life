@@ -129,6 +129,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
               bible: _bibleController.text,
               qtDate: qtDate.toString());
 
+          hideKeyboard(context);
           _writeQT();
         }
       },
@@ -285,28 +286,32 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: SingleChildScrollView(
-                controller: _scroll,
-                padding: EdgeInsets.all(10),
-                child: Form(
-                    key: _formKey,
-                    child: new Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            _calendarButton,
-                            _qtDate,
-                            _deleteButton,
+            child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                child: SingleChildScrollView(
+                    controller: _scroll,
+                    padding: EdgeInsets.all(10),
+                    child: Form(
+                        key: _formKey,
+                        child: new Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                _calendarButton,
+                                _qtDate,
+                                _deleteButton,
+                              ],
+                            ),
+                            _qtTitle,
+                            _qtBible,
+                            _qtContent,
+                            Padding(
+                              padding: EdgeInsets.all(130),
+                            )
                           ],
-                        ),
-                        _qtTitle,
-                        _qtBible,
-                        _qtContent,
-                        Padding(
-                          padding: EdgeInsets.all(130),
-                        )
-                      ],
-                    )))));
+                        ))))));
   }
 }

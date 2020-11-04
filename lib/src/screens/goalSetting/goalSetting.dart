@@ -1,7 +1,11 @@
+import 'package:christian_ordinary_life/src/model/Alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
@@ -34,12 +38,25 @@ class GoalSettingState extends State<GoalSetting> {
   bool _isLoading = false;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  String timezone;
+  CommonSettings commonSettings = new CommonSettings();
+
+  Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+    try {
+      timezone = await FlutterNativeTimezone.getLocalTimezone();
+    } on PlatformException {
+      print('Failed to get the timezone.');
+    }
+    final String timeZoneName = timezone;
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+  }
 
   Future<void> setUserGoal() async {
     bool saveAvailable = true;
     if (!goalInfo.checkContent(context, bibleUserPlan)) saveAvailable = false;
 
-    if (GoalInfo.goal.oldBiblePlan != null && GoalInfo.goal.oldBiblePlan) {
+    if (_compareBiblePlan()) {
       await showConfirmDialog(context,
               Translations.of(context).trans('replace_bible_plan_ment'))
           .then((value) {
@@ -47,10 +64,30 @@ class GoalSettingState extends State<GoalSetting> {
       });
     }
 
+    // If bible plan is the same as before, do not change.
+    if (_isEqualBiblePlan()) {
+      GoalInfo.goal.keepBiblePlan = true;
+    } else {
+      GoalInfo.goal.keepBiblePlan = false;
+    }
+
     if (saveAvailable) {
       setState(() {
         _isLoading = true;
       });
+
+      _cancelAllNotifications();
+
+      if (GoalInfo.goal.qtAlarm) {
+        await _setAlarm('qt');
+      } else {
+        _saveAlarm('qt', false);
+      }
+      if (GoalInfo.goal.prayingAlarm) {
+        await _setAlarm('praying');
+      } else {
+        _saveAlarm('praying', false);
+      }
       goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
         setState(() {
           _isLoading = false;
@@ -71,6 +108,68 @@ class GoalSettingState extends State<GoalSetting> {
                   builder: (context) => GoalSettingComplete(nothingSelected)));
         }
       });
+    }
+  }
+
+  bool _isEqualBiblePlan() {
+    bool equal = false;
+    if (GoalInfo.goal.readingBible == true &&
+        GoalInfo.goal.oldBiblePlan == true &&
+        GoalInfo.goal.oldBiblePlanId != null &&
+        GoalInfo.goal.oldBiblePlanId.isNotEmpty &&
+        bibleUserPlan.biblePlanId.isNotEmpty &&
+        GoalInfo.goal.oldBiblePlanId == bibleUserPlan.biblePlanId &&
+        GoalInfo.goal.oldPlanPeriod != null &&
+        GoalInfo.goal.oldPlanPeriod.isNotEmpty &&
+        bibleUserPlan.planPeriod.isNotEmpty &&
+        GoalInfo.goal.oldPlanPeriod == bibleUserPlan.planPeriod &&
+        GoalInfo.goal.oldCustomBible == bibleUserPlan.customBible) {
+      equal = true;
+    }
+
+    return equal;
+  }
+
+  bool _compareBiblePlan() {
+    bool different = false;
+    if ((GoalInfo.goal.oldBiblePlanId != null &&
+            GoalInfo.goal.oldBiblePlanId.isNotEmpty &&
+            bibleUserPlan.biblePlanId != null &&
+            bibleUserPlan.biblePlanId.isNotEmpty &&
+            GoalInfo.goal.oldBiblePlanId != bibleUserPlan.biblePlanId) ||
+        (GoalInfo.goal.oldPlanPeriod != null &&
+            GoalInfo.goal.oldPlanPeriod.isNotEmpty &&
+            bibleUserPlan.planPeriod != null &&
+            bibleUserPlan.planPeriod.isNotEmpty &&
+            GoalInfo.goal.oldPlanPeriod != bibleUserPlan.planPeriod) ||
+        GoalInfo.goal.oldCustomBible != bibleUserPlan.customBible) {
+      different = true;
+    }
+
+    return different;
+  }
+
+  Future<void> _saveAlarm(String target, bool allow) async {
+    Alarm alarm = new Alarm();
+    alarm.title = target;
+    alarm.time = GoalInfo.goal.prayingTime;
+    alarm.allow = allow;
+    await commonSettings.setAlarm(alarm);
+  }
+
+  Future<void> _setAlarm(String target) async {
+    _saveAlarm(target, true);
+
+    if (target == 'praying') {
+      String prayingTime = GoalInfo.goal.prayingTime;
+      List<String> time = prayingTime.split(':');
+      Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
+      await _dailyPrayingTimeNotification(alramTime);
+    } else if (target == 'qt') {
+      String qtTime = GoalInfo.goal.qtTime;
+      List<String> time = qtTime.split(':');
+      Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
+      await _dailyQtTimeNotification(alramTime);
     }
   }
 
@@ -117,7 +216,9 @@ class GoalSettingState extends State<GoalSetting> {
                           bibleUserPlan: bibleUserPlan,
                         ))).then((value) {
               if (value != null) {
-                bibleUserPlan = value['bibleUserPlan'];
+                setState(() {
+                  bibleUserPlan = value['bibleUserPlan'];
+                });
               }
             });
           }
@@ -179,11 +280,11 @@ class GoalSettingState extends State<GoalSetting> {
 
   Future<void> _dailyQtTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
+        CommonSettings.qtAlarmId,
         '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('qt_time')}',
         Translations.of(context)
             .trans('qt_time_alarm_message', param1: UserInfo.loginUser.name),
-        _nextInstanceOfTenAM(alarmTime),
+        _scheduledDaily(alarmTime),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'qt',
@@ -201,11 +302,11 @@ class GoalSettingState extends State<GoalSetting> {
 
   Future<void> _dailyPrayingTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        0,
+        CommonSettings.prayingAlarmId,
         '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('praying_time')}',
         Translations.of(context).trans('praying_time_alarm_message',
             param1: UserInfo.loginUser.name),
-        _nextInstanceOfTenAM(alarmTime),
+        _scheduledDaily(alarmTime),
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'praying',
@@ -221,14 +322,11 @@ class GoalSettingState extends State<GoalSetting> {
         matchDateTimeComponents: DateTimeComponents.time);
   }
 
-  tz.TZDateTime _nextInstanceOfTenAM(Time alarmTime) {
+  tz.TZDateTime _scheduledDaily(Time alarmTime) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    print(
-        'TZDateTime:  ${tz.local}, ${now.year}, ${now.month}, ${now.day}, ${now.hour}, ${now.minute}');
     tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month,
         now.day, alarmTime.hour, alarmTime.minute);
     //if (scheduledDate.isBefore(now)) {
-    print('schedule added');
     scheduledDate = scheduledDate.add(const Duration(days: 1));
     // }
     return scheduledDate;
@@ -264,8 +362,7 @@ class GoalSettingState extends State<GoalSetting> {
     });
 
     // alarm function setting
-
-    tz.initializeTimeZones();
+    _configureLocalTimeZone();
 
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');

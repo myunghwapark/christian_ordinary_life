@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:share/share.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
@@ -24,13 +25,22 @@ class QtRecordDetailState extends State<QtRecordDetail> {
   QT detailQt = new QT();
   String _text = '';
   String _subject = '';
+  bool _isLoading = false;
 
   Future<void> getQtRecord() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
+
       await API.transaction(context, API.qtRecordDetail, param: {
         'qtRecordSeqNo': widget.qt.seqNo,
         'qtDate': widget.qt.qtDate
       }).then((response) {
+        setState(() {
+          _isLoading = false;
+        });
+
         QT qt = QT.fromJson(json.decode(response));
         List<QT> tempList;
         if (qt.detail.length != 0) {
@@ -59,6 +69,10 @@ class QtRecordDetailState extends State<QtRecordDetail> {
     } catch (error) {
       errorMessage(context, error);
       return null;
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -126,39 +140,44 @@ class QtRecordDetailState extends State<QtRecordDetail> {
         appBar: appBarComponent(
             context, Translations.of(context).trans('menu_qt_record'),
             actionWidget: actionIcon()),
-        body: SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.all(15),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _qtDate,
-                      IconButton(
-                          icon: Icon(
-                            Icons.ios_share,
-                            color: AppColors.sky,
-                          ),
-                          onPressed: () {
-                            _share(context);
-                          }),
-                    ]),
-                _qtTitle,
-                Divider(
-                  color: AppColors.greenPoint,
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.all(15),
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _qtDate,
+                          IconButton(
+                              icon: Icon(
+                                Icons.ios_share,
+                                color: AppColors.sky,
+                              ),
+                              onPressed: () {
+                                _share(context);
+                              }),
+                        ]),
+                    _qtTitle,
+                    Divider(
+                      color: AppColors.greenPoint,
+                    ),
+                    _qtContent
+                  ],
                 ),
-                _qtContent
-              ],
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 
   @override

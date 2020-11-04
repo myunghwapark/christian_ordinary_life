@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "195513654442",
+    "firebase_url": "https://christian-ordinary-life.firebaseio.com",
+    "project_id": "christian-ordinary-life",
+    "storage_bucket": "christian-ordinary-life.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:195513654442:android:5a7bb1d7b609f7f685c4d3",
+        "android_client_info": {
+          "package_name": "com.alice.christian_ordinary_life"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "195513654442-c1v9ff5fc32k1686jbl3orbfoqj882mq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUDcASBKTpy4pk2FFWqkgmNAzTDiuHqec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "195513654442-c1v9ff5fc32k1686jbl3orbfoqj882mq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "195513654442-79opvl49k0nd42080k86pvti6ahcp4vu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.alice.christianOrdinaryLife"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

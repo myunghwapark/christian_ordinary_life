@@ -82,6 +82,15 @@ class ContactDeveloperState extends State<ContactDeveloper> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _subjectController.text = Translations.of(context).trans('contact_title');
+
+    _bodyController.text = '';
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_first) {
       _subjectController.text = Translations.of(context).trans('contact_title');

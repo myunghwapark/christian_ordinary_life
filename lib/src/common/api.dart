@@ -1,16 +1,16 @@
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
-import 'package:christian_ordinary_life/src/model/TransactionResult.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/model/TransactionResult.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class API {
   //static String serverAddress = 'http://192.168.64.2/col/';
-  static String serverAddress = 'http://christian-life.xyz/';
+  static String serverAddress = 'https://christian-life.xyz/';
   static String serverURL = serverAddress + 'apis/';
   static final String systemImageURL = serverAddress + 'images/system/';
   static final String diaryImageURL = serverAddress + 'images/diary/';
@@ -66,6 +66,7 @@ class API {
     param['jwt'] = jwt;
     param['keepLogin'] = UserInfo.loginUser.keepLogin;
 
+    //print('param: $param');
     final response = await http
         .post(url,
             headers: <String, String>{
@@ -77,18 +78,20 @@ class API {
     });
 
     try {
+      // print(response.body);
       // Error
       if (response.statusCode != 200) {
         showAlertDialog(
             context, Translations.of(context).trans('error_message'));
         return null;
       }
-      //print(response.body);
       TransactionResult transactionResult =
           TransactionResult.fromJson(json.decode(response.body));
 
       if (transactionResult.errorMessage == 'Expired token') {
-        logout(context);
+        logout(context, 'expired');
+      } else if (transactionResult.errorMessage == 'Invalid token') {
+        logout(context, 'Invalid');
       } else {
         Map<String, dynamic> map = json.decode(response.body);
 
@@ -108,8 +111,15 @@ class API {
     return response.body;
   }
 
-  static Future<void> logout(BuildContext context) async {
-    showAlertDialog(context, Translations.of(context).trans('login_expired'))
+  static Future<void> logout(BuildContext context, String errorType) async {
+    String text = '';
+    if (errorType == 'expired') {
+      text = 'login_expired';
+    } else {
+      text = 'invalid_token';
+    }
+
+    showAlertDialog(context, Translations.of(context).trans(text))
         .then((value) async {
       UserInfo userInfo = new UserInfo();
       userInfo.logtOutProcess(context);

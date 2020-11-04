@@ -41,12 +41,13 @@ dependencies:
   flutter_cupertino_date_picker: ^1.0.26+2
   badges: ^1.1.4
   image_picker: ^0.6.7+12
-  admob_flutter: ^1.0.0
+  admob_flutter: ^1.0.1
   flutter_email_sender: ^3.0.1
   loading_overlay: ^0.2.1
   webview_flutter: ^1.0.5
   flutter_local_notifications: ^3.0.1
   timezone: ^0.5.9
+  flutter_native_timezone: ^1.0.4
   share: ^0.6.5+3
 
   

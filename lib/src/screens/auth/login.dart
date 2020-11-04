@@ -176,6 +176,7 @@ class LoginState extends State<Login> {
     final loginButton = appButtons
         .filledGreenButton(Translations.of(context).trans('login'), () {
       if (_formKey.currentState.validate()) {
+        hideKeyboard(context);
         User userInfo = User(
             email: emailController.text, password: passwordController.text);
 
@@ -241,32 +242,38 @@ class LoginState extends State<Login> {
               opacity: 0.5,
               progressIndicator: CircularProgressIndicator(),
               color: Colors.black,
-              child: SingleChildScrollView(
-                  child: Container(
-                      padding: EdgeInsets.all(20),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            closeButton,
-                            loginLabel,
-                            Container(
-                              height: 20,
+              child: GestureDetector(
+                  onTap: () {
+                    hideKeyboard(context);
+                  },
+                  child: SingleChildScrollView(
+                      child: Container(
+                          padding: EdgeInsets.all(20),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                closeButton,
+                                loginLabel,
+                                Container(
+                                  height: 20,
+                                ),
+                                email,
+                                SizedBox(height: 10.0),
+                                password,
+                                keepLogin,
+                                loginButton,
+                                labelOr,
+                                otherOption,
+                                Padding(
+                                  padding: EdgeInsets.all(110),
+                                ),
+                              ],
                             ),
-                            email,
-                            SizedBox(height: 10.0),
-                            password,
-                            keepLogin,
-                            loginButton,
-                            labelOr,
-                            otherOption,
-                            SizedBox(height: 14.0),
-                          ],
-                        ),
-                      )))))
+                          ))))))
     ]);
   }
 

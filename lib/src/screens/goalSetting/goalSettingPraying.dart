@@ -128,9 +128,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
                     fontWeight: FontWeight.w300,
                   )),
               _prayingTimeBox,
-              Translations.of(context).localeLaunguageCode() == 'ko'
-                  ? _preposition
-                  : Container(),
+              CommonSettings.language == 'ko' ? _preposition : Container(),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [

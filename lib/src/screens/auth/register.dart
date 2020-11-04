@@ -24,6 +24,8 @@ class RegisterState extends State<Register> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordConfirmController = TextEditingController();
+  ScrollController _scroll;
+  FocusNode _focus = new FocusNode();
 
   Future<User> registerUser(User user) async {
     User userResult;
@@ -80,6 +82,15 @@ class RegisterState extends State<Register> {
 
   @override
   void initState() {
+    _scroll = new ScrollController();
+    _focus.addListener(() {
+      if (_scroll.hasClients) {
+        Future.delayed(Duration(milliseconds: 50), () {
+          _scroll?.jumpTo(120);
+        });
+      }
+    });
+
     super.initState();
   }
 
@@ -191,6 +202,7 @@ class RegisterState extends State<Register> {
         controller: passwordConfirmController,
         autofocus: false,
         obscureText: true,
+        focusNode: _focus,
         maxLength: 20,
         validator: (value) {
           if (value.isEmpty) {
@@ -207,6 +219,7 @@ class RegisterState extends State<Register> {
     final _registerButton = appButtons
         .filledGreenButton(Translations.of(context).trans('register'), () {
       if (_formKey.currentState.validate()) {
+        hideKeyboard(context);
         _register(context);
       }
     });
@@ -223,35 +236,37 @@ class RegisterState extends State<Register> {
             child: Stack(children: <Widget>[
               _background,
               Positioned(
-                child: _closeButton,
-              ),
-              Positioned(
-                  child: Form(
-                      key: _formKey,
+                  child: SingleChildScrollView(
+                      controller: _scroll,
                       child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            _registerLabel,
-                            Container(
-                              height: 20,
+                          padding: EdgeInsets.all(20),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                _closeButton,
+                                _registerLabel,
+                                Container(
+                                  height: 20,
+                                ),
+                                _email,
+                                SizedBox(height: 10.0),
+                                _name,
+                                SizedBox(height: 10.0),
+                                _password,
+                                SizedBox(height: 10.0),
+                                _passwordConfirm,
+                                SizedBox(height: 14.0),
+                                _registerButton,
+                                Padding(
+                                  padding: EdgeInsets.all(150),
+                                ),
+                              ],
                             ),
-                            _email,
-                            SizedBox(height: 10.0),
-                            _name,
-                            SizedBox(height: 10.0),
-                            _password,
-                            SizedBox(height: 10.0),
-                            _passwordConfirm,
-                            SizedBox(height: 14.0),
-                            _registerButton,
-                            SizedBox(height: 20.0),
-                          ],
-                        ),
-                      )))
+                          ))))
             ])));
   }
 }

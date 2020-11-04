@@ -1,20 +1,21 @@
 import 'dart:convert';
-
-import 'package:christian_ordinary_life/src/common/api.dart';
-import 'package:christian_ordinary_life/src/common/notification.dart';
-import 'package:christian_ordinary_life/src/common/userInfo.dart';
-import 'package:christian_ordinary_life/src/common/util.dart';
-import 'package:christian_ordinary_life/src/model/Goal.dart';
-import 'package:christian_ordinary_life/src/screens/settings/changePassword.dart';
-import 'package:christian_ordinary_life/src/screens/settings/contactDeveloper.dart';
-import 'package:christian_ordinary_life/src/screens/settings/donation.dart';
-import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
-import 'package:christian_ordinary_life/src/screens/settings/privacyPolicy.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/customPicker.dart';
+import 'package:christian_ordinary_life/src/model/Alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:settings_ui/settings_ui.dart';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
+import 'package:christian_ordinary_life/src/common/util.dart';
+import 'package:christian_ordinary_life/src/model/Goal.dart';
+import 'package:christian_ordinary_life/src/screens/settings/changePassword.dart';
+import 'package:christian_ordinary_life/src/screens/settings/donation.dart';
+import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
+import 'package:christian_ordinary_life/src/screens/settings/privacyPolicy.dart';
 import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -30,6 +31,13 @@ class Settings extends StatefulWidget {
 class SettingsState extends State<Settings> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
+  CommonSettings commonSettings = new CommonSettings();
+  String _selectedLanguage;
+  List<String> languageOption = new List<String>();
+  CustomPicker _languagePicker;
+  bool _first = true;
+  Alarm qtAlarm = new Alarm();
+  Alarm prayingAlarm = new Alarm();
 
   Future<void> _goalReset() async {
     var confirmResult = await showConfirmDialog(
@@ -71,11 +79,6 @@ class SettingsState extends State<Settings> {
     }
   }
 
-  void _goNotification() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SetNotification()));
-  }
-
   void _goHowToUse() {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => HowToUse()));
@@ -113,25 +116,86 @@ class SettingsState extends State<Settings> {
     }
   }
 
+  Future<void> _saveLanguage() async {
+    await showConfirmDialog(
+            context, Translations.of(context).trans('language_change_confirm'))
+        .then((value) async {
+      if (value == 'ok') {
+        await commonSettings.setLanguage(_selectedLanguage);
+      }
+    });
+  }
+
+  void _showLanguagePicker() async {
+    final result = await showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext builder) {
+          return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 2.5,
+              child: _languagePicker);
+        });
+
+    if (result != null) _setLanguage(result);
+  }
+
+  void _setLanguage(int selected) {
+    setState(() {
+      _selectedLanguage = languageOption[selected];
+      _saveLanguage();
+    });
+  }
+
+  void _makeLanguageOption() {
+    List<Widget> pickerList = new List<Widget>();
+    for (int i = 0; i < languageOption.length; i++) {
+      pickerList.add(Container(
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(Translations.of(context).trans(languageOption[i])),
+              )
+            ],
+          )));
+    }
+    CustomPicker customPicker = new CustomPicker(
+      pickerList: pickerList,
+    );
+    _languagePicker = customPicker;
+  }
+/* 
+  Future<void> getAlarmSetting() async {
+    Alarm tempQtAlarm = await commonSettings.getAlarm('qt');
+    Alarm tempPrayingAlarm = await commonSettings.getAlarm('praying');
+    setState(() {
+      qtAlarm = tempQtAlarm;
+      prayingAlarm = tempPrayingAlarm;
+    });
+  } */
+
   @override
   Widget build(BuildContext context) {
+    if (_first) {
+      _makeLanguageOption();
+      _first = false;
+    }
     final _userSettings = SettingsSection(
       title: Translations.of(context).trans('user'),
       tiles: [
         SettingsTile(
-          title: Translations.of(context).trans('change_password'),
-          leading: Icon(Icons.lock),
-          onTap: () {
-            _goChangePassword();
-          },
-        ),
-        SettingsTile(
-          title: 'Notification',
-          leading: Icon(Icons.lock),
-          onTap: () {
-            _goNotification();
-          },
-        ),
+            title: Translations.of(context).trans('change_password'),
+            leading: Icon(
+              Icons.lock,
+              color: AppColors.yellowishGreenDarker,
+            ),
+            onTap: () {
+              _goChangePassword();
+            },
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey[350],
+            )),
       ],
     );
 
@@ -141,55 +205,105 @@ class SettingsState extends State<Settings> {
         SettingsTile(
           title: Translations.of(context).trans('usage_guide'),
           //subtitle: 'English',
-          leading: Icon(Icons.description),
+          leading: Icon(
+            Icons.description,
+            color: AppColors.yellowishGreenDarker,
+          ),
           onTap: () {
             _goHowToUse();
           },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.grey[350],
+          ),
         ),
         SettingsTile(
           title: Translations.of(context).trans('privacy_policy'),
-          leading: Icon(Icons.security),
+          leading: Icon(Icons.security, color: AppColors.yellowishGreenDarker),
           onTap: () {
             _goPrivacyPolicy();
           },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.grey[350],
+          ),
         ),
-        SettingsTile(
-          title: Translations.of(context).trans('goal_reset'),
-          leading: Icon(Icons.gps_not_fixed),
-          onTap: _goalReset,
-        ),
-      ],
-    );
-
-    final _infoSettings = SettingsSection(
-      title: Translations.of(context).trans('info'),
-      tiles: [
         SettingsTile(
           title: Translations.of(context).trans('contact_developer'),
-          leading: Icon(Icons.send),
+          leading: Icon(Icons.send, color: AppColors.yellowishGreenDarker),
           onTap: () {
             _goContactDeveloper();
           },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.grey[350],
+          ),
         ),
         /* SettingsTile(
                   title: Translations.of(context).trans('writing_review'),
                   // leading: Icon(Icons.rate_review),
                   leading: Icon(Icons.mood),
                   onTap: () {},
+          trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey[350],
+            ),
                 ), */
         SettingsTile(
           title: Translations.of(context).trans('donation'),
-          leading: Icon(FontAwesomeIcons.donate),
+          leading: Icon(FontAwesomeIcons.donate,
+              color: AppColors.yellowishGreenDarker),
           onTap: () {
             _goDonation();
           },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.grey[350],
+          ),
+        ),
+      ],
+    );
+
+    final _appSettings = SettingsSection(
+      title: Translations.of(context).trans('setting'),
+      tiles: [
+        SettingsTile(
+          title: Translations.of(context).trans('goal_reset'),
+          leading:
+              Icon(Icons.gps_not_fixed, color: AppColors.yellowishGreenDarker),
+          onTap: _goalReset,
+          trailing: Container(),
+        ),
+        SettingsTile(
+          title: Translations.of(context).trans('language'),
+          subtitle: Translations.of(context).trans(_selectedLanguage),
+          leading: Icon(Icons.language, color: AppColors.yellowishGreenDarker),
+          onTap: () {
+            _showLanguagePicker();
+          },
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.grey[350],
+          ),
         ),
         /* SettingsTile.switchTile(
-                title: 'Use fingerprint',
-                leading: Icon(Icons.fingerprint),
-                switchValue: value,
-                onToggle: (bool value) {},
-              ), */
+          title: Translations.of(context).trans('pray_alarm'),
+          leading: Icon(FontAwesomeIcons.pray,
+              color: AppColors.yellowishGreenDarker),
+          switchValue: prayingAlarm.allow == null ? false : prayingAlarm.allow,
+          onToggle: (bool value) {
+            setState(() {
+              prayingAlarm.allow = value;
+            });
+          },
+        ),
+        SettingsTile.switchTile(
+          title: Translations.of(context).trans('qt_alarm'),
+          leading:
+              Icon(FontAwesomeIcons.pen, color: AppColors.yellowishGreenDarker),
+          switchValue: qtAlarm.allow == null ? false : qtAlarm.allow,
+          onToggle: (bool value) {},
+        ), */
       ],
     );
 
@@ -208,8 +322,20 @@ class SettingsState extends State<Settings> {
               sections: [
                 _userSettings,
                 _commonSettings,
-                _infoSettings,
+                _appSettings,
               ],
             )));
+  }
+
+  @override
+  void initState() {
+    languageOption.add('ko');
+    languageOption.add('en');
+
+    _selectedLanguage = CommonSettings.language;
+
+    // getAlarmSetting();
+
+    super.initState();
   }
 }

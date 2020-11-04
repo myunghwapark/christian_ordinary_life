@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
 import 'src/navigation/appDrawer.dart';
@@ -127,7 +126,6 @@ class MyApp extends StatelessWidget {
         for (Locale supportedLocale in supportedLocales) {
           if (supportedLocale.languageCode == locale.languageCode) {
             debugPrint("*language ok for launageCode $supportedLocale");
-            CommonSettings.language = locale.languageCode;
             return supportedLocale;
           }
         }

@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:share/share.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -24,7 +28,6 @@ class ThankDiaryDetail extends StatefulWidget {
 class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   Diary detailDiary = new Diary();
   String _imageURL;
-  List<String> imagePaths = [];
   String _text = '';
   String _subject = '';
   bool _isLoading = false;
@@ -55,7 +58,6 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
             // Set share items
             if (detailDiary.imageURL != null) {
               _imageURL = API.diaryImageURL + detailDiary.imageURL;
-              imagePaths.add(_imageURL);
             }
 
             _subject = '[' +
@@ -111,8 +113,22 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   void _share(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
 
-    if (imagePaths.isNotEmpty) {
-      await Share.shareFiles(imagePaths,
+    if (_imageURL.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+      var response = await get(_imageURL);
+      final documentDirectory = (await getExternalStorageDirectory()).path;
+      File imgFile = new File('$documentDirectory/${detailDiary.imageURL}');
+      imgFile.writeAsBytesSync(response.bodyBytes);
+      List<String> imageLocalPath = [
+        '$documentDirectory/${detailDiary.imageURL}'
+      ];
+      setState(() {
+        _isLoading = false;
+      });
+
+      await Share.shareFiles(imageLocalPath,
           text: _text,
           subject: _subject,
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);

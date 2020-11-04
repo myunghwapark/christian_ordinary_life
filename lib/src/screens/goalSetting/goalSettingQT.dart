@@ -94,7 +94,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
 
     final _resolution = Container(
       margin: EdgeInsets.only(top: 10, bottom: 10),
-      padding: EdgeInsets.only(top: 10, bottom: 27),
+      padding: EdgeInsets.only(top: 20, bottom: 27),
       child: Column(
         children: [
           Row(
@@ -106,9 +106,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
                     fontFamily: '12LotteMartHappy',
                     fontWeight: FontWeight.w300,
                   )),
-              Translations.of(context).localeLaunguageCode() == 'ko'
-                  ? _qtTimeBox
-                  : Container(),
+              CommonSettings.language == 'ko' ? _qtTimeBox : Container(),
             ],
           ),
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [

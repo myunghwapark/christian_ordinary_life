@@ -66,6 +66,7 @@ class ChangePasswordState extends State<ChangePassword> {
 
   void _apply() {
     if (_formKey.currentState.validate()) {
+      hideKeyboard(context);
       setState(() {
         _isLoading = true;
         _changePassword();

@@ -59,6 +59,9 @@ class QTRecordState extends State<QTRecord> {
         _isLoading = true;
       });
     }
+
+    if (!initLoad) hideKeyboard(context);
+
     try {
       await API.transaction(context, API.qtRecordList, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,

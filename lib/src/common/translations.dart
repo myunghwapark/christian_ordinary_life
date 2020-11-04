@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -18,9 +19,18 @@ class Translations {
   Map<String, dynamic> _bible;
 
   Future<bool> load() async {
+    CommonSettings commonSettings = new CommonSettings();
+
+    await commonSettings.getLanguage().then((value) {
+      if (value != null && value != '') {
+        CommonSettings.language = value;
+      } else {
+        CommonSettings.language = locale.languageCode;
+      }
+    });
     // App
     String data = await rootBundle
-        .loadString('assets/locale/${this.locale.languageCode}.json');
+        .loadString('assets/locale/${CommonSettings.language}.json');
 
     Map<String, dynamic> _result = json.decode(data);
 
@@ -31,7 +41,7 @@ class Translations {
 
     // Bible
     String bibleData = await rootBundle
-        .loadString('assets/locale/bible_${this.locale.languageCode}.json');
+        .loadString('assets/locale/bible_${CommonSettings.language}.json');
 
     Map<String, dynamic> _bibleResult = json.decode(bibleData);
 
@@ -64,10 +74,6 @@ class Translations {
   Map bibles() {
     return this._bible;
   }
-
-  String localeLaunguageCode() {
-    return this.locale.languageCode;
-  }
 }
 
 class TranslationsDelegate extends LocalizationsDelegate<Translations> {
@@ -81,10 +87,10 @@ class TranslationsDelegate extends LocalizationsDelegate<Translations> {
     Translations localizations = new Translations(locale);
     await localizations.load();
 
-    print("Load ${locale.languageCode}");
+    print("Load ${CommonSettings.language}");
 
     // Time Zone setting
-    if (locale.languageCode == 'ko') {
+    if (CommonSettings.language == 'ko') {
       Intl.defaultLocale = 'ko_KR';
     } else {
       Intl.defaultLocale = 'en_US';

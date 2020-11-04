@@ -27,6 +27,9 @@ class GoalInfo {
           List<Goal> goalInfo =
               result.goalInfo.map((model) => Goal.fromJson(model)).toList();
           goal = goalInfo[0];
+          goal.oldBiblePlanId = goal.biblePlanId;
+          goal.oldPlanPeriod = goal.planPeriod;
+          goal.oldCustomBible = goal.customBible;
 
           if (!goal.readingBible &&
               !goal.praying &&
@@ -112,6 +115,7 @@ class GoalInfo {
         'prayingTime': GoalInfo.goal.prayingTime,
         'prayingAlarm': GoalInfo.goal.prayingAlarm,
         'prayingDuration': GoalInfo.goal.prayingDuration,
+        'keepBiblePlan': GoalInfo.goal.keepBiblePlan,
         'biblePlanId': bibleUserPlan.biblePlanId,
         'planPeriod': bibleUserPlan.planPeriod,
         'customBible': bibleUserPlan.customBible,

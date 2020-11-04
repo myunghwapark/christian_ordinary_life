@@ -52,14 +52,6 @@ class ReadingBibleState extends State<ReadingBible> {
   int _currentChapter;
   bool _isLoading = false;
 
-  /* void _moveContent() {
-    if (_first) {
-      Size size = getSizes(_keyTodaysBible);
-      _scrollTo(size.height);
-      _first = false;
-    }
-  } */
-
   void _scrollTo(double moveHeight) {
     double maxScroll = _scrollController.position.maxScrollExtent;
 
