@@ -272,7 +272,9 @@ class SettingsState extends State<Settings> {
           leading:
               Icon(Icons.gps_not_fixed, color: AppColors.yellowishGreenDarker),
           onTap: _goalReset,
-          trailing: Container(),
+          trailing: Container(
+            width: 20,
+          ),
         ),
         SettingsTile(
           title: Translations.of(context).trans('language'),

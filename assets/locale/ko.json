@@ -138,7 +138,7 @@
     "validate_wrong_email": "이메일을 바르게 입력해주세요.",
     "validate_name": "이름을 입력해주세요.",
     "validate_empty_password": "비밀번호를 입력해주세요.",
-    "validate_wrong_password": "비밀번호는 8자 이상 영문 대소문자, 숫자를 포함해야합니다.",
+    "validate_wrong_password": "비밀번호는 8자 이상 영문, 숫자, 다음의 특수문자(!@#$%^&*~) 중 하나를 포함해야합니다.",
     "validate_empty_password_confirm": "비밀번호를 한번 더 입력해주세요.",
     "validate_not_match_password_confirm": "비밀번호가 일치하지 않습니다.",
     "register_fail_message": "회원가입에 실패하셨습니다. 잠시 후에 다시 시도해주세요.",

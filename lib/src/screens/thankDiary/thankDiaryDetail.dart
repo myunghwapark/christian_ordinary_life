@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,6 +6,7 @@ import 'dart:convert';
 import 'package:share/share.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -41,6 +41,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       }
 
       await API.transaction(context, API.thanksDiaryDetail, param: {
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'thankDiarySeqNo': widget.diary.seqNo,
         'diaryDate': widget.diary.diaryDate
       }).then((response) {

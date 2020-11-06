@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:share/share.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/User.dart';
@@ -34,6 +35,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
       });
 
       await API.transaction(context, API.qtRecordDetail, param: {
+        'userSeqNo': UserInfo.loginUser.seqNo,
         'qtRecordSeqNo': widget.qt.seqNo,
         'qtDate': widget.qt.qtDate
       }).then((response) {

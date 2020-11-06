@@ -145,7 +145,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
         borderRadius: BorderRadius.circular(20),
         toAnimate: true,
         animationType: BadgeAnimationType.slide,
-        position: BadgePosition.topEnd(top: 0, end: -6),
+        position: BadgePosition.topStart(top: 0, start: -6),
         badgeContent: Text(
           bible.getCheckOrder().toString(),
           style: TextStyle(color: Colors.white),

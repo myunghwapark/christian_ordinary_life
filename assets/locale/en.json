@@ -138,7 +138,7 @@
     "validate_wrong_email": "Please enter your email correctly.",
     "validate_name": "Please enter your name.",
     "validate_empty_password": "Please enter password.",
-    "validate_wrong_password": "The password must be at least 8 characters containing at least one uppercase letter and at least one number.",
+    "validate_wrong_password": "The password must be at least 8 characters containing at least one number, and one of the following special characters (!@#$%^&*~).",
     "validate_empty_password_confirm": "Please enter password one more.",
     "validate_not_match_password_confirm": "The password doesn't match.",
     "register_fail_message": "Member registration failed. Please try again later.",

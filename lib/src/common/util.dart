@@ -275,7 +275,7 @@ Future<String> showImageDialog(BuildContext context, Image image) async {
 }
 
 bool validatePassword(String value) {
-  Pattern pattern = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$';
+  Pattern pattern = r'^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
   // r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*~]).{8,}$';
   RegExp regex = new RegExp(pattern);
 

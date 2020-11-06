@@ -138,12 +138,27 @@ class MainScreenState extends State<MainScreen> {
               break;
             case 'praying':
               if (GoalInfo.goalProgress.praying != 'y') {
-                GoalInfo.goalProgress.praying = 'y';
-                goalInfo.setPrayingProgress(context).then((value) {
-                  setState(() {
-                    _checkVars[item] = !_checkVars[item];
-                  });
+                setState(() {
+                  _isLoading = true;
                 });
+
+                try {
+                  GoalInfo.goalProgress.praying = 'y';
+                  goalInfo.setPrayingProgress(context).then((value) {
+                    setState(() {
+                      _isLoading = false;
+                      _checkVars[item] = !_checkVars[item];
+                    });
+                  });
+                } on Exception catch (exception) {
+                  errorMessage(context, exception);
+                } catch (error) {
+                  errorMessage(context, error);
+                } finally {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
               }
               break;
             case 'thank_diary':

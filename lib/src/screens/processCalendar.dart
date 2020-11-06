@@ -56,7 +56,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
     try {
       await API.transaction(context, API.getMonthGoalProgress, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
-        'yearMonth': _yearMonth
+        'yearMonth': _yearMonth,
+        'today': getToday()
       }).then((response) {
         GoalProgress result = GoalProgress.fromJson(json.decode(response));
         if (result.result == 'success') {
