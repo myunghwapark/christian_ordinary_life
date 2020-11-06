@@ -156,7 +156,7 @@ class RegisterState extends State<Register> {
     final _email = TextFormField(
         controller: emailController,
         keyboardType: TextInputType.emailAddress,
-        maxLength: 20,
+        maxLength: 50,
         validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_empty_email');
