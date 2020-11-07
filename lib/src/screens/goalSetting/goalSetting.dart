@@ -78,12 +78,12 @@ class GoalSettingState extends State<GoalSetting> {
 
       _cancelAllNotifications();
 
-      if (GoalInfo.goal.qtAlarm) {
+      if (GoalInfo.goal.qtRecord && GoalInfo.goal.qtAlarm) {
         await _setAlarm('qt');
       } else {
         _saveAlarm('qt', false);
       }
-      if (GoalInfo.goal.prayingAlarm) {
+      if (GoalInfo.goal.praying && GoalInfo.goal.prayingAlarm) {
         await _setAlarm('praying');
       } else {
         _saveAlarm('praying', false);

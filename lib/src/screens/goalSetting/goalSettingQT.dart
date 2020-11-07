@@ -30,7 +30,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
 
   void _init() {
     goal = widget.goal;
-    if (goal.qtTime == null) {
+    if (goal.qtTime == null || goal.qtTime == '') {
       goal.qtTime = _setHour + ':' + _setMinute;
     } else {
       List<String> qtTime = goal.qtTime.split(':');

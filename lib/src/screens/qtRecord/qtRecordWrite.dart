@@ -263,7 +263,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
           decoration: componentStyle
               .whiteGreyInput(Translations.of(context).trans('qt_hint')),
           controller: _contentController,
-          maxLength: 1000,
+          maxLength: 5000,
           focusNode: _focus,
           validator: (value) {
             if (value.isEmpty) {

@@ -76,7 +76,12 @@ class AppDrawerState extends State {
                                 .trans('no_bible_plan_ment'))
                         .then((value) {
                       if (value == 'ok') {
-                        goalInfo.goBiblePlan(context);
+                        if (GoalInfo.goal.readingBible) {
+                          goalInfo.goBiblePlan(context);
+                        } else {
+                          Navigator.pushReplacementNamed(
+                              context, GoalSetting.routeName);
+                        }
                       } else {
                         Navigator.pushReplacementNamed(context, '/');
                       }
@@ -94,7 +99,7 @@ class AppDrawerState extends State {
     return Row(
       children: <Widget>[
         SizedBox(
-            width: 40,
+            width: 45,
             height: 25,
             child: FlatButton(
               color: Colors.transparent,

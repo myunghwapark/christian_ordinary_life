@@ -238,7 +238,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
             );
           }
 
-          if (events.length == count) {
+          if (events.length != 0 && events.length == count) {
             children.add(
               Positioned(
                   left: 8,

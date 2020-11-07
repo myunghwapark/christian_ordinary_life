@@ -78,13 +78,16 @@ class API {
     });
 
     try {
-      // print(response.body);
+      //print(response.body);
       // Error
       if (response.statusCode != 200) {
         showAlertDialog(
             context, Translations.of(context).trans('error_message'));
         return null;
+      } else if (response == null || response.body == null) {
+        return null;
       }
+
       TransactionResult transactionResult =
           TransactionResult.fromJson(json.decode(response.body));
 
