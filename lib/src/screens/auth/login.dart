@@ -56,7 +56,7 @@ class LoginState extends State<Login> {
         prefs.setString('userSeqNo', userResult.seqNo);
 
         Navigator.pop(context, 'success');
-      } else if (userResult.errorCode == '01') {
+      } else if (userResult.errorCode == '02') {
         showAlertDialog(
             context, Translations.of(context).trans('wrong_information'));
       } else {
