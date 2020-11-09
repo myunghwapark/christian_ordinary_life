@@ -224,6 +224,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     }
     CustomPicker customPicker = new CustomPicker(
       pickerList: pickerList,
+      selectedItem: int.parse(_selectedCategory.categoryNo) - 1,
     );
     _thankCategoryPicker = customPicker;
   }

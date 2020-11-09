@@ -161,6 +161,7 @@ class SettingsState extends State<Settings> {
     }
     CustomPicker customPicker = new CustomPicker(
       pickerList: pickerList,
+      selectedItem: CommonSettings.language == 'ko' ? 0 : 1,
     );
     _languagePicker = customPicker;
   }

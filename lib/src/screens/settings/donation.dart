@@ -81,6 +81,7 @@ class DonationState extends State<Donation> {
     final _title = Container(
         padding: EdgeInsets.all(20),
         color: AppColors.greenPoint.withOpacity(0.1),
+        width: MediaQuery.of(context).copyWith().size.width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

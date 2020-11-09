@@ -265,6 +265,21 @@ class HowToUseState extends State<HowToUse> {
   }
 
   Widget _phoneImage(int number) {
+    var shortestSide = MediaQuery.of(context).size.shortestSide;
+
+    // Determine if we should use mobile layout or not, 600 here is
+    // a common breakpoint for a typical 7-inch tablet.
+    final bool useMobileLayout = shortestSide < 600;
+    BoxFit imageFit;
+    double imageWidth;
+    if (useMobileLayout) {
+      imageFit = BoxFit.fitWidth;
+      imageWidth = MediaQuery.of(context).copyWith().size.width - 120;
+    } else {
+      imageFit = BoxFit.fill;
+      imageWidth = MediaQuery.of(context).copyWith().size.width - 350;
+    }
+
     return Positioned(
       child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -282,8 +297,8 @@ class HowToUseState extends State<HowToUse> {
                               "_" +
                               CommonSettings.language +
                               ".jpg"),
-                  fit: BoxFit.fitWidth,
-                  width: MediaQuery.of(context).copyWith().size.width - 120,
+                  fit: imageFit,
+                  width: imageWidth,
                   alignment: Alignment.bottomCenter,
                 ),
               ],
