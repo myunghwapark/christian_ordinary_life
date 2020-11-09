@@ -1,6 +1,11 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'package:share/share.dart';
@@ -27,10 +32,12 @@ class ThankDiaryDetail extends StatefulWidget {
 
 class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   Diary detailDiary = new Diary();
-  String _imageURL;
+  String _title = '';
+  //String _imageURL;
   String _text = '';
   String _subject = '';
   bool _isLoading = false;
+  static GlobalKey previewContainer = GlobalKey();
 
   Future<void> getThankDiary() async {
     try {
@@ -43,7 +50,8 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       await API.transaction(context, API.thanksDiaryDetail, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'thankDiarySeqNo': widget.diary.seqNo,
-        'diaryDate': widget.diary.diaryDate
+        'diaryDate': widget.diary.diaryDate,
+        'language': CommonSettings.language,
       }).then((response) {
         setState(() {
           _isLoading = false;
@@ -55,18 +63,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
               diary.detail.map((model) => Diary.fromJson(model)).toList();
           setState(() {
             detailDiary = tempList[0];
-
-            // Set share items
-            if (detailDiary.imageURL != null) {
-              _imageURL = API.diaryImageURL + detailDiary.imageURL;
-            }
-
-            _subject = '[' +
-                getDateOfWeek(DateTime.parse(detailDiary.diaryDate)) +
-                '] ' +
-                detailDiary.title;
-
-            _text = detailDiary.content;
+            _setContents();
           });
         } else {
           showAlertDialog(
@@ -87,17 +84,38 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     }
   }
 
+  void _setContents() {
+    if (detailDiary.title != null && detailDiary.title != '') {
+      _title = detailDiary.title;
+    } else {
+      _title = detailDiary.categoryTitle;
+    }
+
+    // Set share items
+    /*  if (detailDiary.imageURL != null) {
+      _imageURL = API.diaryImageURL + detailDiary.imageURL;
+    } */
+
+    _subject = '[' +
+        getDateOfWeek(DateTime.parse(detailDiary.diaryDate)) +
+        '] ' +
+        detailDiary.title;
+
+    _text = detailDiary.content;
+  }
+
   Future<void> _goQtRecordWrite() async {
     await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ThankDiaryWrite(diary: widget.diary)))
+                builder: (context) => ThankDiaryWrite(diary: detailDiary)))
         .then((value) {
       if (value == 'delete') {
         Navigator.pop(context);
       } else {
         setState(() {
           detailDiary = value;
+          _setContents();
         });
       }
     });
@@ -111,10 +129,38 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     );
   }
 
+  Future<Null> _screenShotAndShare() async {
+    try {
+      RenderRepaintBoundary boundary =
+          previewContainer.currentContext.findRenderObject();
+      if (boundary.debugNeedsPaint) {
+        Timer(Duration(seconds: 1), () => _screenShotAndShare());
+        return null;
+      }
+      ui.Image image = await boundary.toImage();
+      final directory = (await getExternalStorageDirectory()).path;
+      ByteData byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData.buffer.asUint8List();
+      File imgFile = new File('$directory/screenshot.png');
+      imgFile.writeAsBytes(pngBytes);
+      List<String> imageLocalPath = ['$directory/screenshot.png'];
+      // print('Screenshot Path:' + imgFile.path);
+      final RenderBox box = context.findRenderObject();
+      Share.shareFiles(imageLocalPath,
+          subject: _subject,
+          text: _text,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    } on PlatformException catch (e) {
+      print("Exception while taking screenshot:" + e.toString());
+    }
+  }
+
+/* 
   void _share(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
 
-    if (_imageURL.isNotEmpty) {
+    if (detailDiary.imageURL != null && detailDiary.imageURL != '') {
       setState(() {
         _isLoading = true;
       });
@@ -139,7 +185,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     }
   }
-
+ */
   @override
   Widget build(BuildContext context) {
     final _categoryIcon = detailDiary.categoryImageUrl != null
@@ -158,12 +204,10 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
           )
         : Container();
 
-    final _diaryTitle = detailDiary.title != null
-        ? Text(
-            detailDiary.title,
-            style: TextStyle(color: AppColors.black, fontSize: 18),
-          )
-        : Container();
+    final _diaryTitle = Text(
+      _title,
+      style: TextStyle(color: AppColors.black, fontSize: 18),
+    );
 
     final _image = Visibility(
         visible: detailDiary.imageURL == null || detailDiary.imageURL == ''
@@ -178,6 +222,16 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
                     (detailDiary.imageURL == null
                         ? ''
                         : detailDiary.imageURL))));
+
+    final _shareButton = IconButton(
+        icon: Icon(
+          Icons.ios_share,
+          color: AppColors.pastelPink,
+        ),
+        onPressed: () {
+          //_share(context);
+          _screenShotAndShare();
+        });
 
     final _diaryContent = detailDiary.content != null
         ? Container(
@@ -197,6 +251,8 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
             child: SingleChildScrollView(
+                child: RepaintBoundary(
+              key: previewContainer,
               child: Container(
                 margin: EdgeInsets.all(15),
                 padding: EdgeInsets.all(12),
@@ -221,14 +277,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 _diaryDate,
-                                IconButton(
-                                    icon: Icon(
-                                      Icons.ios_share,
-                                      color: AppColors.pastelPink,
-                                    ),
-                                    onPressed: () {
-                                      _share(context);
-                                    }),
+                                _shareButton,
                               ],
                             ),
                             _diaryTitle,
@@ -244,7 +293,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
                   ],
                 ),
               ),
-            )));
+            ))));
   }
 
   @override

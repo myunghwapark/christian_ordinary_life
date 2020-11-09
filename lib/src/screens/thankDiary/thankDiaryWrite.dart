@@ -264,6 +264,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           newDiary.content = _contentController.text;
           newDiary.diaryDate = diaryDate.toString();
           newDiary.categoryImageUrl = _selectedCategory.categoryImageUrl;
+          newDiary.categoryNo = _selectedCategory.categoryNo;
 
           hideKeyboard(context);
           _writeDiary();
@@ -519,12 +520,6 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           controller: _titleController,
           keyboardType: TextInputType.text,
           maxLength: 80,
-          validator: (value) {
-            if (value.isEmpty) {
-              return Translations.of(context).trans('validate_title');
-            }
-            return null;
-          },
         ),
       ),
     );

@@ -7,6 +7,7 @@ class Diary {
   String errorMessage;
   String errorCode;
   String categoryNo;
+  String categoryTitle;
   String imageURL;
   String image;
   String categoryImageUrl;
@@ -24,6 +25,7 @@ class Diary {
       this.imageURL,
       this.image,
       this.categoryImageUrl,
+      this.categoryTitle,
       this.imageStatus,
       this.result,
       this.errorCode,
@@ -40,6 +42,7 @@ class Diary {
         imageURL = json['imageURL'],
         image = json['image'],
         categoryImageUrl = json['categoryImageUrl'],
+        categoryTitle = json['categoryTitle'],
         result = json['result'],
         errorMessage = json['errorMessage'],
         errorCode = json['errorCode'],

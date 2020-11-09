@@ -22,6 +22,9 @@ class ThankDiaryInfo {
               .map((model) => ThankCategory.fromJson(model))
               .toList();
 
+          thankCategoryDropbox = new List<ThankCategory>();
+          thankCategoryList = new List<ThankCategory>();
+
           ThankCategory allCategory = new ThankCategory();
           allCategory.categoryTitle = 'All Category';
           allCategory.categoryNo = '0';

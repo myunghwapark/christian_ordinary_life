@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -76,7 +77,8 @@ class ThankDiaryState extends State<ThankDiary> {
         'searchEndDate': _searchEndDate,
         'categoryNo': _categoryNo,
         'startPageNum': _startPageNum,
-        'rowCount': _rowCount
+        'rowCount': _rowCount,
+        'language': CommonSettings.language,
       }).then((response) {
         diary = Diary.fromJson(json.decode(response));
         _totalCnt = diary.totalCnt;
@@ -261,7 +263,9 @@ class ThankDiaryState extends State<ThankDiary> {
                         Container(
                             padding: EdgeInsets.only(bottom: 5),
                             child: Text(
-                              curDiary.title,
+                              (curDiary.title == null || curDiary.title == '')
+                                  ? curDiary.categoryTitle
+                                  : curDiary.title,
                               style: TextStyle(
                                   color: AppColors.black, fontSize: 18),
                               overflow: TextOverflow.ellipsis,
