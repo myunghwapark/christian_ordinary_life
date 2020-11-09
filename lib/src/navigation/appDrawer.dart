@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
@@ -23,6 +25,7 @@ class AppDrawerState extends State {
   GoalInfo goalInfo = new GoalInfo();
   Widget memberInfo;
   TodayBible todayBible = new TodayBible();
+  bool _isLoading = false;
 
   Widget _createDrawerItem(
       {String target,
@@ -162,9 +165,15 @@ class AppDrawerState extends State {
   }
 
   Future<void> _getTodaysBible() async {
+    if (this.mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
     await goalInfo.getTodaysBible(context).then((value) {
       if (this.mounted) {
         setState(() {
+          _isLoading = false;
           todayBible = value;
         });
       }
@@ -174,7 +183,11 @@ class AppDrawerState extends State {
   @override
   void initState() {
     super.initState();
-    _getLoginInfo().then((value) => _getTodaysBible());
+    _getLoginInfo().then((value) {
+      if (UserInfo.loginUser.seqNo != null) {
+        _getTodaysBible();
+      }
+    });
   }
 
   @override
@@ -231,6 +244,11 @@ class AppDrawerState extends State {
     }
 
     return Drawer(
+        child: LoadingOverlay(
+      isLoading: _isLoading,
+      opacity: 0.5,
+      progressIndicator: CircularProgressIndicator(),
+      color: Colors.black,
       child: Container(
         padding: EdgeInsets.only(left: 20, right: 20),
         decoration: BoxDecoration(
@@ -293,6 +311,6 @@ class AppDrawerState extends State {
           ),
         ),
       ),
-    );
+    ));
   }
 }

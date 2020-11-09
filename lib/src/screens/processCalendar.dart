@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+
 import 'package:christian_ordinary_life/src/model/Diary.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
 import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordDetail.dart';
@@ -31,6 +33,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
   CalendarController _calendarController;
   List<GoalProgress> _goalProgress = new List<GoalProgress>();
   String _yearMonth;
+  bool _isLoading = false;
 
   void _onDaySelected(DateTime day, List events, List holidays) {
     setState(() {
@@ -40,7 +43,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
 
   void _onCalendarCreated(
       DateTime first, DateTime last, CalendarFormat format) {
-    getProgress();
+    Future.delayed(const Duration(milliseconds: 10), getProgress);
   }
 
   void _onVisibleDaysChanged(
@@ -54,6 +57,9 @@ class ProcessCalendarState extends State<ProcessCalendar>
 
   Future<void> getProgress() async {
     try {
+      setState(() {
+        _isLoading = true;
+      });
       await API.transaction(context, API.getMonthGoalProgress, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'yearMonth': _yearMonth,
@@ -111,6 +117,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
                   ..addAll(goalDailyProgress);
               }
             }
+            _isLoading = false;
             //_selectedEvents = goalDailyProgress; // 오늘자 선택
           });
         }
@@ -119,6 +126,10 @@ class ProcessCalendarState extends State<ProcessCalendar>
       errorMessage(context, exception);
     } catch (error) {
       errorMessage(context, error);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -206,7 +217,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.only(top: 5.0, left: 18.0),
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Colors.blue[50],
               //borderRadius: BorderRadius.all(Radius.circular(50))
             ),
             width: 100,
@@ -339,23 +350,28 @@ class ProcessCalendarState extends State<ProcessCalendar>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightMint,
-      appBar: appBarComponent(
-          context, Translations.of(context).trans('menu_calendar')),
-      drawer: AppDrawer(),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          _buildTableCalendarWithBuilders(),
-          const SizedBox(height: 16.0),
-          Expanded(
-              child: Container(
-                  padding: EdgeInsets.only(top: 15),
-                  color: Colors.white.withOpacity(0.6),
-                  child: _buildEventList())),
-        ],
-      ),
-    );
+        backgroundColor: AppColors.lightMint,
+        appBar: appBarComponent(
+            context, Translations.of(context).trans('menu_calendar')),
+        drawer: AppDrawer(),
+        body: LoadingOverlay(
+          isLoading: _isLoading,
+          opacity: 0.5,
+          progressIndicator: CircularProgressIndicator(),
+          color: Colors.black,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              _buildTableCalendarWithBuilders(),
+              const SizedBox(height: 16.0),
+              Expanded(
+                  child: Container(
+                      padding: EdgeInsets.only(top: 15),
+                      color: Colors.white.withOpacity(0.6),
+                      child: _buildEventList())),
+            ],
+          ),
+        ));
   }
 
   @override

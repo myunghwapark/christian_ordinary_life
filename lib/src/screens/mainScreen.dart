@@ -390,36 +390,50 @@ class MainScreenState extends State<MainScreen> {
         ));
   }
 
+  void init() {
+    try {
+      GoalInfo.goal?.goalSet = false;
+
+      _currentDateTime = new DateTime.now();
+      _year = getYear(_currentDateTime);
+      _date = getDate(_currentDateTime);
+
+      if (this.mounted) {
+        setState(() {
+          _isLoading = true;
+        });
+      }
+      getUserInfo().then((value) => goalInfo.getUserGoal(context).then((value) {
+            setState(() {
+              GoalInfo.goal = value;
+            });
+
+            goalInfo.getGoalProgress(context).then((value) {
+              setState(() {
+                GoalInfo.goalProgress = value;
+                _setGoals();
+
+                getBiblePhrase()
+                    .then((value) => _getTodaysBible().then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }));
+              });
+            });
+          }));
+
+      _showHowToUse();
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    }
+  }
+
   @override
   void initState() {
-    GoalInfo.goal?.goalSet = false;
-
-    if (this.mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
-    getUserInfo().then((value) => goalInfo.getUserGoal(context).then((value) {
-          setState(() {
-            GoalInfo.goal = value;
-          });
-
-          goalInfo.getGoalProgress(context).then((value) {
-            setState(() {
-              GoalInfo.goalProgress = value;
-              _setGoals();
-
-              getBiblePhrase().then((value) => _getTodaysBible());
-              _isLoading = false;
-            });
-          });
-        }));
-    _currentDateTime = new DateTime.now();
-    _year = getYear(_currentDateTime);
-    _date = getDate(_currentDateTime);
-
-    _showHowToUse();
-
+    init();
     super.initState();
   }
 
