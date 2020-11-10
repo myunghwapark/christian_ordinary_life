@@ -133,11 +133,15 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     try {
       RenderRepaintBoundary boundary =
           previewContainer.currentContext.findRenderObject();
-      if (boundary.debugNeedsPaint) {
+      /*  if (boundary.debugNeedsPaint) {
         Timer(Duration(seconds: 1), () => _screenShotAndShare());
         return null;
-      }
+      } */
       ui.Image image = await boundary.toImage();
+
+      setState(() {
+        _isLoading = true;
+      });
       final directory = (await getExternalStorageDirectory()).path;
       ByteData byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
@@ -146,6 +150,10 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       imgFile.writeAsBytes(pngBytes);
       List<String> imageLocalPath = ['$directory/screenshot.png'];
       final RenderBox box = context.findRenderObject();
+
+      setState(() {
+        _isLoading = false;
+      });
       Share.shareFiles(imageLocalPath,
           subject: _subject,
           text: _text,
