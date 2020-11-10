@@ -84,7 +84,9 @@ class API {
         showAlertDialog(
             context, Translations.of(context).trans('error_message'));
         return null;
-      } else if (response == null || response.body == null) {
+      } else if (response == null ||
+          response.body == null ||
+          response.body == '') {
         return null;
       }
 
@@ -93,8 +95,10 @@ class API {
 
       if (transactionResult.errorMessage == 'Expired token') {
         logout(context, 'expired');
+        return null;
       } else if (transactionResult.errorMessage == 'Invalid token') {
         logout(context, 'Invalid');
+        return null;
       } else {
         Map<String, dynamic> map = json.decode(response.body);
 
@@ -122,7 +126,7 @@ class API {
       text = 'invalid_token';
     }
 
-    showAlertDialog(context, Translations.of(context).trans(text))
+    await showAlertDialog(context, Translations.of(context).trans(text))
         .then((value) async {
       UserInfo userInfo = new UserInfo();
       userInfo.logtOutProcess(context);

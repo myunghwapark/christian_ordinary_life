@@ -188,7 +188,8 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
-        todayBible = TodayBible.fromJson(json.decode(response));
+        if (response != null)
+          todayBible = TodayBible.fromJson(json.decode(response));
       });
     } on Exception catch (exception) {
       errorMessage(context, exception);
