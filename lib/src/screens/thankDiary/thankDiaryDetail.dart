@@ -115,7 +115,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       } else {
         setState(() {
           detailDiary = value;
-          _setContents();
+          getThankDiary();
         });
       }
     });
@@ -145,7 +145,6 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       File imgFile = new File('$directory/screenshot.png');
       imgFile.writeAsBytes(pngBytes);
       List<String> imageLocalPath = ['$directory/screenshot.png'];
-      // print('Screenshot Path:' + imgFile.path);
       final RenderBox box = context.findRenderObject();
       Share.shareFiles(imageLocalPath,
           subject: _subject,
@@ -156,10 +155,9 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     }
   }
 
-/* 
   void _share(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
-
+/* 
     if (detailDiary.imageURL != null && detailDiary.imageURL != '') {
       setState(() {
         _isLoading = true;
@@ -179,13 +177,13 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
           text: _text,
           subject: _subject,
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    } else {
-      await Share.share(_text,
-          subject: _subject,
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    }
+    } else { */
+    await Share.share(_text,
+        subject: _subject,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    //  }
   }
- */
+
   @override
   Widget build(BuildContext context) {
     final _categoryIcon = detailDiary.categoryImageUrl != null
@@ -229,8 +227,11 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
           color: AppColors.pastelPink,
         ),
         onPressed: () {
-          //_share(context);
-          _screenShotAndShare();
+          if (Platform.isAndroid) {
+            _screenShotAndShare();
+          } else {
+            _share(context);
+          }
         });
 
     final _diaryContent = detailDiary.content != null

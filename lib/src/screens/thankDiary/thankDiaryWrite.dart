@@ -191,6 +191,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           if (_savedImage != '') {
             _savedImage = '';
             newDiary.imageStatus = 'delete';
+            newDiary.imageURL = null;
           } else {
             _imageFile = null;
           }
