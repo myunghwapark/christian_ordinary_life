@@ -33,6 +33,7 @@ class ComponentStyle {
         hintText: hint,
         fillColor: Colors.white,
         filled: true,
+        errorMaxLines: 3,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
         ));
