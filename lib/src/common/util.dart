@@ -195,7 +195,14 @@ Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
       isScrollControlled: true,
       context: context,
       builder: (BuildContext builder) {
-        return Calendar(diaryDate);
+        return SafeArea(
+            top: true,
+            child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top,
+                ),
+                child: Calendar(diaryDate)));
       });
 
   return result;

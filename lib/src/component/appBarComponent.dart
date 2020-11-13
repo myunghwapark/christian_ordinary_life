@@ -45,7 +45,7 @@ Widget appBarCustom(
 }) {
   return Container(
     height: 70,
-    padding: EdgeInsets.only(top: 15),
+    padding: EdgeInsets.only(top: 10),
     color: Colors.teal,
     child: Row(children: [
       Container(
