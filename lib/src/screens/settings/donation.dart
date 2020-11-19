@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 
@@ -105,7 +104,7 @@ class DonationState extends State<Donation> {
             )
           ],
         ));
-
+/* 
     final _donation1 = Container(
       padding: EdgeInsets.symmetric(vertical: 35, horizontal: 20),
       child: Column(
@@ -155,7 +154,7 @@ class DonationState extends State<Donation> {
         ],
       ),
     );
-
+ */
     final _donation2 = Container(
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       child: Column(
@@ -164,7 +163,7 @@ class DonationState extends State<Donation> {
           Row(
             children: [
               Text(
-                Translations.of(context).trans('donation_way', param1: '2'),
+                Translations.of(context).trans('donation_way', param1: ''),
                 style: TextStyle(
                   color: AppColors.greenPoint,
                   fontSize: 17,
@@ -225,7 +224,7 @@ class DonationState extends State<Donation> {
           appBarComponent(context, Translations.of(context).trans('donation')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_title, _donation1, _donation2, _adBanner],
+        children: [_title, _donation2, _adBanner],
       ),
     );
   }

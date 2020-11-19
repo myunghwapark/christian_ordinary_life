@@ -22,36 +22,38 @@ class GoalInfo {
     try {
       await API.transaction(context, API.getUserGoal,
           param: {'userSeqNo': UserInfo.loginUser.seqNo}).then((response) {
-        result = Goal.fromJson(json.decode(response));
-        if (result.result == 'success') {
-          List<Goal> goalInfo =
-              result.goalInfo.map((model) => Goal.fromJson(model)).toList();
-          goal = goalInfo[0];
-          goal.oldBiblePlanId = goal.biblePlanId;
-          goal.oldPlanPeriod = goal.planPeriod;
-          goal.oldCustomBible = goal.customBible;
+        if (response != null) {
+          result = Goal.fromJson(json.decode(response));
+          if (result.result == 'success') {
+            List<Goal> goalInfo =
+                result.goalInfo.map((model) => Goal.fromJson(model)).toList();
+            goal = goalInfo[0];
+            goal.oldBiblePlanId = goal.biblePlanId;
+            goal.oldPlanPeriod = goal.planPeriod;
+            goal.oldCustomBible = goal.customBible;
 
-          if (!goal.readingBible &&
-              !goal.praying &&
-              !goal.qtRecord &&
-              !goal.thankDiary) {
+            if (!goal.readingBible &&
+                !goal.praying &&
+                !goal.qtRecord &&
+                !goal.thankDiary) {
+              goal.goalSet = false;
+            } else {
+              goal.goalSet = true;
+              if (goal.userBiblePlanSeqNo != null &&
+                  goal.userBiblePlanSeqNo != '') {
+                goal.oldBiblePlan = true;
+              }
+            }
+          } else if (result.errorCode == '01') {
+            goal = new Goal();
+            goal.readingBible = false;
+            goal.praying = false;
+            goal.qtRecord = false;
+            goal.thankDiary = false;
             goal.goalSet = false;
           } else {
-            goal.goalSet = true;
-            if (goal.userBiblePlanSeqNo != null &&
-                goal.userBiblePlanSeqNo != '') {
-              goal.oldBiblePlan = true;
-            }
+            errorMessage(context, result.errorMessage);
           }
-        } else if (result.errorCode == '01') {
-          goal = new Goal();
-          goal.readingBible = false;
-          goal.praying = false;
-          goal.qtRecord = false;
-          goal.thankDiary = false;
-          goal.goalSet = false;
-        } else {
-          errorMessage(context, result.errorMessage);
         }
       });
     } on Exception catch (exception) {
@@ -71,23 +73,25 @@ class GoalInfo {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'goalDate': getToday()
       }).then((response) {
-        result = GoalProgress.fromJson(json.decode(response));
-        if (result.result == 'success') {
-          List<GoalProgress> goalInfo = result.goalProgress
-              .map((model) => GoalProgress.fromJson(model))
-              .toList();
-          goalProgress = goalInfo[0];
-        }
-        // If there is no goal progress, set default setting.
-        else if (result.errorCode == '01') {
-          goalProgress = new GoalProgress();
+        if (response != null) {
+          result = GoalProgress.fromJson(json.decode(response));
+          if (result.result == 'success') {
+            List<GoalProgress> goalInfo = result.goalProgress
+                .map((model) => GoalProgress.fromJson(model))
+                .toList();
+            goalProgress = goalInfo[0];
+          }
+          // If there is no goal progress, set default setting.
+          else if (result.errorCode == '01') {
+            goalProgress = new GoalProgress();
 
-          if (!goal.readingBible) goalProgress.readingBible = '-';
-          if (!goal.praying) goalProgress.praying = '-';
-          if (!goal.qtRecord) goalProgress.qtRecord = '-';
-          if (!goal.thankDiary) goalProgress.thankDiary = '-';
-        } else {
-          errorMessage(context, result.errorMessage);
+            if (!goal.readingBible) goalProgress.readingBible = '-';
+            if (!goal.praying) goalProgress.praying = '-';
+            if (!goal.qtRecord) goalProgress.qtRecord = '-';
+            if (!goal.thankDiary) goalProgress.thankDiary = '-';
+          } else {
+            errorMessage(context, result.errorMessage);
+          }
         }
       });
     } on Exception catch (exception) {

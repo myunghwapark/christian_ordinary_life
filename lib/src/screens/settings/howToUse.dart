@@ -351,13 +351,18 @@ class HowToUseState extends State<HowToUse> {
         child: Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        FlatButton(
-          child: Text(Translations.of(context).trans('close')),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          textColor: AppColors.darkGray,
-        )
+        Container(
+            margin: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+            child: FlatButton(
+              child: Text(
+                Translations.of(context).trans('close'),
+                style: TextStyle(fontSize: 16),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              textColor: AppColors.darkGray,
+            ))
       ],
     ));
 

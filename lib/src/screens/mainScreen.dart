@@ -228,6 +228,7 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _getTodaysBible() async {
+    if (!userInfo.loginCheck()) return null;
     await goalInfo.getTodaysBible(context).then((value) {
       if (this.mounted) {
         setState(() {

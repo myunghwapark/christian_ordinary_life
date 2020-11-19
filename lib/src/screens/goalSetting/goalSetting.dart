@@ -381,49 +381,41 @@ class GoalSettingState extends State<GoalSetting> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: Colors.teal,
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top,
-        ),
-        child: Scaffold(
-            body: LoadingOverlay(
-                isLoading: _isLoading,
-                opacity: 0.5,
-                progressIndicator: CircularProgressIndicator(),
-                color: Colors.black,
-                child: UserInfo.loginUser != null
-                    ? Column(children: [
-                        appBarCustom(
-                            context,
-                            Translations.of(context)
-                                .trans('title_goal_setting'),
-                            leaderText:
-                                Translations.of(context).trans('cancel'),
-                            onLeaderTap: _goToMain,
-                            actionText: Translations.of(context).trans('save'),
-                            onActionTap: setUserGoal),
-                        _createGoal(
-                            'qt',
-                            Translations.of(context).trans('daily_qt'),
-                            AppColors.blueSky,
-                            GoalInfo.goal?.qtRecord),
-                        _createGoal(
-                            'praying',
-                            Translations.of(context).trans('daily_praying'),
-                            AppColors.mint,
-                            GoalInfo.goal?.praying),
-                        _createGoal(
-                            'bible',
-                            Translations.of(context).trans('daily_bible'),
-                            AppColors.lightOrange,
-                            GoalInfo.goal?.readingBible),
-                        _createGoal(
-                            'diary',
-                            Translations.of(context).trans('daily_thank'),
-                            AppColors.pastelPink,
-                            GoalInfo.goal?.thankDiary),
-                      ])
-                    : Container())));
+    return Scaffold(
+        body: LoadingOverlay(
+            isLoading: _isLoading,
+            opacity: 0.5,
+            progressIndicator: CircularProgressIndicator(),
+            color: Colors.black,
+            child: UserInfo.loginUser != null
+                ? Column(children: [
+                    appBarCustom(context,
+                        Translations.of(context).trans('title_goal_setting'),
+                        leaderText: Translations.of(context).trans('cancel'),
+                        onLeaderTap: _goToMain,
+                        actionText: Translations.of(context).trans('save'),
+                        onActionTap: setUserGoal),
+                    _createGoal(
+                        'qt',
+                        Translations.of(context).trans('daily_qt'),
+                        AppColors.blueSky,
+                        GoalInfo.goal?.qtRecord),
+                    _createGoal(
+                        'praying',
+                        Translations.of(context).trans('daily_praying'),
+                        AppColors.mint,
+                        GoalInfo.goal?.praying),
+                    _createGoal(
+                        'bible',
+                        Translations.of(context).trans('daily_bible'),
+                        AppColors.lightOrange,
+                        GoalInfo.goal?.readingBible),
+                    _createGoal(
+                        'diary',
+                        Translations.of(context).trans('daily_thank'),
+                        AppColors.pastelPink,
+                        GoalInfo.goal?.thankDiary),
+                  ])
+                : Container()));
   }
 }

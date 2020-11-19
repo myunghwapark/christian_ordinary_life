@@ -24,24 +24,27 @@ class PrivcyPolicyState extends State<PrivacyPolicy> {
     return Scaffold(
         appBar: appBarComponent(
             context, Translations.of(context).trans('privacy_policy')),
-        body: LoadingOverlay(
-            isLoading: _isLoading,
-            opacity: 0.5,
-            progressIndicator: CircularProgressIndicator(),
-            color: Colors.black,
-            child: WebView(
-              initialUrl:
-                  API.privacyPolicy + '?language=' + CommonSettings.language,
-              onWebViewCreated: (WebViewController webViewController) {
-                _controller.complete(webViewController);
-              },
-              gestureNavigationEnabled: true,
-              onPageFinished: (finish) {
-                setState(() {
-                  _isLoading = false;
-                });
-              },
-            )));
+        body: SafeArea(
+            bottom: true,
+            child: LoadingOverlay(
+                isLoading: _isLoading,
+                opacity: 0.5,
+                progressIndicator: CircularProgressIndicator(),
+                color: Colors.black,
+                child: WebView(
+                  initialUrl: API.privacyPolicy +
+                      '?language=' +
+                      CommonSettings.language,
+                  onWebViewCreated: (WebViewController webViewController) {
+                    _controller.complete(webViewController);
+                  },
+                  gestureNavigationEnabled: true,
+                  onPageFinished: (finish) {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                ))));
   }
 
   @override

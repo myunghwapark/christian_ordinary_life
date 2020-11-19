@@ -281,7 +281,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
               actionText: Translations.of(context).trans('next'),
               onActionTap: _nextSetting),
           Container(
-            height: (MediaQuery.of(context).copyWith().size.height - 70),
+            height: (MediaQuery.of(context).copyWith().size.height - 130),
             padding: EdgeInsets.only(top: 5, left: 12, right: 12),
             child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
