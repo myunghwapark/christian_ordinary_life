@@ -49,6 +49,7 @@ dependencies:
   timezone: ^0.5.9
   flutter_native_timezone: ^1.0.4
   share: ^0.6.5+4
+  keyboard_visibility: ^0.5.6
 
   
 

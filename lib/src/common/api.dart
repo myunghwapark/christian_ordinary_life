@@ -20,6 +20,7 @@ class API {
   static String login = serverURL + 'user/login.php';
   static String resetPassword = serverURL + 'user/reset_password.php';
   static String changePassword = serverURL + 'user/change_password.php';
+  static String checkLogin = serverURL + 'user/check_login.php';
 
   static String getUserGoal = serverURL + 'goal/get_user_goal.php';
   static String setUserGoal = serverURL + 'goal/set_user_goal.php';

@@ -235,8 +235,12 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
           color: AppColors.pastelPink,
         ),
         onPressed: () {
-          if (Platform.isAndroid) {
-            _screenShotAndShare();
+          if (detailDiary.imageURL != null && detailDiary.imageURL != '') {
+            if (Platform.isAndroid) {
+              _screenShotAndShare();
+            } else {
+              _share(context);
+            }
           } else {
             _share(context);
           }

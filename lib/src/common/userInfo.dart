@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:christian_ordinary_life/src/common/api.dart';
+import 'package:christian_ordinary_life/src/model/TransactionResult.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -56,6 +60,29 @@ class UserInfo {
       return false;
     } else
       return true;
+  }
+
+  Future<bool> checkLoginServer(BuildContext context) async {
+    if (!loginCheck()) return false;
+
+    TransactionResult result;
+    try {
+      await API.transaction(context, API.checkLogin,
+          param: {'userSeqNo': UserInfo.loginUser.seqNo}).then((response) {
+        if (response != null) {
+          result = TransactionResult.fromJson(json.decode(response));
+          if (result.result == 'success') {
+            return true;
+          }
+        }
+      });
+    } on Exception catch (exception) {
+      errorMessage(context, exception);
+    } catch (error) {
+      errorMessage(context, error);
+    }
+
+    return true;
   }
 
   Future<void> showLogin(BuildContext context,

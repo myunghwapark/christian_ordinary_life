@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
@@ -20,14 +22,17 @@ class QtRecordWrite extends StatefulWidget {
   QtRecordWriteStatus createState() => QtRecordWriteStatus();
 }
 
-class QtRecordWriteStatus extends State<QtRecordWrite> {
+class QtRecordWriteStatus extends State<QtRecordWrite>
+    with SingleTickerProviderStateMixin {
   QT newQt = new QT();
+  UserInfo userInfo = new UserInfo();
   final TextEditingController _titleController = new TextEditingController();
   final TextEditingController _contentController = new TextEditingController();
   final TextEditingController _bibleController = new TextEditingController();
-
-  ScrollController _scroll;
   FocusNode _focus = new FocusNode();
+  AnimationController _controller;
+  Animation _animation;
+
   ComponentStyle componentStyle = new ComponentStyle();
 
   String qtDateForm = '';
@@ -35,6 +40,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
   bool _trashVisibility = false;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  KeyboardVisibilityNotification _keyboardVisibility =
+      new KeyboardVisibilityNotification();
+  int _keyboardVisibilitySubscriberId;
+  bool _keyboardState;
 
   void _writeQT() async {
     try {
@@ -152,6 +162,15 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     });
   }
 
+  Future<bool> _androidBackKeyEvent() async {
+    if (_keyboardState) {
+      FocusScope.of(context).requestFocus(new FocusNode());
+    } else {
+      Navigator.pop(context, widget.qt);
+    }
+    return false;
+  }
+
   @override
   void initState() {
     if (widget.qt != null) {
@@ -162,14 +181,35 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     }
     qtDateForm = getDateOfWeek(qtDate);
 
-    _scroll = new ScrollController();
+    /* Content scroll event start */
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animation = Tween(begin: 50.0, end: 350.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+
     _focus.addListener(() {
-      if (_scroll.hasClients) {
-        Future.delayed(Duration(milliseconds: 50), () {
-          _scroll?.jumpTo(120);
-        });
+      if (_focus.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
       }
     });
+    /* Content scroll event end */
+
+    /* Check keyboard visible for Android back button event */
+    _keyboardState = _keyboardVisibility.isKeyboardVisible;
+
+    _keyboardVisibilitySubscriberId = _keyboardVisibility.addNewListener(
+      onChange: (bool visible) {
+        setState(() {
+          _keyboardState = visible;
+        });
+      },
+    );
+
+    userInfo.checkLoginServer(context);
 
     super.initState();
   }
@@ -179,6 +219,9 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
     _titleController.dispose();
     _contentController.dispose();
     _bibleController.dispose();
+    _controller.dispose();
+    _focus.dispose();
+    _keyboardVisibility.removeListener(_keyboardVisibilitySubscriberId);
     super.dispose();
   }
 
@@ -273,45 +316,46 @@ class QtRecordWriteStatus extends State<QtRecordWrite> {
           },
         ));
 
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: AppColors.lightSky,
-        appBar: appBarBack(
-            context, Translations.of(context).trans('menu_qt_record'),
-            actionWidget: actionIcon(),
-            onBackTap: () => Navigator.pop(context, newQt)),
-        body: LoadingOverlay(
-            isLoading: _isLoading,
-            opacity: 0.5,
-            progressIndicator: CircularProgressIndicator(),
-            color: Colors.black,
-            child: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                child: SingleChildScrollView(
-                    controller: _scroll,
-                    padding: EdgeInsets.all(10),
-                    child: Form(
-                        key: _formKey,
-                        child: new Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                _calendarButton,
-                                _qtDate,
-                                _deleteButton,
+    return WillPopScope(
+        onWillPop: _androidBackKeyEvent,
+        child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            //resizeToAvoidBottomPadding: false,
+            backgroundColor: AppColors.lightSky,
+            appBar: appBarBack(
+                context, Translations.of(context).trans('menu_qt_record'),
+                actionWidget: actionIcon(),
+                onBackTap: () => Navigator.pop(context, widget.qt)),
+            body: LoadingOverlay(
+                isLoading: _isLoading,
+                opacity: 0.5,
+                progressIndicator: CircularProgressIndicator(),
+                color: Colors.black,
+                child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    },
+                    child: SingleChildScrollView(
+                        padding: EdgeInsets.all(10),
+                        child: Form(
+                            key: _formKey,
+                            child: new Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    _calendarButton,
+                                    _qtDate,
+                                    _deleteButton,
+                                  ],
+                                ),
+                                _qtTitle,
+                                _qtBible,
+                                _qtContent,
+                                Platform.isAndroid
+                                    ? SizedBox(height: _animation.value)
+                                    : Container(),
                               ],
-                            ),
-                            _qtTitle,
-                            _qtBible,
-                            _qtContent,
-                            Padding(
-                              padding: EdgeInsets.all(130),
-                            )
-                          ],
-                        ))))));
+                            )))))));
   }
 }

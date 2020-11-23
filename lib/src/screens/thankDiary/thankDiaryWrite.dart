@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:keyboard_visibility/keyboard_visibility.dart';
 
 import 'package:christian_ordinary_life/src/common/thankDiaryInfo.dart';
 import 'package:christian_ordinary_life/src/common/getImage.dart';
@@ -28,13 +29,16 @@ class ThankDiaryWrite extends StatefulWidget {
   ThankDiaryWriteState createState() => ThankDiaryWriteState();
 }
 
-class ThankDiaryWriteState extends State<ThankDiaryWrite> {
+class ThankDiaryWriteState extends State<ThankDiaryWrite>
+    with SingleTickerProviderStateMixin {
   Diary newDiary = new Diary();
+  UserInfo userInfo = new UserInfo();
   final TextEditingController _titleController = new TextEditingController();
   final TextEditingController _contentController = new TextEditingController();
-  ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
-  ScrollController _scroll;
   FocusNode _focus = new FocusNode();
+  AnimationController _controller;
+  Animation _animation;
+  ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
   ComponentStyle componentStyle = new ComponentStyle();
 
   String diaryDateForm = '';
@@ -54,6 +58,11 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   String _savedImage = '';
   bool _first = true;
   bool _isLoading = false;
+
+  KeyboardVisibilityNotification _keyboardVisibility =
+      new KeyboardVisibilityNotification();
+  int _keyboardVisibilitySubscriberId;
+  bool _keyboardState;
 
   Future<void> _writeDiary() async {
     try {
@@ -334,6 +343,15 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     }
   }
 
+  Future<bool> _androidBackKeyEvent() async {
+    if (_keyboardState) {
+      FocusScope.of(context).requestFocus(new FocusNode());
+    } else {
+      Navigator.pop(context, widget.diary);
+    }
+    return false;
+  }
+
   @override
   void initState() {
     if (widget.diary != null) {
@@ -346,23 +364,46 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
     }
     diaryDateForm = getDateOfWeek(diaryDate);
 
-    _scroll = new ScrollController();
+    /* Content scroll event start */
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animation = Tween(begin: 50.0, end: 350.0).animate(_controller)
+      ..addListener(() {
+        setState(() {});
+      });
+
     _focus.addListener(() {
-      if (_scroll.hasClients) {
-        Future.delayed(Duration(milliseconds: 50), () {
-          _scroll?.jumpTo(120);
-        });
+      if (_focus.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
       }
     });
+    /* Content scroll event end */
 
-    if (ThankDiaryInfo.thankCategoryList == null ||
-        ThankDiaryInfo.thankCategoryList.length == 0) {
-      thankDiaryInfo
-          .getThankCategory(context)
-          .then((value) => _makeThankCategoryOption());
-    } else {
-      _makeThankCategoryOption();
-    }
+    /* Check keyboard visible for Android back button event */
+    _keyboardState = _keyboardVisibility.isKeyboardVisible;
+
+    _keyboardVisibilitySubscriberId = _keyboardVisibility.addNewListener(
+      onChange: (bool visible) {
+        setState(() {
+          _keyboardState = visible;
+        });
+      },
+    );
+
+    userInfo.checkLoginServer(context).then((value) {
+      if (value == true) {
+        if (ThankDiaryInfo.thankCategoryList == null ||
+            ThankDiaryInfo.thankCategoryList.length == 0) {
+          thankDiaryInfo
+              .getThankCategory(context)
+              .then((value) => _makeThankCategoryOption());
+        } else {
+          _makeThankCategoryOption();
+        }
+      }
+    });
 
     super.initState();
   }
@@ -389,6 +430,9 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
+    _controller.dispose();
+    _focus.dispose();
+    _keyboardVisibility.removeListener(_keyboardVisibilitySubscriberId);
     super.dispose();
   }
 
@@ -545,52 +589,52 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite> {
           },
         ));
 
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomPadding: false,
-        backgroundColor: AppColors.lightPinks,
-        appBar: appBarBack(
-            context, Translations.of(context).trans('menu_thank_diary'),
-            actionWidget: actionIcon(),
-            onBackTap: () => Navigator.pop(context, widget.diary)),
-        body: LoadingOverlay(
-            isLoading: _isLoading,
-            opacity: 0.5,
-            progressIndicator: CircularProgressIndicator(),
-            color: Colors.black,
-            child: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                child: SingleChildScrollView(
-                    controller: _scroll,
-                    padding: EdgeInsets.all(10),
-                    child: Form(
-                        key: _formKey,
-                        child: new Column(
-                          children: <Widget>[
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                _categoryButton,
-                                _calendarButton,
-                                _diaryDate,
-                                _deleteButton,
+    return WillPopScope(
+        onWillPop: _androidBackKeyEvent,
+        child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: AppColors.lightPinks,
+            appBar: appBarBack(
+                context, Translations.of(context).trans('menu_thank_diary'),
+                actionWidget: actionIcon(),
+                onBackTap: () => Navigator.pop(context, widget.diary)),
+            body: LoadingOverlay(
+                isLoading: _isLoading,
+                opacity: 0.5,
+                progressIndicator: CircularProgressIndicator(),
+                color: Colors.black,
+                child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    },
+                    child: SingleChildScrollView(
+                        padding: EdgeInsets.all(10),
+                        child: Form(
+                            key: _formKey,
+                            child: new Column(
+                              children: <Widget>[
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    _categoryButton,
+                                    _calendarButton,
+                                    _diaryDate,
+                                    _deleteButton,
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _imageButton,
+                                    _diaryTitle,
+                                  ],
+                                ),
+                                _diaryContent,
+                                Platform.isAndroid
+                                    ? SizedBox(height: _animation.value)
+                                    : Container(),
                               ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _imageButton,
-                                _diaryTitle,
-                              ],
-                            ),
-                            _diaryContent,
-                            Padding(
-                              padding: EdgeInsets.all(130),
-                            )
-                          ],
-                        ))))));
+                            )))))));
   }
 }

@@ -145,7 +145,7 @@
     "error_message": "An error occurred while processing your request. Please try again later.",
     "duplicate_email": "This email is already registered. Would you like to log in?",
     "success_register": "Membership registration was processed successfully. Please use the app after logging in.",
-    "wrong_information": "The email or password you entered does not match. Please enter it correctly and try again.",
+    "wrong_information": "The email or password you entered does not match. Please check and try again.",
     "login_fail_message": "An error occurred while logging in. Please try again later.",
     "login_needs": "It is available after login. Would you like to log in?",
     "chapter": "",
