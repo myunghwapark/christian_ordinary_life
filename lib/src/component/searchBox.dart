@@ -348,6 +348,7 @@ class SearchBoxState extends State<SearchBox> {
                         appButtons.filledWhiteCustomButton(
                             Translations.of(context)
                                 .trans('search_with_criteria'), () {
+                          hideKeyboard(context);
                           if (_checkDate()) widget.onSubmitted();
                         }, widget.pointColor)
                       ],
