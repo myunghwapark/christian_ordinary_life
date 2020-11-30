@@ -22,11 +22,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-9598646327425938~4406663656</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -36,12 +36,26 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>This app does not require access to the usage of the Apple music.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>This app does not require access to the usage of the calendar.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera to provide the photos users want in their posts.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app does not require access to the usage of the contact.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app does not require access to the usage of the user location.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app does not require access to the usage of the user location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app does not require access to the microphone.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>This app does not require access to the usage of the motion.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to provide the photos users want in their posts.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>This app does not require access to the usage of the speech recognition.</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>This identifier will be used to deliver personalized ads to you.</string>
 	<key>UILaunchStoryboardName</key>
