@@ -1,9 +1,10 @@
-import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
@@ -34,6 +35,8 @@ class MainScreenState extends State<MainScreen> {
   BiblePhrase biblePhrase = new BiblePhrase();
   CommonSettings commonSettings = new CommonSettings();
   bool _isLoading = false;
+  int _remainDate = 0;
+  String _remainPeriod = 'until_target_date';
 
   String _year = '';
   String _date = '';
@@ -100,34 +103,79 @@ class MainScreenState extends State<MainScreen> {
   Widget _createMainItems({String item}) {
     String text = Translations.of(context).trans('menu_$item');
     return ListTile(
-        title: Row(
-          children: (<Widget>[
-            Container(
-                padding: EdgeInsets.only(left: 8.0, bottom: 15),
-                child: Icon(
-                  _checkVars[item]
-                      ? FontAwesomeIcons.checkCircle
-                      : FontAwesomeIcons.circle,
-                  color:
-                      _checkVars[item] ? AppColors.marine : AppColors.lightGray,
-                  size: 35,
-                )),
-            Container(
-              padding: EdgeInsets.only(top: 5, left: 14.0, bottom: 15),
-              child: Text(
-                text,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color:
-                      _checkVars[item] ? AppColors.marine : AppColors.lightGray,
-                  fontSize: 30,
-                  fontFamily: '12LotteMartHappy',
-                  fontWeight: FontWeight.w300,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: (<Widget>[
+                Container(
+                    padding: EdgeInsets.only(left: 8.0, bottom: 15),
+                    child: Icon(
+                      _checkVars[item]
+                          ? FontAwesomeIcons.checkCircle
+                          : FontAwesomeIcons.circle,
+                      color: _checkVars[item]
+                          ? AppColors.marine
+                          : AppColors.lightGray,
+                      size: 35,
+                    )),
+                Container(
+                  padding: EdgeInsets.only(top: 5, left: 14.0, bottom: 15),
+                  child: Text(
+                    text,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: _checkVars[item]
+                          ? AppColors.marine
+                          : AppColors.lightGray,
+                      fontSize: 30,
+                      fontFamily: '12LotteMartHappy',
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
                 ),
-              ),
-            )
-          ]),
+                (CommonSettings.language == 'ko' &&
+                        item == 'reading_bible' &&
+                        _remainDate > 0)
+                    ? Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.red[500],
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(20))),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        margin: EdgeInsets.only(left: 7, bottom: 9),
+                        child: Text(
+                          Translations.of(context).trans(_remainPeriod,
+                              param1: _remainDate.toString()),
+                          style: TextStyle(fontSize: 11),
+                        ),
+                      )
+                    : Container()
+              ]),
+            ),
+            (CommonSettings.language == 'en' &&
+                    item == 'reading_bible' &&
+                    _remainDate > 0)
+                ? Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.red[500],
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                    margin: EdgeInsets.only(top: 0, left: 55, bottom: 10),
+                    child: Text(
+                      Translations.of(context)
+                          .trans(_remainPeriod, param1: _remainDate.toString()),
+                      style: TextStyle(fontSize: 11),
+                    ),
+                  )
+                : Container()
+          ],
         ),
         onTap: () {
           switch (item) {
@@ -233,6 +281,7 @@ class MainScreenState extends State<MainScreen> {
       if (this.mounted) {
         setState(() {
           todayBible = value;
+          getRemainDate();
         });
       }
     });
@@ -273,6 +322,29 @@ class MainScreenState extends State<MainScreen> {
     } else {
       Navigator.pushReplacementNamed(context, GoalSetting.routeName,
           arguments: UserInfo.loginUser);
+    }
+  }
+
+  void getRemainDate() {
+    if (todayBible != null && todayBible.planEndDate != null) {
+      DateTime planEndDate =
+          DateTime.parse('${todayBible.planEndDate} 24:00:00');
+      setState(() {
+        _remainDate = dateDifferenceInDays(planEndDate);
+        if (_remainDate == 1) {
+          _remainPeriod = 'until_target_date';
+        } else {
+          _remainPeriod = 'until_target_dates';
+        }
+        if (_remainDate == 0) {
+          _remainDate = dateDifferenceInHours(planEndDate);
+          if (_remainDate == 1) {
+            _remainPeriod = 'until_target_hour';
+          } else {
+            _remainPeriod = 'until_target_hours';
+          }
+        }
+      });
     }
   }
 
@@ -393,6 +465,8 @@ class MainScreenState extends State<MainScreen> {
 
   void init() {
     try {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+
       GoalInfo.goal?.goalSet = false;
 
       _currentDateTime = new DateTime.now();

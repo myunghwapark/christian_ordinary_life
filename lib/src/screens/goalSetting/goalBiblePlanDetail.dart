@@ -84,7 +84,7 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
     // To get _contentSpace Size
     double _deviceWidth = MediaQuery.of(context).size.width;
     double _containerPadding = 20;
-    double _containerMargin = 10;
+    double _containerMargin = 20;
     double _contentSpace = (_deviceWidth - (_containerPadding * 2));
 
     final _title = Container(
@@ -116,7 +116,11 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
       height: 90,
       width: _contentSpace,
       padding: EdgeInsets.all(_containerPadding),
-      margin: EdgeInsets.all(_containerMargin),
+      margin: EdgeInsets.only(
+          left: _containerMargin,
+          right: _containerMargin,
+          top: _containerMargin,
+          bottom: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -156,8 +160,9 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
           ),
         ],
       ),
-      height: (MediaQuery.of(context).copyWith().size.height - 220),
+      height: (MediaQuery.of(context).copyWith().size.height - 260),
       child: ListView.separated(
+          shrinkWrap: true,
           physics: const AlwaysScrollableScrollPhysics(),
           itemCount: biblePlanDetailList.length,
           separatorBuilder: (BuildContext context, int index) => Divider(
@@ -188,15 +193,15 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
           context,
           Translations.of(context).trans('bible_reading_plan'),
         ),
-        body: LoadingOverlay(
-            isLoading: _isLoading,
-            opacity: 0.5,
-            progressIndicator: CircularProgressIndicator(),
-            color: Colors.black,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [_titleBox, _list],
-            )));
+        body: SafeArea(
+            child: LoadingOverlay(
+                isLoading: _isLoading,
+                opacity: 0.5,
+                progressIndicator: CircularProgressIndicator(),
+                color: Colors.black,
+                child: ListView(
+                  children: [_titleBox, _list],
+                ))));
   }
 
   @override

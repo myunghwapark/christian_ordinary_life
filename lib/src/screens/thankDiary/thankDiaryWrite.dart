@@ -559,6 +559,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
         padding: EdgeInsets.all(12),
         height: 90,
         child: TextFormField(
+          enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.center,
           decoration: componentStyle
               .whiteGreyInput(Translations.of(context).trans('title_hint')),
@@ -572,6 +573,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
     final _diaryContent = Container(
         padding: EdgeInsets.all(12),
         child: TextFormField(
+          enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.top,
           keyboardType: TextInputType.multiline,
           minLines: 10,

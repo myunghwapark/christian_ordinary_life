@@ -268,6 +268,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
       padding: EdgeInsets.all(12),
       height: 90,
       child: TextFormField(
+        enableInteractiveSelection: true,
         textAlignVertical: TextAlignVertical.center,
         decoration: componentStyle
             .whiteGreyInput(Translations.of(context).trans('title_hint')),
@@ -287,6 +288,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
       padding: EdgeInsets.all(12),
       height: 90,
       child: TextFormField(
+        enableInteractiveSelection: true,
         textAlignVertical: TextAlignVertical.center,
         decoration: componentStyle
             .whiteGreyInput(Translations.of(context).trans('qt_bible_hint')),
@@ -299,6 +301,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
     final _qtContent = Container(
         padding: EdgeInsets.all(12),
         child: TextFormField(
+          enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.top,
           keyboardType: TextInputType.multiline,
           minLines: 10,

@@ -81,6 +81,25 @@ String getTodayYearMonth(DateTime now) {
   return template.format(now);
 }
 
+bool isBeforeDate(DateTime compareDate) {
+  var now = new DateTime.now();
+  return compareDate.isBefore(now);
+}
+
+int dateDifferenceInDays(DateTime targetDate) {
+  DateTime now = new DateTime.now();
+  int different = targetDate.difference(now).inDays;
+
+  return different;
+}
+
+int dateDifferenceInHours(DateTime targetDate) {
+  DateTime now = new DateTime.now();
+  int different = targetDate.difference(now).inHours;
+
+  return different;
+}
+
 DateTime convertDateFromString(String strDate) {
   DateTime date = DateTime.parse(strDate);
   return date;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/component/fontSettingDialog.dart';
@@ -51,6 +53,7 @@ class ReadingBibleState extends State<ReadingBible> {
   GlobalKey _keyTodaysBible = GlobalKey();
   int _currentChapter;
   bool _isLoading = false;
+  double _readingPercentage = 0;
 
   void _scrollTo(double moveHeight) {
     double maxScroll = _scrollController.position.maxScrollExtent;
@@ -64,6 +67,14 @@ class ReadingBibleState extends State<ReadingBible> {
   }
 
   void _scrollListener() {
+    double percent =
+        _scrollController.offset / _scrollController.position.maxScrollExtent;
+    setState(() {
+      _readingPercentage = double.parse(percent.toStringAsFixed(2)) > 1
+          ? 1.0
+          : double.parse(percent.toStringAsFixed(2));
+    });
+
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
@@ -311,26 +322,55 @@ class ReadingBibleState extends State<ReadingBible> {
     }
   }
 
+  bool compareDate() {
+    DateTime planEndDate = DateTime.parse(todayBible.planEndDate);
+    return isBeforeDate(planEndDate);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _days = Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
+    final _days = Stack(
+      children: <Widget>[
         Container(
-          padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
-          margin: EdgeInsets.only(right: 10),
-          decoration: BoxDecoration(
-              color: AppColors.orange,
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(5),
-                  bottomRight: Radius.circular(5)),
-              border: Border.all(color: AppColors.orange)),
-          child: Text(
-            Translations.of(context)
-                .trans('day_order', param1: goalProgress.bibleDays),
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+            padding: EdgeInsets.all(10),
+            child: Row(
+              children: [
+                Text(
+                  todayBible.planStartDate,
+                  style: TextStyle(fontSize: 16, color: AppColors.lightBrown),
+                ),
+                Text(
+                  ' ~ ',
+                  style: TextStyle(fontSize: 16, color: AppColors.lightBrown),
+                ),
+                Text(
+                  todayBible.planEndDate,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: compareDate() ? Colors.red : AppColors.lightBrown),
+                )
+              ],
+            )),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
+              margin: EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                  color: AppColors.orange,
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(5),
+                      bottomRight: Radius.circular(5)),
+                  border: Border.all(color: AppColors.orange)),
+              child: Text(
+                Translations.of(context)
+                    .trans('day_order', param1: goalProgress.bibleDays),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        )
       ],
     );
 
@@ -600,7 +640,7 @@ class ReadingBibleState extends State<ReadingBible> {
               ? Container(
                   height: 40,
                   width: 100,
-                  margin: EdgeInsets.all(10),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                   child: appButtons.filledGreyButton(
                       Translations.of(context).trans('prev'), () {
                     _currentChapter--;
@@ -610,7 +650,7 @@ class ReadingBibleState extends State<ReadingBible> {
           Container(
               height: 40,
               width: 200,
-              margin: EdgeInsets.all(10),
+              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               child: _currentChapter != null
                   ? appButtons.filledOrangeButton(
                       todaysBibleChapters.length == (_currentChapter + 1)
@@ -668,6 +708,16 @@ class ReadingBibleState extends State<ReadingBible> {
       );
     }
 
+    final _percentage = Positioned(
+        bottom: 0,
+        child: new LinearPercentIndicator(
+          width: MediaQuery.of(context).copyWith().size.width,
+          lineHeight: 3.0,
+          percent: _readingPercentage,
+          backgroundColor: Colors.white,
+          progressColor: AppColors.marine,
+        ));
+
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: AppDrawer(),
@@ -676,16 +726,21 @@ class ReadingBibleState extends State<ReadingBible> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: <Widget>[
-                sliverAppBar(context,
-                    Translations.of(context).trans('menu_reading_bible'),
-                    actionWidget: actionIcon()),
-                _todaysBible(),
-                _bibleTitle,
-                _bible,
-                _buttons
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                    child: CustomScrollView(
+                        controller: _scrollController,
+                        slivers: <Widget>[
+                      sliverAppBar(context,
+                          Translations.of(context).trans('menu_reading_bible'),
+                          actionWidget: actionIcon()),
+                      _todaysBible(),
+                      _bibleTitle,
+                      _bible,
+                      _buttons,
+                    ])),
+                _percentage
               ],
             )),
         floatingActionButton: _floatingButton);
@@ -697,6 +752,8 @@ class ReadingBibleState extends State<ReadingBible> {
     _setBibleFont();
     _scrollController.addListener(_scrollListener);
     todayBible = widget.todayBible;
+
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
 
     getTodaysBible();
     super.initState();

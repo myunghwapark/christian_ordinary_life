@@ -1,4 +1,6 @@
+import 'package:christian_ordinary_life/src/component/timeBox.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
 
@@ -36,6 +38,16 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
   List<BiblePlan> biblePlanList = <BiblePlan>[];
   GoalInfo goalInfo = new GoalInfo();
   bool _isLoading = false;
+  int _selected = 0;
+  bool _timeBoxVisible = true;
+  DateTime today = new DateTime.now();
+  String _setHour = '06', _setMinute = '00';
+
+  DateTime _setInitTime() {
+    DateTime _dateTime = new DateTime(today.year, today.month, today.day,
+        int.parse(_setHour), int.parse(_setMinute));
+    return _dateTime;
+  }
 
   Future<void> _getBiblePlan() async {
     BiblePlan result;
@@ -158,6 +170,30 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     }
   }
 
+  void _onAlarmRadioChanged(int value) {
+    setState(() {
+      _selected = value;
+    });
+    GoalInfo.goal.readingBibleAlarm = value == 0 ? true : false;
+
+    setState(() {
+      if (value == 0) {
+        _timeBoxVisible = true;
+      } else {
+        _timeBoxVisible = false;
+      }
+    });
+  }
+
+  void _onTimepickerChanged(List timeArray) {
+    setState(() {
+      List times = timepickerChanged(timeArray);
+      _setHour = times[0];
+      _setMinute = times[1];
+      GoalInfo.goal.readingBibleTime = times[0] + ':' + times[1];
+    });
+  }
+
   void _backScreen() {
     Navigator.pop(context, {"bibleUserPlan": bibleUserPlan});
   }
@@ -172,6 +208,93 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
 
   @override
   Widget build(BuildContext context) {
+    final _alramSetLabel = Container(
+        margin: EdgeInsets.only(top: 30, left: 20, bottom: 10),
+        child: Text(
+          Translations.of(context).trans('readingbible_notice_setting_ment'),
+          style: TextStyle(
+            fontSize: 20,
+            fontFamily: '12LotteMartHappy',
+            fontWeight: FontWeight.w300,
+          ),
+        ));
+
+    final _radioYes = RadioListTile(
+        title: Text(Translations.of(context).trans('yes')),
+        value: 0,
+        groupValue: _selected,
+        onChanged: (int value) {
+          _onAlarmRadioChanged(value);
+        });
+
+    final _radioNo = RadioListTile(
+        title: Text(Translations.of(context).trans('no')),
+        value: 1,
+        groupValue: _selected,
+        onChanged: (int value) {
+          _onAlarmRadioChanged(value);
+        });
+
+    final _readingBibleTimeBox = Visibility(
+        visible: _timeBoxVisible,
+        child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+                border: Border.all(color: AppColors.lightBrown),
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text(Translations.of(context).trans('readingbible_time'),
+                  style: TextStyle(color: AppColors.lightBrown, fontSize: 17)),
+              timeBox(
+                  context,
+                  _setHour,
+                  _setMinute,
+                  AppColors.lightBrown,
+                  () => {
+                        // Time picker
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext builder) {
+                              return Container(
+                                  height: MediaQuery.of(context)
+                                          .copyWith()
+                                          .size
+                                          .height /
+                                      2.5,
+                                  child: TimePickerWidget(
+                                      initDateTime: _setInitTime(),
+                                      dateFormat: 'HH:mm',
+                                      onConfirm: (time, timeArray) =>
+                                          {_onTimepickerChanged(timeArray)}));
+                            })
+                      })
+            ])));
+
+    final _bibleAlarm = Container(
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _alramSetLabel,
+            _radioYes,
+            _readingBibleTimeBox,
+            _radioNo,
+          ],
+        ));
+
     return Scaffold(
         backgroundColor: AppColors.lightOrange,
         appBar: widget.newBiblePlan
@@ -188,22 +311,51 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: ListView.builder(
-                itemCount: biblePlanList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    onTap: () {
-                      _onRadioChanged(index);
-                    },
-                    title: RadioBox(biblePlanList[index]),
-                  );
-                })));
+            child: ListView(
+              children: [
+                _bibleAlarm,
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: biblePlanList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        onTap: () {
+                          _onRadioChanged(index);
+                        },
+                        title: RadioBox(biblePlanList[index]),
+                      );
+                    })
+              ],
+            )));
   }
 
   @override
   initState() {
     super.initState();
     bibleUserPlan = widget.bibleUserPlan;
+
+    if (GoalInfo.goal.readingBibleTime == null ||
+        GoalInfo.goal.readingBibleTime == '') {
+      GoalInfo.goal.readingBibleTime = _setHour + ':' + _setMinute;
+    } else {
+      List<String> readingBibleTime = GoalInfo.goal.readingBibleTime.split(':');
+      _setHour = readingBibleTime[0];
+      _setMinute = readingBibleTime[1];
+    }
+
+    if (GoalInfo.goal.readingBibleAlarm == null) {
+      GoalInfo.goal.readingBibleAlarm = _selected == 0 ? true : false;
+    } else {
+      _selected = GoalInfo.goal.readingBibleAlarm == true ? 0 : 1;
+    }
+
+    if (!GoalInfo.goal.readingBibleAlarm) {
+      setState(() {
+        _timeBoxVisible = false;
+      });
+    }
+
     _getBiblePlan();
   }
 

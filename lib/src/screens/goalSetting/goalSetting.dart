@@ -1,3 +1,4 @@
+import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingThankDiary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -88,6 +89,17 @@ class GoalSettingState extends State<GoalSetting> {
       } else {
         _saveAlarm('praying', false);
       }
+      if (GoalInfo.goal.thankDiary && GoalInfo.goal.thankDiaryAlarm) {
+        await _setAlarm('thankDiary');
+      } else {
+        _saveAlarm('thankDiary', false);
+      }
+      if (GoalInfo.goal.readingBible && GoalInfo.goal.readingBibleAlarm) {
+        await _setAlarm('readingBible');
+      } else {
+        _saveAlarm('readingBible', false);
+      }
+
       goalInfo.setUserGoal(context, bibleUserPlan).then((value) {
         setState(() {
           _isLoading = false;
@@ -170,6 +182,16 @@ class GoalSettingState extends State<GoalSetting> {
       List<String> time = qtTime.split(':');
       Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
       await _dailyQtTimeNotification(alramTime);
+    } else if (target == 'thankDiary') {
+      String thankDiaryTime = GoalInfo.goal.thankDiaryTime;
+      List<String> time = thankDiaryTime.split(':');
+      Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
+      await _dailyThankDiaryTimeNotification(alramTime);
+    } else if (target == 'readingBible') {
+      String readingBibleTime = GoalInfo.goal.readingBibleTime;
+      List<String> time = readingBibleTime.split(':');
+      Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
+      await _dailyReadingBibleTimeNotification(alramTime);
     }
   }
 
@@ -225,6 +247,20 @@ class GoalSettingState extends State<GoalSetting> {
           break;
         case 'diary':
           GoalInfo.goal.thankDiary = !GoalInfo.goal.thankDiary;
+          if (GoalInfo.goal.thankDiary == true) {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            GoalSettingThankDiary(goal: GoalInfo.goal)))
+                .then((value) {
+              if (value != null) {
+                setState(() {
+                  GoalInfo.goal = value['goal'];
+                });
+              }
+            });
+          }
           break;
       }
     });
@@ -263,11 +299,10 @@ class GoalSettingState extends State<GoalSetting> {
                               color: Colors.white,
                             ),
                           ))),
-                  if (target != 'diary')
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.white,
-                    )
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                  )
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
               ),
@@ -289,7 +324,7 @@ class GoalSettingState extends State<GoalSetting> {
           android: AndroidNotificationDetails(
             'qt',
             'colQt',
-            'Time to qt',
+            'Time for QT',
             priority: Priority.high,
             importance: Importance.high,
           ),
@@ -303,7 +338,7 @@ class GoalSettingState extends State<GoalSetting> {
   Future<void> _dailyPrayingTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
         CommonSettings.prayingAlarmId,
-        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('praying_time')}',
+        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('thankdiary_time')}',
         Translations.of(context).trans('praying_time_alarm_message',
             param1: UserInfo.loginUser.name),
         _scheduledDaily(alarmTime),
@@ -311,7 +346,51 @@ class GoalSettingState extends State<GoalSetting> {
           android: AndroidNotificationDetails(
             'praying',
             'colPraying',
-            'Time to praying',
+            'Time to pray',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
+  Future<void> _dailyThankDiaryTimeNotification(Time alarmTime) async {
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        CommonSettings.prayingAlarmId,
+        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('thankdiary_time')}',
+        Translations.of(context).trans('thankdiary_time_alarm_message',
+            param1: UserInfo.loginUser.name),
+        _scheduledDaily(alarmTime),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'thankDiary',
+            'colThankDiary',
+            'Time for Thank Diary',
+            priority: Priority.high,
+            importance: Importance.high,
+          ),
+        ),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time);
+  }
+
+  Future<void> _dailyReadingBibleTimeNotification(Time alarmTime) async {
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
+        CommonSettings.prayingAlarmId,
+        '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('readingbible_time')}',
+        Translations.of(context).trans('readingbible_time_alarm_message',
+            param1: UserInfo.loginUser.name),
+        _scheduledDaily(alarmTime),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'readingBible',
+            'colReadingBible',
+            'Time for Reading Bible',
             priority: Priority.high,
             importance: Importance.high,
           ),

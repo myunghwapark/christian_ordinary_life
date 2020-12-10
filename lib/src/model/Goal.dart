@@ -11,6 +11,10 @@ class Goal {
   bool prayingAlarm;
   String prayingTime;
   String prayingDuration;
+  bool readingBibleAlarm;
+  String readingBibleTime;
+  bool thankDiaryAlarm;
+  String thankDiaryTime;
   String goalSetDate;
   String biblePlanStartDate;
   String result;
@@ -42,6 +46,10 @@ class Goal {
       this.prayingAlarm,
       this.prayingTime,
       this.prayingDuration,
+      this.readingBibleAlarm,
+      this.readingBibleTime,
+      this.thankDiaryAlarm,
+      this.thankDiaryTime,
       this.goalSetDate,
       this.biblePlanStartDate,
       this.result,
@@ -70,6 +78,10 @@ class Goal {
         prayingAlarm = (json['prayingAlarm'] == 'true'),
         prayingTime = json['prayingTime'],
         prayingDuration = json['prayingDuration'],
+        readingBibleAlarm = (json['readingBibleAlarm'] == 'true'),
+        readingBibleTime = json['readingBibleTime'],
+        thankDiaryAlarm = (json['thankDiaryAlarm'] == 'true'),
+        thankDiaryTime = json['thankDiaryTime'],
         goalSetDate = json['goalSetDate'],
         biblePlanStartDate = json['biblePlanStartDate'],
         result = json['result'],

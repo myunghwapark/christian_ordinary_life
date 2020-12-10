@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../common/colors.dart';
 
 Widget timeBox(BuildContext context, String _setHour, String _setMinute,
     Color _setColor, GestureTapCallback onTap) {
@@ -27,7 +26,7 @@ Widget timeBox(BuildContext context, String _setHour, String _setMinute,
             ),
             Container(
                 padding: EdgeInsets.all(5),
-                child: Text(':', style: TextStyle(color: AppColors.marine))),
+                child: Text(':', style: TextStyle(color: _setColor))),
             Container(
               width: 50,
               height: 40,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/util.dart';
@@ -6,7 +7,6 @@ import 'package:christian_ordinary_life/src/model/BibleUserPlan.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
-import 'package:flutter/material.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/model/GoalProgress.dart';
@@ -107,11 +107,20 @@ class GoalInfo {
       BuildContext context, BibleUserPlan bibleUserPlan) async {
     Goal result = new Goal();
 
+    print('thankDiaryTime: ${GoalInfo.goal.thankDiaryTime}');
+    print('thankDiaryAlarm: ${GoalInfo.goal.thankDiaryAlarm}');
+    print('readingBibleTime: ${GoalInfo.goal.readingBibleTime}');
+    print('readingBibleAlarm: ${GoalInfo.goal.readingBibleAlarm}');
+
     try {
       await API.transaction(context, API.setUserGoal, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
         'readingBible': GoalInfo.goal.readingBible,
         'thankDiary': GoalInfo.goal.thankDiary,
+        'thankDiaryTime': GoalInfo.goal.thankDiaryTime,
+        'thankDiaryAlarm': GoalInfo.goal.thankDiaryAlarm,
+        'readingBibleTime': GoalInfo.goal.readingBibleTime,
+        'readingBibleAlarm': GoalInfo.goal.readingBibleAlarm,
         'qtRecord': GoalInfo.goal.qtRecord,
         'qtTime': GoalInfo.goal.qtTime,
         'qtAlarm': GoalInfo.goal.qtAlarm,
