@@ -227,10 +227,10 @@ Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
   return result;
 }
 
-void showToast(GlobalKey<ScaffoldState> scaffordKey, String toastText,
+void showToast(GlobalKey<ScaffoldState> scaffoldKey, String toastText,
     {SnackBarAction action}) {
   //final scaffold = Scaffold.of(context);
-  scaffordKey.currentState.showSnackBar(SnackBar(
+  scaffoldKey.currentState.showSnackBar(SnackBar(
     content: Text(toastText),
     action: action != null ? action : null,
   ));

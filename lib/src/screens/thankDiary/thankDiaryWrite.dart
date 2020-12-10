@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
+import 'package:christian_ordinary_life/src/component/customTextfieldToolBar.dart';
 import 'package:christian_ordinary_life/src/common/thankDiaryInfo.dart';
 import 'package:christian_ordinary_life/src/common/getImage.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
@@ -40,11 +41,11 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
   Animation _animation;
   ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
   ComponentStyle componentStyle = new ComponentStyle();
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   String diaryDateForm = '';
   DateTime diaryDate = new DateTime.now();
   bool _trashVisibility = false;
-  final _formKey = GlobalKey<FormState>();
   ThankCategory _selectedCategory = new ThankCategory();
   CustomPicker _thankCategoryPicker;
   CustomPicker _imageOptionPicker;
@@ -268,7 +269,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
     return FlatButton(
       child: Text(Translations.of(context).trans('save')),
       onPressed: () {
-        if (_formKey.currentState.validate()) {
+        if (_contentController.text.isNotEmpty) {
           newDiary.seqNo = widget.diary != null ? widget.diary.seqNo : null;
           newDiary.title = _titleController.text;
           newDiary.content = _contentController.text;
@@ -278,6 +279,10 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
 
           hideKeyboard(context);
           _writeDiary();
+        } else {
+          hideKeyboard(context);
+          showToast(
+              _scaffoldKey, Translations.of(context).trans('validate_content'));
         }
       },
       textColor: AppColors.darkGray,
@@ -558,7 +563,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
       child: Container(
         padding: EdgeInsets.all(12),
         height: 90,
-        child: TextFormField(
+        child: CustomTextField(
           enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.center,
           decoration: componentStyle
@@ -572,7 +577,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
 
     final _diaryContent = Container(
         padding: EdgeInsets.all(12),
-        child: TextFormField(
+        child: CustomTextField(
           enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.top,
           keyboardType: TextInputType.multiline,
@@ -583,17 +588,18 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
           controller: _contentController,
           maxLength: 5000,
           focusNode: _focus,
-          validator: (value) {
+          /* validator: (value) {
             if (value.isEmpty) {
               return Translations.of(context).trans('validate_content');
             }
             return null;
-          },
+          }, */
         ));
 
     return WillPopScope(
         onWillPop: _androidBackKeyEvent,
         child: Scaffold(
+            key: _scaffoldKey,
             resizeToAvoidBottomInset: true,
             backgroundColor: AppColors.lightPinks,
             appBar: appBarBack(
@@ -611,32 +617,30 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
                     },
                     child: SingleChildScrollView(
                         padding: EdgeInsets.all(10),
-                        child: Form(
-                            key: _formKey,
-                            child: new Column(
-                              children: <Widget>[
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    _categoryButton,
-                                    _calendarButton,
-                                    _diaryDate,
-                                    _deleteButton,
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _imageButton,
-                                    _diaryTitle,
-                                  ],
-                                ),
-                                _diaryContent,
-                                Platform.isAndroid
-                                    ? SizedBox(height: _animation.value)
-                                    : Container(),
+                        child: new Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                _categoryButton,
+                                _calendarButton,
+                                _diaryDate,
+                                _deleteButton,
                               ],
-                            )))))));
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _imageButton,
+                                _diaryTitle,
+                              ],
+                            ),
+                            _diaryContent,
+                            Platform.isAndroid
+                                ? SizedBox(height: _animation.value)
+                                : Container(),
+                          ],
+                        ))))));
   }
 }

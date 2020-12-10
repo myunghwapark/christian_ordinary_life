@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 
+import 'package:christian_ordinary_life/src/component/customTextfieldToolBar.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
 import 'package:christian_ordinary_life/src/component/componentStyle.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
@@ -38,7 +39,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
   String qtDateForm = '';
   DateTime qtDate = new DateTime.now();
   bool _trashVisibility = false;
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   bool _isLoading = false;
 
   KeyboardVisibilityNotification _keyboardVisibility =
@@ -131,7 +132,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
         style: TextStyle(color: AppColors.darkGray),
       ),
       onPressed: () {
-        if (_formKey.currentState.validate()) {
+        if (_formCheck()) {
           newQt = new QT(
               seqNo: newQt != null ? newQt.seqNo : null,
               title: _titleController.text,
@@ -169,6 +170,21 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
       Navigator.pop(context, widget.qt);
     }
     return false;
+  }
+
+  bool _formCheck() {
+    if (_titleController.text.isEmpty) {
+      hideKeyboard(context);
+      showToast(_scaffoldKey, Translations.of(context).trans('validate_title'));
+      return false;
+    } else if (_contentController.text.isEmpty) {
+      hideKeyboard(context);
+      showToast(
+          _scaffoldKey, Translations.of(context).trans('validate_content'));
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
@@ -267,7 +283,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
     final _qtTitle = Container(
       padding: EdgeInsets.all(12),
       height: 90,
-      child: TextFormField(
+      child: CustomTextField(
         enableInteractiveSelection: true,
         textAlignVertical: TextAlignVertical.center,
         decoration: componentStyle
@@ -275,19 +291,19 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
         controller: _titleController,
         keyboardType: TextInputType.text,
         maxLength: 80,
-        validator: (value) {
+        /* validator: (value) {
           if (value.isEmpty) {
             return Translations.of(context).trans('validate_title');
           }
           return null;
-        },
+        }, */
       ),
     );
 
     final _qtBible = Container(
       padding: EdgeInsets.all(12),
       height: 90,
-      child: TextFormField(
+      child: CustomTextField(
         enableInteractiveSelection: true,
         textAlignVertical: TextAlignVertical.center,
         decoration: componentStyle
@@ -300,7 +316,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
 
     final _qtContent = Container(
         padding: EdgeInsets.all(12),
-        child: TextFormField(
+        child: CustomTextField(
           enableInteractiveSelection: true,
           textAlignVertical: TextAlignVertical.top,
           keyboardType: TextInputType.multiline,
@@ -311,17 +327,18 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
           controller: _contentController,
           maxLength: 5000,
           focusNode: _focus,
-          validator: (value) {
+          /* validator: (value) {
             if (value.isEmpty) {
               return Translations.of(context).trans('validate_content');
             }
             return null;
-          },
+          }, */
         ));
 
     return WillPopScope(
         onWillPop: _androidBackKeyEvent,
         child: Scaffold(
+            key: _scaffoldKey,
             resizeToAvoidBottomInset: true,
             //resizeToAvoidBottomPadding: false,
             backgroundColor: AppColors.lightSky,
@@ -340,25 +357,23 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
                     },
                     child: SingleChildScrollView(
                         padding: EdgeInsets.all(10),
-                        child: Form(
-                            key: _formKey,
-                            child: new Column(
-                              children: <Widget>[
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    _calendarButton,
-                                    _qtDate,
-                                    _deleteButton,
-                                  ],
-                                ),
-                                _qtTitle,
-                                _qtBible,
-                                _qtContent,
-                                Platform.isAndroid
-                                    ? SizedBox(height: _animation.value)
-                                    : Container(),
+                        child: new Column(
+                          children: <Widget>[
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                _calendarButton,
+                                _qtDate,
+                                _deleteButton,
                               ],
-                            )))))));
+                            ),
+                            _qtTitle,
+                            _qtBible,
+                            _qtContent,
+                            Platform.isAndroid
+                                ? SizedBox(height: _animation.value)
+                                : Container(),
+                          ],
+                        ))))));
   }
 }
