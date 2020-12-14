@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
@@ -279,6 +281,10 @@ class HowToUseState extends State<HowToUse> {
       imageFit = BoxFit.fill;
       imageWidth = MediaQuery.of(context).copyWith().size.width - 350;
     }
+    String iOS = "";
+    if (Platform.isIOS || Platform.isMacOS) {
+      iOS = 'iphone_';
+    }
 
     return Positioned(
       child: Row(
@@ -291,8 +297,9 @@ class HowToUseState extends State<HowToUse> {
                 Image.network(
                   API.systemImageURL +
                       (number == 1
-                          ? "how_to_use1.jpg"
-                          : "how_to_use" +
+                          ? iOS + "how_to_use1.jpg"
+                          : iOS +
+                              "how_to_use" +
                               number.toString() +
                               "_" +
                               CommonSettings.language +
@@ -310,15 +317,21 @@ class HowToUseState extends State<HowToUse> {
   void _imageCache() {
     for (int i = 1; i <= 6; i++) {
       String imageUrl = "";
+      String iOS = "";
+      if (Platform.isIOS || Platform.isMacOS) {
+        iOS = 'iphone_';
+      }
       if (i == 1) {
-        imageUrl = "how_to_use" + i.toString() + ".jpg";
+        imageUrl = iOS + "how_to_use" + i.toString() + ".jpg";
       } else {
-        imageUrl = "how_to_use" +
+        imageUrl = iOS +
+            "how_to_use" +
             i.toString() +
             "_" +
             CommonSettings.language +
             ".jpg";
       }
+
       Image theImage =
           Image.network(API.systemImageURL + imageUrl, fit: BoxFit.cover);
       precacheImage(theImage.image, context);

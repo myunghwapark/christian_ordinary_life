@@ -204,13 +204,13 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
         : Container();
 
     final _diaryDate = detailDiary.diaryDate != null
-        ? Text(
+        ? SelectableText(
             getDateOfWeek(DateTime.parse(detailDiary.diaryDate)),
             style: TextStyle(color: AppColors.darkGray),
           )
         : Container();
 
-    final _diaryTitle = Text(
+    final _diaryTitle = SelectableText(
       _title,
       style: TextStyle(color: AppColors.black, fontSize: 18),
     );
@@ -250,7 +250,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
         ? Container(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             constraints: BoxConstraints(minHeight: 100),
-            child: Text(detailDiary.content))
+            child: SelectableText(detailDiary.content))
         : Container();
 
     return Scaffold(

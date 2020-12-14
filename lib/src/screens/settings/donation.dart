@@ -19,7 +19,6 @@ class DonationState extends State<Donation> {
       return 'ca-app-pub-9598646327425938/3640376898';
     } else if (Platform.isAndroid) {
       return 'ca-app-pub-9598646327425938/6983713779';
-      //return 'ca-app-pub-3940256099942544/6300978111'; //test
     }
     return null;
   }
@@ -28,16 +27,16 @@ class DonationState extends State<Donation> {
       AdmobAdEvent event, Map<String, dynamic> args, String adType) {
     switch (event) {
       case AdmobAdEvent.loaded:
-        showSnackBar('New Admob $adType Ad loaded!');
+        print('New Admob $adType Ad loaded!');
         break;
       case AdmobAdEvent.opened:
-        showSnackBar('Admob $adType Ad opened!');
+        print('Admob $adType Ad opened!');
         break;
       case AdmobAdEvent.closed:
-        showSnackBar('Admob $adType Ad closed!');
+        print('Admob $adType Ad closed!');
         break;
       case AdmobAdEvent.failedToLoad:
-        showSnackBar('Admob $adType failed to load. :(');
+        print('Admob $adType failed to load. :(');
         break;
       case AdmobAdEvent.rewarded:
         showDialog(
@@ -104,57 +103,7 @@ class DonationState extends State<Donation> {
             )
           ],
         ));
-/* 
-    final _donation1 = Container(
-      padding: EdgeInsets.symmetric(vertical: 35, horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                Translations.of(context).trans('donation_way', param1: '1'),
-                style: TextStyle(
-                  color: AppColors.greenPoint,
-                  fontSize: 17,
-                  fontFamily: '12LotteMartHappy',
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Expanded(
-                child: Container(
-                  height: 2,
-                  color: AppColors.greenPoint.withOpacity(0.3),
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            Translations.of(context).trans('donation_account_title'),
-            style: TextStyle(
-              color: AppColors.darkGray,
-              fontSize: 16,
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            CommonSettings.donationAccount,
-            style: TextStyle(
-              color: AppColors.darkGray,
-              fontSize: 16,
-            ),
-          )
-        ],
-      ),
-    );
- */
+
     final _donation2 = Container(
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       child: Column(

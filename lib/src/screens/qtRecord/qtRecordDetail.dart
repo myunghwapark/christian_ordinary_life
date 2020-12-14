@@ -114,14 +114,14 @@ class QtRecordDetailState extends State<QtRecordDetail> {
   @override
   Widget build(BuildContext context) {
     final _qtDate = detailQt.qtDate != null
-        ? Text(
+        ? SelectableText(
             getDateOfWeek(DateTime.parse(detailQt.qtDate)),
             style: TextStyle(color: AppColors.darkGray),
           )
         : Container();
 
     final _qtTitle = detailQt.bible != null
-        ? Text(
+        ? SelectableText(
             ((detailQt.bible != null && detailQt.bible != '')
                     ? '[${detailQt.bible}] '
                     : '') +
@@ -134,7 +134,7 @@ class QtRecordDetailState extends State<QtRecordDetail> {
         ? Container(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             constraints: BoxConstraints(minHeight: 100),
-            child: Text(detailQt.content))
+            child: SelectableText(detailQt.content))
         : Container();
 
     return Scaffold(

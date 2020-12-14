@@ -165,15 +165,6 @@ class SettingsState extends State<Settings> {
     );
     _languagePicker = customPicker;
   }
-/* 
-  Future<void> getAlarmSetting() async {
-    Alarm tempQtAlarm = await commonSettings.getAlarm('qt');
-    Alarm tempPrayingAlarm = await commonSettings.getAlarm('praying');
-    setState(() {
-      qtAlarm = tempQtAlarm;
-      prayingAlarm = tempPrayingAlarm;
-    });
-  } */
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +181,7 @@ class SettingsState extends State<Settings> {
               Icons.lock,
               color: AppColors.yellowishGreenDarker,
             ),
-            onTap: () {
+            onPressed: (BuildContext context) {
               _goChangePassword();
             },
             trailing: Icon(
@@ -210,7 +201,7 @@ class SettingsState extends State<Settings> {
             Icons.description,
             color: AppColors.yellowishGreenDarker,
           ),
-          onTap: () {
+          onPressed: (BuildContext context) {
             _goHowToUse();
           },
           trailing: Icon(
@@ -221,7 +212,7 @@ class SettingsState extends State<Settings> {
         SettingsTile(
           title: Translations.of(context).trans('privacy_policy'),
           leading: Icon(Icons.security, color: AppColors.yellowishGreenDarker),
-          onTap: () {
+          onPressed: (BuildContext context) {
             _goPrivacyPolicy();
           },
           trailing: Icon(
@@ -232,7 +223,7 @@ class SettingsState extends State<Settings> {
         SettingsTile(
           title: Translations.of(context).trans('contact_developer'),
           leading: Icon(Icons.send, color: AppColors.yellowishGreenDarker),
-          onTap: () {
+          onPressed: (BuildContext context) {
             _goContactDeveloper();
           },
           trailing: Icon(
@@ -240,21 +231,11 @@ class SettingsState extends State<Settings> {
             color: Colors.grey[350],
           ),
         ),
-        /* SettingsTile(
-                  title: Translations.of(context).trans('writing_review'),
-                  // leading: Icon(Icons.rate_review),
-                  leading: Icon(Icons.mood),
-                  onTap: () {},
-          trailing: Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.grey[350],
-            ),
-                ), */
         SettingsTile(
           title: Translations.of(context).trans('donation'),
           leading: Icon(FontAwesomeIcons.donate,
               color: AppColors.yellowishGreenDarker),
-          onTap: () {
+          onPressed: (BuildContext context) {
             _goDonation();
           },
           trailing: Icon(
@@ -272,7 +253,9 @@ class SettingsState extends State<Settings> {
           title: Translations.of(context).trans('goal_reset'),
           leading:
               Icon(Icons.gps_not_fixed, color: AppColors.yellowishGreenDarker),
-          onTap: _goalReset,
+          onPressed: (BuildContext context) {
+            _goalReset();
+          },
           trailing: Container(
             width: 20,
           ),
@@ -281,7 +264,7 @@ class SettingsState extends State<Settings> {
           title: Translations.of(context).trans('language'),
           subtitle: Translations.of(context).trans(_selectedLanguage),
           leading: Icon(Icons.language, color: AppColors.yellowishGreenDarker),
-          onTap: () {
+          onPressed: (BuildContext context) {
             _showLanguagePicker();
           },
           trailing: Icon(
@@ -289,24 +272,6 @@ class SettingsState extends State<Settings> {
             color: Colors.grey[350],
           ),
         ),
-        /* SettingsTile.switchTile(
-          title: Translations.of(context).trans('pray_alarm'),
-          leading: Icon(FontAwesomeIcons.pray,
-              color: AppColors.yellowishGreenDarker),
-          switchValue: prayingAlarm.allow == null ? false : prayingAlarm.allow,
-          onToggle: (bool value) {
-            setState(() {
-              prayingAlarm.allow = value;
-            });
-          },
-        ),
-        SettingsTile.switchTile(
-          title: Translations.of(context).trans('qt_alarm'),
-          leading:
-              Icon(FontAwesomeIcons.pen, color: AppColors.yellowishGreenDarker),
-          switchValue: qtAlarm.allow == null ? false : qtAlarm.allow,
-          onToggle: (bool value) {},
-        ), */
       ],
     );
 
@@ -336,8 +301,6 @@ class SettingsState extends State<Settings> {
     languageOption.add('en');
 
     _selectedLanguage = CommonSettings.language;
-
-    // getAlarmSetting();
 
     super.initState();
   }

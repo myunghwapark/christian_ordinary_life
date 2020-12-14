@@ -112,7 +112,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   admob_flutter: 370023e0bc3f49a44ba94f14009e0728bffe43e8
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_email_sender: f787522d0e82f50e5766c1213dbffff22fdcf009
+  flutter_email_sender: 02d7443217d8c41483223627972bfdc09f74276b
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_native_timezone: e72ff1900460ff57cfd331d1758050c9269f3e99
   Google-Mobile-Ads-SDK: 29bbdb182d69ff606cc0301da1590b40be8d2205

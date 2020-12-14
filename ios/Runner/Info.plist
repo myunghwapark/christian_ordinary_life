@@ -35,6 +35,10 @@
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSAllowsArbitraryLoadsForMedia</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This app does not require access to the usage of the Apple music.</string>
@@ -56,8 +60,6 @@
 	<string>This app requires access to the photo library to provide the photos users want in their posts.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app does not require access to the usage of the speech recognition.</string>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>This identifier will be used to deliver personalized ads to you.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -77,7 +79,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>GADIsAdManagerApp</key>
+	<true/>
 	<key>io.flutter.embedded_views_preview</key>
-	<string>YES</string>
+	<true/>
 </dict>
 </plist>
