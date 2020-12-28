@@ -70,9 +70,13 @@ class ReadingBibleState extends State<ReadingBible> {
     double percent =
         _scrollController.offset / _scrollController.position.maxScrollExtent;
     setState(() {
-      _readingPercentage = double.parse(percent.toStringAsFixed(2)) > 1
-          ? 1.0
-          : double.parse(percent.toStringAsFixed(2));
+      if (double.parse(percent.toStringAsFixed(2)) > 1) {
+        _readingPercentage = 1.0;
+      } else if (double.parse(percent.toStringAsFixed(2)) < 0) {
+        _readingPercentage = 0.0;
+      } else {
+        _readingPercentage = double.parse(percent.toStringAsFixed(2));
+      }
     });
 
     if (_scrollController.offset >=

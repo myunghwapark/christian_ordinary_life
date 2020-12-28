@@ -219,6 +219,13 @@ class ThankDiaryState extends State<ThankDiary> {
           });
     }
 
+    final _diaryTotalCount = Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Text(Translations.of(context)
+              .trans('total_count', param1: _totalCnt.toString()))
+        ]));
+
     final _diaryList = ListView.separated(
         itemCount: diaryList?.length,
         separatorBuilder: (context, index) {
@@ -318,13 +325,14 @@ class ThankDiaryState extends State<ThankDiary> {
             color: Colors.black,
             child: Column(children: <Widget>[
               SearchBox(
-                pointColor: AppColors.pastelPink,
-                searchFieldNode: _searchFieldNode,
-                keywordController: keywordController,
-                onSubmitted: _onSubmitted,
-                thankCategoryVisible: true,
-                scaffoldKey: _scaffoldKey,
-              ),
+                  pointColor: AppColors.pastelPink,
+                  searchFieldNode: _searchFieldNode,
+                  keywordController: keywordController,
+                  onSubmitted: _onSubmitted,
+                  thankCategoryVisible: true,
+                  scaffoldKey: _scaffoldKey,
+                  topPadding: MediaQuery.of(context).padding.top),
+              _diaryTotalCount,
               Expanded(
                   child: SmartRefresher(
                 header: _header(),

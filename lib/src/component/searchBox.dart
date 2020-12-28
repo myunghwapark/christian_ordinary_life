@@ -19,6 +19,7 @@ class SearchBox extends StatefulWidget {
   final GestureTapCallback onSubmitted;
   final bool thankCategoryVisible;
   final GlobalKey scaffoldKey;
+  final double topPadding;
 
   SearchBox(
       {this.pointColor,
@@ -26,7 +27,8 @@ class SearchBox extends StatefulWidget {
       this.searchFieldNode,
       this.keywordController,
       this.thankCategoryVisible,
-      this.scaffoldKey});
+      this.scaffoldKey,
+      this.topPadding});
   SearchBoxState createState() => SearchBoxState();
 }
 
@@ -177,7 +179,7 @@ class SearchBoxState extends State<SearchBox> {
             searchStartDayForm,
           )),
       onTap: () {
-        showCalendar(context, searchStartDay).then((result) {
+        showCalendar(context, searchStartDay, widget.topPadding).then((result) {
           if (result != null) _setDate('start', result);
         });
       },
@@ -199,7 +201,7 @@ class SearchBoxState extends State<SearchBox> {
             searchEndDayForm,
           )),
       onTap: () {
-        showCalendar(context, searchEndDay).then((result) {
+        showCalendar(context, searchEndDay, widget.topPadding).then((result) {
           if (result != null) _setDate('end', result);
         });
       },

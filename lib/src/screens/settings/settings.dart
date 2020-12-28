@@ -173,6 +173,8 @@ class SettingsState extends State<Settings> {
       _first = false;
     }
     final _userSettings = SettingsSection(
+      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
       title: Translations.of(context).trans('user'),
       tiles: [
         SettingsTile(
@@ -192,6 +194,8 @@ class SettingsState extends State<Settings> {
     );
 
     final _commonSettings = SettingsSection(
+      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
       title: Translations.of(context).trans('common'),
       tiles: [
         SettingsTile(
@@ -247,6 +251,8 @@ class SettingsState extends State<Settings> {
     );
 
     final _appSettings = SettingsSection(
+      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
       title: Translations.of(context).trans('setting'),
       tiles: [
         SettingsTile(

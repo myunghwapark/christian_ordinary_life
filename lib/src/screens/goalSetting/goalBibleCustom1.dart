@@ -211,7 +211,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       _getBible();
     }
     final _bibleSelectionLabel = Padding(
-      padding: EdgeInsets.only(bottom: 8),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Text(
         Translations.of(context).trans('bible_selection'),
         style: TextStyle(
@@ -224,18 +224,20 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
     );
 
     final _subtitle = Padding(
-        padding: EdgeInsets.only(bottom: 10),
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         child: Text(
           Translations.of(context).trans('bible_selection_ment'),
           style: TextStyle(color: AppColors.darkGray, fontSize: 16),
           textAlign: TextAlign.start,
         ));
 
-    final _oldTestamentTitle = Text(
-      Translations.of(context).trans('old_testament'),
-      style: TextStyle(color: Colors.black, fontSize: 16),
-      textAlign: TextAlign.start,
-    );
+    final _oldTestamentTitle = Padding(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Text(
+          Translations.of(context).trans('old_testament'),
+          style: TextStyle(color: Colors.black, fontSize: 16),
+          textAlign: TextAlign.start,
+        ));
 
     final _oldTestaments = GridView.count(
       //physics: ScrollPhysics(),
@@ -250,8 +252,8 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
       }).toList(),
     );
 
-    final _newTestamentTitle = Container(
-      padding: EdgeInsets.only(top: 20),
+    final _newTestamentTitle = Padding(
+      padding: EdgeInsets.only(top: 25, bottom: 10, left: 20),
       child: Text(
         Translations.of(context).trans('new_testament'),
         style: TextStyle(color: Colors.black, fontSize: 16),
@@ -272,32 +274,27 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
     );
 
     return Scaffold(
-        key: scaffoldKey,
-        body: Column(children: [
-          appBarCustom(
-              context, Translations.of(context).trans('title_goal_setting'),
-              leaderText: Translations.of(context).trans('cancel'),
-              onLeaderTap: _goToBack,
-              actionText: Translations.of(context).trans('next'),
-              onActionTap: _nextSetting),
-          Container(
-            height: (MediaQuery.of(context).copyWith().size.height - 130),
-            padding: EdgeInsets.only(top: 5, left: 12, right: 12),
-            child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: <Widget>[
-                  _bibleSelectionLabel,
-                  _subtitle,
-                  _oldTestamentTitle,
-                  _oldTestaments,
-                  _newTestamentTitle,
-                  _newTestaments,
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                  )
-                ]),
-          )
-        ]));
+      key: scaffoldKey,
+      appBar: appBarCustom(
+          context, Translations.of(context).trans('title_goal_setting'),
+          leaderText: Translations.of(context).trans('cancel'),
+          onLeaderTap: _goToBack,
+          actionText: Translations.of(context).trans('next'),
+          onActionTap: _nextSetting),
+      body: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: <Widget>[
+            _bibleSelectionLabel,
+            _subtitle,
+            _oldTestamentTitle,
+            _oldTestaments,
+            _newTestamentTitle,
+            _newTestaments,
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            )
+          ]),
+    );
   }
 
   @override

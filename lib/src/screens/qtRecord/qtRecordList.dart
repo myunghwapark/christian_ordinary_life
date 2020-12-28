@@ -201,6 +201,13 @@ class QTRecordState extends State<QTRecord> {
           });
     }
 
+    final _qtTotalCount = Container(
+        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Text(Translations.of(context)
+              .trans('total_count', param1: _totalCnt.toString()))
+        ]));
+
     final _qtList = ListView.separated(
         itemCount: qtList?.length,
         separatorBuilder: (context, index) {
@@ -273,12 +280,13 @@ class QTRecordState extends State<QTRecord> {
             color: Colors.black,
             child: Column(children: <Widget>[
               SearchBox(
-                pointColor: AppColors.marine,
-                searchFieldNode: _searchFieldNode,
-                keywordController: keywordController,
-                onSubmitted: _onSubmitted,
-                thankCategoryVisible: false,
-              ),
+                  pointColor: AppColors.marine,
+                  searchFieldNode: _searchFieldNode,
+                  keywordController: keywordController,
+                  onSubmitted: _onSubmitted,
+                  thankCategoryVisible: false,
+                  topPadding: MediaQuery.of(context).padding.top),
+              _qtTotalCount,
               Expanded(
                   child: SmartRefresher(
                 header: _header(),

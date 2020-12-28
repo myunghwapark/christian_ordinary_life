@@ -249,7 +249,8 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
           icon: Icon(Icons.calendar_today),
           color: AppColors.marine,
           onPressed: () {
-            showCalendar(context, qtDate).then((result) {
+            showCalendar(context, qtDate, MediaQuery.of(context).padding.top)
+                .then((result) {
               if (result != null) _setDate(result);
             });
           },
@@ -263,7 +264,8 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
           style: TextStyle(fontSize: 18),
         ),
         onTap: () {
-          showCalendar(context, qtDate).then((result) {
+          showCalendar(context, qtDate, MediaQuery.of(context).padding.top)
+              .then((result) {
             if (result != null) _setDate(result);
           });
         },

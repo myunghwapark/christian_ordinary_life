@@ -211,6 +211,7 @@
     "until_target_hour": "#1 hour to target day",
     "until_target_dates": "#1 days to target day",
     "until_target_hours": "#1 hours to target day",
+    "total_count": "Total #1",
 
     "gen": "Genesis",
     "ex": "Exodus",

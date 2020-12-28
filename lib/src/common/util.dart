@@ -209,19 +209,18 @@ Future<String> showTimeConfirmDialog(BuildContext context, Alarm alarm) async {
   return result;
 } */
 
-Future<DateTime> showCalendar(BuildContext context, DateTime diaryDate) async {
+Future<DateTime> showCalendar(
+    BuildContext context, DateTime date, double topPadding) async {
   final result = await showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       builder: (BuildContext builder) {
-        return SafeArea(
-            top: true,
-            child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).padding.top,
-                ),
-                child: Calendar(diaryDate)));
+        return Container(
+            color: Colors.white,
+            padding: EdgeInsets.only(
+              top: topPadding,
+            ),
+            child: Calendar(date));
       });
 
   return result;
