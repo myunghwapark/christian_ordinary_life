@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:christian_ordinary_life/src/component/customTextfieldToolBar.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
@@ -14,6 +15,8 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/model/QT.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
 
 class QtRecordWrite extends StatefulWidget {
   final QT qt;
@@ -33,6 +36,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
   FocusNode _focus = new FocusNode();
   AnimationController _controller;
   Animation _animation;
+  AppButtons buttons = new AppButtons();
 
   ComponentStyle componentStyle = new ComponentStyle();
 
@@ -187,6 +191,19 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
     }
   }
 
+  Future<void> _launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+        headers: <String, String>{'': ''},
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   void initState() {
     if (widget.qt != null) {
@@ -271,6 +288,17 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
         },
       ),
     );
+
+    final _todaysQt = buttons
+        .outerlineMintButton(Translations.of(context).trans('todays_qt'), () {
+      String url;
+      if (CommonSettings.language == 'ko') {
+        url = API.qtLinkSwim + getCalDateFormat(qtDate);
+      } else {
+        url = API.qtLinkWordforToday;
+      }
+      _launchInBrowser(url);
+    });
 
     final _deleteButton = Visibility(
         visible: _trashVisibility,
@@ -366,6 +394,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
                               children: [
                                 _calendarButton,
                                 _qtDate,
+                                _todaysQt,
                                 _deleteButton,
                               ],
                             ),

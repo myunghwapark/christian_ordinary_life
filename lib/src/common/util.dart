@@ -171,43 +171,6 @@ Future<String> showConfirmDialog(BuildContext context, String alertText) async {
 
   return result;
 }
-/* 
-Future<String> showTimeConfirmDialog(BuildContext context, Alarm alarm) async {
-  List<String> time = alarm.time.split(':');
-
-  String result = await showDialog(
-    context: context,
-    barrierDismissible: false, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        content: Column(
-          children: [
-            Text(Translations.of(context).trans('alarm_confirm')),
-            Row(
-              children: [],
-            )
-          ],
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(Translations.of(context).trans('cancel')),
-            onPressed: () {
-              Navigator.pop(context, "cancel");
-            },
-          ),
-          FlatButton(
-            child: Text(Translations.of(context).trans('confirm')),
-            onPressed: () {
-              Navigator.pop(context, "ok");
-            },
-          ),
-        ],
-      );
-    },
-  );
-
-  return result;
-} */
 
 Future<DateTime> showCalendar(
     BuildContext context, DateTime date, double topPadding) async {
@@ -228,7 +191,6 @@ Future<DateTime> showCalendar(
 
 void showToast(GlobalKey<ScaffoldState> scaffoldKey, String toastText,
     {SnackBarAction action}) {
-  //final scaffold = Scaffold.of(context);
   scaffoldKey.currentState.showSnackBar(SnackBar(
     content: Text(toastText),
     action: action != null ? action : null,

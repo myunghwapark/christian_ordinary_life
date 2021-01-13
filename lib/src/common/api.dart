@@ -11,6 +11,10 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 class API {
   //static String serverAddress = 'http://192.168.64.2/col/';
   static String serverAddress = 'https://christian-life.xyz/';
+  static String qtLinkSwim =
+      'http://qt.swim.org/user_utf/dailybible/user_print_web.php?edit_all=';
+  static String qtLinkWordforToday =
+      'https://www.rhema.co.nz/the-word-for-today';
   static String serverURL = serverAddress + 'apis/';
   static final String systemImageURL = serverAddress + 'images/system/';
   static final String diaryImageURL = serverAddress + 'images/diary/';

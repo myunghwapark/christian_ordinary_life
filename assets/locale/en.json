@@ -212,6 +212,8 @@
     "until_target_dates": "#1 days to target day",
     "until_target_hours": "#1 hours to target day",
     "total_count": "Total #1",
+    "todays_qt": "View QT",
+    "different_ad": "Show different AD",
 
     "gen": "Genesis",
     "ex": "Exodus",

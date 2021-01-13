@@ -4,6 +4,7 @@ import 'package:admob_flutter/admob_flutter.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
+import 'package:christian_ordinary_life/src/component/buttons.dart';
 
 class Donation extends StatefulWidget {
   @override
@@ -12,13 +13,46 @@ class Donation extends StatefulWidget {
 
 class DonationState extends State<Donation> {
   AdmobBannerSize bannerSize;
+  AdmobInterstitial interstitialAd;
   GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  AppButtons buttons = new AppButtons();
+  bool _test = false;
+  String iosBannerUnitId = 'ca-app-pub-9598646327425938/3640376898';
+  String iosFullUnitId = 'ca-app-pub-9598646327425938/3640376898';
+  String iosTestBannerUnitId = 'ca-app-pub-3940256099942544/2934735716';
+  String iosTestFullUnitId = 'ca-app-pub-3940256099942544/4411468910';
+
+  String androidBannerUnitId = 'ca-app-pub-9598646327425938/6983713779';
+  String androidFullUnitId = 'ca-app-pub-9598646327425938/8217575218';
+  String androidTestBannerUnitId = 'ca-app-pub-3940256099942544/6300978111';
+  String androidTestFullUnitId = 'ca-app-pub-3940256099942544/1033173712';
 
   String getBannerAdUnitId() {
     if (Platform.isIOS) {
-      return 'ca-app-pub-9598646327425938/3640376898';
+      if (_test)
+        return iosTestBannerUnitId;
+      else
+        return iosBannerUnitId;
     } else if (Platform.isAndroid) {
-      return 'ca-app-pub-9598646327425938/6983713779';
+      if (_test)
+        return androidTestBannerUnitId;
+      else
+        return androidBannerUnitId;
+    }
+    return null;
+  }
+
+  String getInterstitialAdUnitId() {
+    if (Platform.isIOS) {
+      if (_test)
+        return iosTestFullUnitId;
+      else
+        return iosFullUnitId;
+    } else if (Platform.isAndroid) {
+      if (_test)
+        return androidTestFullUnitId;
+      else
+        return androidFullUnitId;
     }
     return null;
   }
@@ -147,6 +181,12 @@ class DonationState extends State<Donation> {
       ),
     );
 
+    final _differentAd = Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: buttons.filledWhiteMintButton(
+            Translations.of(context).trans('different_ad'),
+            interstitialAd.show));
+
     final _adBanner = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -173,20 +213,30 @@ class DonationState extends State<Donation> {
           appBarComponent(context, Translations.of(context).trans('donation')),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [_title, _donation2, _adBanner],
+        children: [_title, _donation2, _differentAd, _adBanner],
       ),
     );
   }
 
   @override
   void initState() {
-    bannerSize = AdmobBannerSize.BANNER;
+    bannerSize = AdmobBannerSize.MEDIUM_RECTANGLE; //AdmobBannerSize.BANNER;
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: getInterstitialAdUnitId(),
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        handleEvent(event, args, 'Interstitial');
+      },
+    );
+
+    interstitialAd.load();
     super.initState();
   }
 
   @override
   void dispose() {
-    //_bannerAd?.dispose();
+    interstitialAd.dispose();
     super.dispose();
   }
 }

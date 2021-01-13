@@ -107,11 +107,6 @@ class GoalInfo {
       BuildContext context, BibleUserPlan bibleUserPlan) async {
     Goal result = new Goal();
 
-    print('thankDiaryTime: ${GoalInfo.goal.thankDiaryTime}');
-    print('thankDiaryAlarm: ${GoalInfo.goal.thankDiaryAlarm}');
-    print('readingBibleTime: ${GoalInfo.goal.readingBibleTime}');
-    print('readingBibleAlarm: ${GoalInfo.goal.readingBibleAlarm}');
-
     try {
       await API.transaction(context, API.setUserGoal, param: {
         'userSeqNo': UserInfo.loginUser.seqNo,
