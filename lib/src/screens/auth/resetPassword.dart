@@ -74,7 +74,7 @@ class ResetPasswordState extends State<ResetPassword> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.pop(context);
           },

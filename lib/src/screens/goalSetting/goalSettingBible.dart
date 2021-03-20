@@ -1,9 +1,8 @@
-import 'package:christian_ordinary_life/src/component/timeBox.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'dart:convert';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/component/timeBox.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/common/goalInfo.dart';
@@ -185,12 +184,11 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     });
   }
 
-  void _onTimepickerChanged(List timeArray) {
+  void _onTimepickerChanged(DateTime dateTime) {
     setState(() {
-      List times = timepickerChanged(timeArray);
-      _setHour = times[0];
-      _setMinute = times[1];
-      GoalInfo.goal.readingBibleTime = times[0] + ':' + times[1];
+      _setHour = makeTimeFormat(dateTime.hour);
+      _setMinute = makeTimeFormat(dateTime.minute);
+      GoalInfo.goal.readingBibleTime = dataFormatTimeSecond(dateTime);
     });
   }
 
@@ -199,10 +197,12 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
   }
 
   Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('save')),
+    return TextButton(
+      child: Text(
+        Translations.of(context).trans('save'),
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: setUserGoal,
-      textColor: AppColors.darkGray,
     );
   }
 
@@ -252,7 +252,9 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                   AppColors.lightBrown,
                   () => {
                         // Time picker
-                        showModalBottomSheet(
+                        openTimePicker(context, _onTimepickerChanged,
+                            initTime: _setInitTime())
+                        /*   showModalBottomSheet(
                             context: context,
                             builder: (BuildContext builder) {
                               return Container(
@@ -266,7 +268,7 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                                       dateFormat: 'HH:mm',
                                       onConfirm: (time, timeArray) =>
                                           {_onTimepickerChanged(timeArray)}));
-                            })
+                            }) */
                       })
             ])));
 

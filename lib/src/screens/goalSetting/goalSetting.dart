@@ -5,7 +5,6 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart' as tz;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:christian_ordinary_life/src/model/Alarm.dart';

@@ -26,7 +26,7 @@ class CustomPickerState extends State<CustomPicker> {
           ),
           backgroundColor: Colors.grey,
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text(
                 Translations.of(context).trans('done'),
                 style: TextStyle(color: Colors.white, fontSize: 16),

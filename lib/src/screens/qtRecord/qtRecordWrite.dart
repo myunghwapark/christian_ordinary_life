@@ -130,7 +130,7 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
   }
 
   Widget actionIcon() {
-    return FlatButton(
+    return TextButton(
       child: Text(
         Translations.of(context).trans('save'),
         style: TextStyle(color: AppColors.darkGray),
@@ -148,7 +148,6 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
           _writeQT();
         }
       },
-      textColor: AppColors.darkGray,
     );
   }
 
@@ -179,12 +178,11 @@ class QtRecordWriteStatus extends State<QtRecordWrite>
   bool _formCheck() {
     if (_titleController.text.isEmpty) {
       hideKeyboard(context);
-      showToast(_scaffoldKey, Translations.of(context).trans('validate_title'));
+      showToast(context, Translations.of(context).trans('validate_title'));
       return false;
     } else if (_contentController.text.isEmpty) {
       hideKeyboard(context);
-      showToast(
-          _scaffoldKey, Translations.of(context).trans('validate_content'));
+      showToast(context, Translations.of(context).trans('validate_content'));
       return false;
     } else {
       return true;

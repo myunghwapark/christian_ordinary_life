@@ -25,7 +25,7 @@ class GoalSettingCompleteState extends State<GoalSettingComplete> {
       elevation: 0,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () => Navigator.pushReplacementNamed(context, '/'),
           child: Text(
             Translations.of(context).trans('confirm'),

@@ -75,7 +75,7 @@ class ChangePasswordState extends State<ChangePassword> {
   }
 
   Widget _actionIcon() {
-    return FlatButton(
+    return TextButton(
       child: Text(Translations.of(context).trans('apply'),
           style: TextStyle(color: AppColors.darkGray)),
       onPressed: _apply,

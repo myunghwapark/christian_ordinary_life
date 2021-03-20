@@ -1,4 +1,6 @@
+import 'package:christian_ordinary_life/src/component/timePicker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
@@ -41,6 +43,15 @@ String getDateOfWeek(DateTime now) {
 String getDate(DateTime now) {
   if (now == null) return '';
   return DateFormat.yMMMMd().format(now);
+}
+
+/*
+  return type: String
+  ex) 2022년 7월 22일 or July 22 2020
+*/
+String getDateOfWeek2(DateTime now) {
+  if (now == null) return '';
+  return DateFormat.MMMMEEEEd().format(now);
 }
 
 /*
@@ -105,23 +116,36 @@ DateTime convertDateFromString(String strDate) {
   return date;
 }
 
-List timepickerChanged(List timeArray) {
-  int hour = timeArray[0], minute = timeArray[1];
-  List<String> timeStrings = new List<String>(2);
-
-  if (hour < 10) {
-    timeStrings[0] = '0' + hour.toString();
+String makeTimeFormat(int time) {
+  String timeStr = '';
+  if (time < 10) {
+    timeStr = '0' + time.toString();
   } else {
-    timeStrings[0] = hour.toString();
+    timeStr = time.toString();
   }
 
-  if (minute < 10) {
-    timeStrings[1] = '0' + minute.toString();
-  } else {
-    timeStrings[1] = minute.toString();
-  }
+  return timeStr;
+}
 
-  return timeStrings;
+String dataFormatTimeSecond(DateTime date) {
+  final template = DateFormat('hh:mm');
+  return template.format(date);
+}
+
+Future<void> openTimePicker(BuildContext context, Function method,
+    {DateTime initTime}) async {
+  await DatePicker.showPicker(context,
+      showTitleActions: true,
+      theme: DatePickerTheme(
+        //headerColor: AppSettings.mainColor,
+        backgroundColor: Colors.grey[200],
+        // doneStyle: TextStyle(color: Colors.white, fontSize: 16)
+      ), onChanged: (date) {
+    print(
+        'change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+  }, onConfirm: (date) {
+    method(date);
+  }, pickerModel: TimePicker(currentTime: initTime ?? DateTime.now()));
 }
 
 Future<void> showAlertDialog(BuildContext context, String alertText) async {
@@ -131,7 +155,7 @@ Future<void> showAlertDialog(BuildContext context, String alertText) async {
       return AlertDialog(
         content: Text(alertText),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text('Ok'),
             onPressed: () {
               Navigator.of(context).pop();
@@ -152,13 +176,13 @@ Future<String> showConfirmDialog(BuildContext context, String alertText) async {
         //title: Text('AlertDialog Demo'),
         content: Text(alertText),
         actions: <Widget>[
-          FlatButton(
+          TextButton(
             child: Text(Translations.of(context).trans('cancel')),
             onPressed: () {
               Navigator.pop(context, "cancel");
             },
           ),
-          FlatButton(
+          TextButton(
             child: Text(Translations.of(context).trans('confirm')),
             onPressed: () {
               Navigator.pop(context, "ok");
@@ -189,9 +213,9 @@ Future<DateTime> showCalendar(
   return result;
 }
 
-void showToast(GlobalKey<ScaffoldState> scaffoldKey, String toastText,
+void showToast(BuildContext context, String toastText,
     {SnackBarAction action}) {
-  scaffoldKey.currentState.showSnackBar(SnackBar(
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(toastText),
     action: action != null ? action : null,
   ));
@@ -235,12 +259,11 @@ Future<String> showImageDialog(BuildContext context, Image image) async {
             Flexible(
                 fit: FlexFit.tight,
                 flex: 2,
-                child: FlatButton(
+                child: TextButton(
                   child: Text(
                     Translations.of(context).trans('close'),
                     textAlign: TextAlign.right,
                   ),
-                  color: Colors.grey.withOpacity(0.0),
                   onPressed: () {
                     Navigator.pop(context, "close");
                   },

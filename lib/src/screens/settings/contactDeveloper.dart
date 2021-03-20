@@ -68,7 +68,7 @@ class ContactDeveloperState extends State<ContactDeveloper> {
 
       if (!mounted) return;
 
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(platformResponse),
       ));
     }
@@ -294,7 +294,7 @@ class ContactDeveloperState extends State<ContactDeveloper> {
       }
     } catch (e) {
       setState(() {
-        showToast(_scaffoldKey, e.toString());
+        showToast(context, e.toString());
         _pickImageError = e;
       });
     }

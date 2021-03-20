@@ -6,7 +6,6 @@ import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/component/timeBox.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 
 class GoalSettingThankDiary extends StatefulWidget {
   final Goal goal;
@@ -50,12 +49,11 @@ class GoalSettingThankDiaryState extends State<GoalSettingThankDiary> {
     goal.thankDiaryAlarm = value == 0 ? true : false;
   }
 
-  void _onTimepickerChanged(List timeArray) {
+  void _onTimepickerChanged(DateTime dateTime) {
     setState(() {
-      List times = timepickerChanged(timeArray);
-      _setHour = times[0];
-      _setMinute = times[1];
-      goal.thankDiaryTime = times[0] + ':' + times[1];
+      _setHour = makeTimeFormat(dateTime.hour);
+      _setMinute = makeTimeFormat(dateTime.minute);
+      goal.thankDiaryTime = dataFormatTimeSecond(dateTime);
     });
   }
 
@@ -68,7 +66,10 @@ class GoalSettingThankDiaryState extends State<GoalSettingThankDiary> {
         AppColors.pastelPink,
         () => {
               // Time picker
-              showModalBottomSheet(
+
+              openTimePicker(context, _onTimepickerChanged,
+                  initTime: _setInitTime())
+              /* showModalBottomSheet(
                   context: context,
                   builder: (BuildContext builder) {
                     return Container(
@@ -79,7 +80,7 @@ class GoalSettingThankDiaryState extends State<GoalSettingThankDiary> {
                             dateFormat: 'HH:mm',
                             onConfirm: (time, timeArray) =>
                                 {_onTimepickerChanged(timeArray)}));
-                  })
+                  }) */
             });
 
     final _preposition =

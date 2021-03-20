@@ -45,6 +45,8 @@ class MyApp extends StatelessWidget {
       home: Main(title: ''),
       initialRoute: '/',
       routes: {
+        QTRecord.routeName: (context) => QTRecord(),
+        ThankDiary.routeName: (context) => ThankDiary(),
         GoalSettingBible.routeName: (context) => GoalSettingBible(),
       },
       onGenerateRoute: (routeSettings) {

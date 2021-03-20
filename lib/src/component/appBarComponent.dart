@@ -56,7 +56,7 @@ Widget appBarCustom(
     ),
     backgroundColor: Colors.teal,
     leadingWidth: 95,
-    leading: FlatButton(
+    leading: TextButton(
       child: Text(
         leaderText,
         style: TextStyle(color: Colors.white, fontSize: 15),
@@ -65,7 +65,7 @@ Widget appBarCustom(
           onLeaderTap == null ? () => Navigator.pop(context) : onLeaderTap,
     ),
     actions: <Widget>[
-      FlatButton(
+      TextButton(
         child: Text(
           actionText,
           style: TextStyle(color: Colors.white, fontSize: 15),

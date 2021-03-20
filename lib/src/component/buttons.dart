@@ -3,90 +3,112 @@ import 'package:flutter/material.dart';
 
 class AppButtons {
   Widget outerlineGreyButton(String title, GestureTapCallback method) {
-    return OutlineButton(
-      color: AppColors.almostWhite,
-      child: Text(title),
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+          primary: AppColors.almostWhite,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: AppColors.yellowishGreen))),
+      child: Text(
+        title,
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: method,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18.0),
-          side: BorderSide(color: AppColors.yellowishGreen)),
     );
   }
 
   Widget outerlineMintButton(String title, GestureTapCallback method) {
-    return OutlineButton(
+    return OutlinedButton(
       onPressed: method,
-      borderSide: BorderSide(color: AppColors.marine),
-      shape: StadiumBorder(),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.marine),
+        shape: StadiumBorder(),
+        onSurface: AppColors.marine.withOpacity(0.1),
+      ),
       child: Text(
         title,
         style: TextStyle(color: AppColors.greenPoint),
       ),
-      highlightColor: AppColors.marine.withOpacity(0.1),
     );
   }
 
   Widget filledGreenButton(String title, GestureTapCallback method) {
     return SizedBox(
         width: double.infinity,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: method,
-          color: AppColors.greenPointMild,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: AppColors.greenPointMild),
+          style: ElevatedButton.styleFrom(
+            primary: AppColors.greenPointMild,
+            padding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: AppColors.greenPointMild),
+            ),
           ),
-          child: Text(title, style: TextStyle(fontSize: 14)),
+          child:
+              Text(title, style: TextStyle(fontSize: 14, color: Colors.white)),
         ));
   }
 
   Widget filledGreyButton(String title, GestureTapCallback method) {
     return SizedBox(
         width: double.infinity,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: method,
-          color: Colors.grey,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.grey),
-          ),
-          child: Text(title, style: TextStyle(fontSize: 14)),
+          style: ElevatedButton.styleFrom(
+              primary: Colors.grey,
+              padding: const EdgeInsets.all(0.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                side: BorderSide(color: Colors.grey),
+              )),
+          child: Text(title,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+              )),
         ));
   }
 
   Widget filledOrangeButton(String title, GestureTapCallback method) {
     return SizedBox(
         width: double.infinity,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: method,
-          color: Colors.orange[300],
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            side: BorderSide(color: Colors.orange[300]),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.orange[300],
+            padding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              side: BorderSide(color: Colors.orange[300]),
+            ),
           ),
-          child: Text(title, style: TextStyle(fontSize: 14)),
+          child: Text(title,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+              )),
         ));
   }
 
   Widget filledWhiteMintButton(String title, GestureTapCallback method) {
     return SizedBox(
         width: double.infinity,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: method,
-          color: Colors.white,
-          textColor: AppColors.darkGray,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            side: BorderSide(color: AppColors.mint),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            padding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              side: BorderSide(color: AppColors.mint),
+            ),
           ),
-          child: Text(title, style: TextStyle(fontSize: 14)),
+          child: Text(title,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.darkGray,
+              )),
         ));
   }
 
@@ -94,16 +116,21 @@ class AppButtons {
       String title, GestureTapCallback method, Color borderColor) {
     return SizedBox(
         width: double.infinity,
-        child: RaisedButton(
+        child: ElevatedButton(
           onPressed: method,
-          color: Colors.white,
-          textColor: AppColors.darkGray,
-          padding: const EdgeInsets.all(0.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            side: BorderSide(color: borderColor),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            padding: const EdgeInsets.all(0.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              side: BorderSide(color: borderColor),
+            ),
           ),
-          child: Text(title, style: TextStyle(fontSize: 14)),
+          child: Text(title,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.darkGray,
+              )),
         ));
   }
 }

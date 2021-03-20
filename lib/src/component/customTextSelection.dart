@@ -39,17 +39,17 @@ class _TextSelectionToolbar extends StatelessWidget {
         MaterialLocalizations.of(context);
     final List<Widget> items = <Widget>[
       if (handleCut != null)
-        FlatButton(
+        TextButton(
             child: Text(localizations.cutButtonLabel), onPressed: handleCut),
       if (handleCopy != null)
-        FlatButton(
+        TextButton(
             child: Text(localizations.copyButtonLabel), onPressed: handleCopy),
       if (handlePaste != null)
-        FlatButton(
+        TextButton(
             child: Text(localizations.pasteButtonLabel),
             onPressed: handlePaste),
       if (handleSelectAll != null)
-        FlatButton(
+        TextButton(
             child: Text(localizations.selectAllButtonLabel),
             onPressed: handleSelectAll),
     ];
@@ -152,7 +152,8 @@ class _CustomTextSelectionControls extends TextSelectionControls {
       Offset position,
       List<TextSelectionPoint> endpoints,
       TextSelectionDelegate delegate,
-      ClipboardStatusNotifier clipboardStatus) {
+      ClipboardStatusNotifier clipboardStatus,
+      Offset lastSecondaryTapDownPosition) {
     assert(debugCheckHasMediaQuery(context));
     assert(debugCheckHasMaterialLocalizations(context));
 
@@ -212,7 +213,7 @@ class _CustomTextSelectionControls extends TextSelectionControls {
       height: _kHandleSize,
       child: CustomPaint(
         painter: _TextSelectionHandlePainter(
-            color: Theme.of(context).textSelectionHandleColor),
+            color: Theme.of(context).textSelectionTheme.selectionHandleColor),
       ),
     );
 

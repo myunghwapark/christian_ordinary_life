@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -52,12 +51,11 @@ class GoalSettingQTState extends State<GoalSettingQT> {
     goal.qtAlarm = value == 0 ? true : false;
   }
 
-  void _onTimepickerChanged(List timeArray) {
+  void _onTimepickerChanged(DateTime dateTime) {
     setState(() {
-      List times = timepickerChanged(timeArray);
-      _setHour = times[0];
-      _setMinute = times[1];
-      goal.qtTime = times[0] + ':' + times[1];
+      _setHour = makeTimeFormat(dateTime.hour);
+      _setMinute = makeTimeFormat(dateTime.minute);
+      goal.qtTime = dataFormatTimeSecond(dateTime);
     });
   }
 
@@ -70,7 +68,10 @@ class GoalSettingQTState extends State<GoalSettingQT> {
         AppColors.blueSky,
         () => {
               // Time picker
-              showModalBottomSheet(
+
+              openTimePicker(context, _onTimepickerChanged,
+                  initTime: _setInitTime())
+              /*  showModalBottomSheet(
                   context: context,
                   builder: (BuildContext builder) {
                     return Container(
@@ -81,7 +82,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
                             dateFormat: 'HH:mm',
                             onConfirm: (time, timeArray) =>
                                 {_onTimepickerChanged(timeArray)}));
-                  })
+                  }) */
             });
 
     final _preposition =

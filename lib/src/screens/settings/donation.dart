@@ -88,7 +88,7 @@ class DonationState extends State<Donation> {
                 ),
               ),
               onWillPop: () async {
-                scaffoldState.currentState.hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
                 return true;
               },
             );
@@ -100,7 +100,7 @@ class DonationState extends State<Donation> {
   }
 
   void showSnackBar(String content) {
-    scaffoldState.currentState.showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
         duration: Duration(milliseconds: 1500),
@@ -181,11 +181,13 @@ class DonationState extends State<Donation> {
       ),
     );
 
-    final _differentAd = Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: buttons.filledWhiteMintButton(
-            Translations.of(context).trans('different_ad'),
-            interstitialAd.show));
+    final _differentAd = Platform.isAndroid
+        ? Container(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: buttons.filledWhiteMintButton(
+                Translations.of(context).trans('different_ad'),
+                interstitialAd.show))
+        : Container();
 
     final _adBanner = Row(
       mainAxisAlignment: MainAxisAlignment.center,

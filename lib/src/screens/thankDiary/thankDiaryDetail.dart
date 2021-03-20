@@ -122,10 +122,12 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
   }
 
   Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('edit')),
+    return TextButton(
+      child: Text(
+        Translations.of(context).trans('edit'),
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: _goQtRecordWrite,
-      textColor: AppColors.darkGray,
     );
   }
 

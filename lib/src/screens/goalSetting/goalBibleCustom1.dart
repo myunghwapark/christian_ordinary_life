@@ -181,7 +181,7 @@ class GoalBibleCustom1State extends State<GoalBibleCustom1> {
   void _nextSetting() async {
     if (biblePlan.length == 0) {
       showToast(
-          scaffoldKey, Translations.of(context).trans('bible_custom_validate'));
+          context, Translations.of(context).trans('bible_custom_validate'));
       return;
     }
     bibleUserPlan.customBible = biblePlan.toString();

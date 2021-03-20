@@ -590,7 +590,7 @@ class CustomTextField extends StatefulWidget {
 
   /// The color to use when painting the cursor.
   ///
-  /// Defaults to [ThemeData.cursorColor] or [CupertinoTheme.primaryColor]
+  /// Defaults to [TextSelectionThemeData.cursorColor] or [CupertinoTheme.primaryColor]
   /// depending on [ThemeData.platform].
   final Color cursorColor;
 
@@ -1003,7 +1003,8 @@ class _CustomTextFieldState extends State<CustomTextField>
         textSelectionControls = customTextSelectionControls;
         paintCursorAboveText = false;
         cursorOpacityAnimates = false;
-        cursorColor ??= themeData.cursorColor;
+        //2021/03/19 themeData.cursorColor에서 CupertinoTheme.of(context).primaryColor 로 수정;
+        cursorColor ??= CupertinoTheme.of(context).primaryColor;
         break;
       case TargetPlatform.linux:
         break;
@@ -1036,7 +1037,7 @@ class _CustomTextFieldState extends State<CustomTextField>
         maxLines: widget.maxLines,
         minLines: widget.minLines,
         expands: widget.expands,
-        selectionColor: themeData.textSelectionColor,
+        //selectionColor: themeData.textSelectionColor,
         selectionControls:
             widget.selectionEnabled ? textSelectionControls : null,
         onChanged: widget.onChanged,

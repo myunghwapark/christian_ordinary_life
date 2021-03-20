@@ -42,12 +42,11 @@ class ReadingBibleState extends State<ReadingBible> {
   GoalProgress goalProgress = new GoalProgress();
 
   // 성경별, 장별로 구분하기 위해 두개의 배열이 필요
-  List<Chapter> todaysBible = new List<Chapter>(); // 계획 ex) gen 1-3
-  List<Chapter> todaysBibleChapters =
-      new List<Chapter>(); // 계획 상세 ex) gen 1, gen 2, gen 3
-  List<Chapter> chapterDropDown = new List<Chapter>();
+  List<Chapter> todaysBible = []; // 계획 ex) gen 1-3
+  List<Chapter> todaysBibleChapters = []; // 계획 상세 ex) gen 1, gen 2, gen 3
+  List<Chapter> chapterDropDown = [];
 
-  List<Book> bookToRead = new List<Book>(); // 성경 1장 분량
+  List<Book> bookToRead = []; // 성경 1장 분량
   String _dropDownValue;
   String _dropDownSelectedTitle;
   GlobalKey _keyTodaysBible = GlobalKey();
@@ -114,7 +113,7 @@ class ReadingBibleState extends State<ReadingBible> {
             .map((model) => Chapter.fromJson(model))
             .toList();
 
-        todaysBible = new List<Chapter>();
+        todaysBible = [];
         goalProgress.bibleProgressNo = int.parse(todayBible.bibleProgress);
         goalProgress.bibleProgress = todayBible.bibleProgress;
         _currentChapter = goalProgress.bibleProgressNo;
@@ -151,7 +150,7 @@ class ReadingBibleState extends State<ReadingBible> {
           Book book = Book.fromJson(json.decode(response));
 
           List<Book> tempList;
-          bookToRead = new List<Book>();
+          bookToRead = [];
           tempList = book.list.map((model) => Book.fromJson(model)).toList();
           for (int i = 0; i < tempList.length; i++) {
             bookToRead.add(tempList[i]);
@@ -230,8 +229,8 @@ class ReadingBibleState extends State<ReadingBible> {
 
   void _setBibleProgress() {
     setState(() {
-      todaysBibleChapters = new List<Chapter>();
-      chapterDropDown = new List<Chapter>();
+      todaysBibleChapters = [];
+      chapterDropDown = [];
 
       int count = 0;
       for (int i = 0; i < todaysBible.length; i++) {
@@ -391,7 +390,7 @@ class ReadingBibleState extends State<ReadingBible> {
     }
 
     _todaysChapters(String book) {
-      List<Chapter> chapterList = new List<Chapter>();
+      List<Chapter> chapterList = [];
       for (int i = 0; i < todaysBibleChapters.length; i++) {
         Chapter chapter = todaysBibleChapters[i];
         if (book == chapter.book) {

@@ -19,7 +19,7 @@ class GoalBiblePlanDetail extends StatefulWidget {
 }
 
 class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
-  List<BiblePlanDetail> biblePlanDetailList = new List<BiblePlanDetail>();
+  List<BiblePlanDetail> biblePlanDetailList = [];
   bool _isLoading = false;
 
   Future<void> _getBiblePlanDetail() async {

@@ -14,7 +14,7 @@ class HowToUse extends StatefulWidget {
 class HowToUseState extends State<HowToUse> {
   int _index = 0;
   PageController _pageController = PageController(viewportFraction: 0.9);
-  List<Widget> _titleList = new List<Widget>();
+  List<Widget> _titleList = [];
   bool _first = true;
 
   void nextPage() {
@@ -366,15 +366,14 @@ class HowToUseState extends State<HowToUse> {
       children: [
         Container(
             margin: EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-            child: FlatButton(
+            child: TextButton(
               child: Text(
                 Translations.of(context).trans('close'),
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: AppColors.darkGray),
               ),
               onPressed: () {
                 Navigator.pop(context);
               },
-              textColor: AppColors.darkGray,
             ))
       ],
     ));

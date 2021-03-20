@@ -106,7 +106,7 @@ class LoginState extends State<Login> {
       elevation: 0,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.pop(context);
           },

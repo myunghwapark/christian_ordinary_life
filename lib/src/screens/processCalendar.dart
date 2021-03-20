@@ -31,7 +31,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
-  List<GoalProgress> _goalProgress = new List<GoalProgress>();
+  List<GoalProgress> _goalProgress = [];
   String _yearMonth;
   bool _isLoading = false;
 
@@ -77,7 +77,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
             for (int i = 0; i < _goalProgress.length; i++) {
               DateTime createTime =
                   convertDateFromString(_goalProgress[i].goalDate);
-              goalDailyProgress = new List<GoalDailyProgress>();
+              goalDailyProgress = [];
 
               if (_goalProgress[i].qtRecord != '-')
                 goalDailyProgress.add(_makeDailyProgressList(

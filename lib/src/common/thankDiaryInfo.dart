@@ -7,8 +7,8 @@ import 'package:christian_ordinary_life/src/common/util.dart';
 import 'package:christian_ordinary_life/src/model/ThankCategory.dart';
 
 class ThankDiaryInfo {
-  static List<ThankCategory> thankCategoryList = new List<ThankCategory>();
-  static List<ThankCategory> thankCategoryDropbox = new List<ThankCategory>();
+  static List<ThankCategory> thankCategoryList = [];
+  static List<ThankCategory> thankCategoryDropbox = [];
 
   Future<void> getThankCategory(BuildContext context) async {
     try {
@@ -22,8 +22,8 @@ class ThankDiaryInfo {
               .map((model) => ThankCategory.fromJson(model))
               .toList();
 
-          thankCategoryDropbox = new List<ThankCategory>();
-          thankCategoryList = new List<ThankCategory>();
+          thankCategoryDropbox = [];
+          thankCategoryList = [];
 
           ThankCategory allCategory = new ThankCategory();
           allCategory.categoryTitle = 'All Category';

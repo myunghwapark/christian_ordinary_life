@@ -131,7 +131,7 @@ class RegisterState extends State<Register> {
       elevation: 0,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () {
             Navigator.pop(context);
           },

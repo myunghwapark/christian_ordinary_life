@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
 import 'package:christian_ordinary_life/src/model/Goal.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
@@ -59,12 +58,11 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
     });
   }
 
-  void _onTimepickerChanged(List timeArray) {
+  void _onTimepickerChanged(DateTime dateTime) {
     setState(() {
-      List times = timepickerChanged(timeArray);
-      _setHour = times[0];
-      _setMinute = times[1];
-      goal.prayingTime = times[0] + ':' + times[1];
+      _setHour = makeTimeFormat(dateTime.hour);
+      _setMinute = makeTimeFormat(dateTime.minute);
+      goal.prayingTime = dataFormatTimeSecond(dateTime);
     });
   }
 
@@ -77,7 +75,10 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
         AppColors.mint,
         () => {
               // Time picker
-              showModalBottomSheet(
+
+              openTimePicker(context, _onTimepickerChanged,
+                  initTime: _setInitTime())
+              /* showModalBottomSheet(
                   context: context,
                   builder: (BuildContext builder) {
                     return Container(
@@ -88,7 +89,7 @@ class GoalSettingPrayingState extends State<GoalSettingPraying> {
                             dateFormat: 'HH:mm',
                             onConfirm: (time, timeArray) =>
                                 {_onTimepickerChanged(timeArray)}));
-                  })
+                  }) */
             });
 
     final _prayingTime = Container(

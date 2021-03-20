@@ -102,12 +102,13 @@ class AppDrawerState extends State {
     return Row(
       children: <Widget>[
         SizedBox(
-            width: 45,
-            height: 25,
-            child: FlatButton(
-              color: Colors.transparent,
-              padding: EdgeInsets.all(0),
-              splashColor: Colors.transparent,
+            height: 40,
+            child: TextButton(
+              style: ButtonStyle(
+                  //backgroundColor: Colors.transparent,
+                  //padding: EdgeInsets.all(0),
+                  //splashColor: Colors.transparent,
+                  ),
               onPressed: () {
                 userInfo.showLogin(context, method: () {
                   setState(() {
@@ -125,26 +126,24 @@ class AppDrawerState extends State {
         Text(' | ',
             style: TextStyle(color: AppColors.greenPoint, fontSize: 14)),
         SizedBox(
-            width: 60,
-            height: 25,
-            child: FlatButton(
-              color: Colors.transparent,
+            child: TextButton(
+          /* color: Colors.transparent,
               padding: EdgeInsets.all(0),
-              splashColor: Colors.transparent,
-              onPressed: () {
-                userInfo.showRegister(context, callBackMethod: () {
-                  setState(() {
-                    memberInfo = user(context);
+              splashColor: Colors.transparent, */
+          onPressed: () {
+            userInfo.showRegister(context, callBackMethod: () {
+              setState(() {
+                memberInfo = user(context);
 
-                    Navigator.pushReplacementNamed(context, '/');
-                  });
-                });
-              },
-              child: Text(
-                Translations.of(context).trans('register'),
-                style: TextStyle(color: AppColors.greenPoint, fontSize: 14),
-              ),
-            )),
+                Navigator.pushReplacementNamed(context, '/');
+              });
+            });
+          },
+          child: Text(
+            Translations.of(context).trans('register'),
+            style: TextStyle(color: AppColors.greenPoint, fontSize: 14),
+          ),
+        )),
       ],
     );
   }

@@ -23,7 +23,7 @@ class QTRecord extends StatefulWidget {
 }
 
 class QTRecordState extends State<QTRecord> {
-  var qtList = new List<QT>();
+  var qtList = [];
   QT qt = new QT();
   TextEditingController keywordController = TextEditingController();
   String keyWord = '';
@@ -111,10 +111,12 @@ class QTRecordState extends State<QTRecord> {
   }
 
   Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('write')),
+    return TextButton(
+      child: Text(
+        Translations.of(context).trans('write'),
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: _goQtRecordWrite,
-      textColor: AppColors.darkGray,
     );
   }
 
@@ -132,7 +134,7 @@ class QTRecordState extends State<QTRecord> {
     _pageNum = 0;
     initLoad = true;
 
-    qtList = new List<QT>();
+    qtList = [];
     getQtRecordList();
   }
 

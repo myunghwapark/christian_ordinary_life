@@ -27,7 +27,7 @@ class ThankDiary extends StatefulWidget {
 class ThankDiaryState extends State<ThankDiary> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   ThankDiaryInfo thankDiaryInfo = new ThankDiaryInfo();
-  var diaryList = new List<Diary>();
+  var diaryList = [];
   Diary diary = new Diary();
   TextEditingController keywordController = TextEditingController();
   String keyWord = '';
@@ -129,10 +129,12 @@ class ThankDiaryState extends State<ThankDiary> {
   }
 
   Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('write')),
+    return TextButton(
+      child: Text(
+        Translations.of(context).trans('write'),
+        style: TextStyle(color: AppColors.darkGray),
+      ),
       onPressed: _goThankDiaryWrite,
-      textColor: AppColors.darkGray,
     );
   }
 
@@ -150,7 +152,7 @@ class ThankDiaryState extends State<ThankDiary> {
     _pageNum = 0;
     initLoad = true;
 
-    diaryList = new List<Diary>();
+    diaryList = [];
     getThankDiaryList();
   }
 

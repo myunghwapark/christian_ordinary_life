@@ -72,10 +72,10 @@ class GoalBibleCustom2State extends State<GoalBibleCustom2> {
   void _complete() {
     if (_daysController.text.isEmpty) {
       showToast(
-          scaffoldKey, Translations.of(context).trans('bible_period_validate'));
+          context, Translations.of(context).trans('bible_period_validate'));
       return;
     } else if (period > totalChapters) {
-      showToast(scaffoldKey,
+      showToast(context,
           Translations.of(context).trans('bible_custom_period_warning'));
       return;
     }

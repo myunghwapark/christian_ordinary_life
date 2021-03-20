@@ -213,7 +213,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
   /* get Image code end */
 
   void _makeThankCategoryOption() {
-    List<Widget> pickerList = new List<Widget>();
+    List<Widget> pickerList = [];
     for (int i = 0; i < ThankDiaryInfo.thankCategoryList.length; i++) {
       pickerList.add(Container(
           padding: EdgeInsets.all(10),
@@ -241,7 +241,7 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
   }
 
   void _makeGetImageOption() {
-    List<Widget> pickerList = new List<Widget>();
+    List<Widget> pickerList = [];
     pickerList = <Widget>[
       Container(
           padding: EdgeInsets.all(13),
@@ -266,8 +266,9 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
   }
 
   Widget actionIcon() {
-    return FlatButton(
-      child: Text(Translations.of(context).trans('save')),
+    return TextButton(
+      child: Text(Translations.of(context).trans('save'),
+          style: TextStyle(color: AppColors.darkGray)),
       onPressed: () {
         if (_contentController.text.isNotEmpty) {
           newDiary.seqNo = widget.diary != null ? widget.diary.seqNo : null;
@@ -282,10 +283,9 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
         } else {
           hideKeyboard(context);
           showToast(
-              _scaffoldKey, Translations.of(context).trans('validate_content'));
+              context, Translations.of(context).trans('validate_content'));
         }
       },
-      textColor: AppColors.darkGray,
     );
   }
 
@@ -480,9 +480,8 @@ class ThankDiaryWriteState extends State<ThankDiaryWrite>
     final _categoryButton = Container(
         width: 50,
         height: 50,
-        child: FlatButton(
+        child: TextButton(
             onPressed: _showCategoryPicker,
-            padding: EdgeInsets.all(0.0),
             child: FadeInImage.assetNetwork(
               image: API.systemImageURL + _selectedCategory.categoryImageUrl,
               width: 70,

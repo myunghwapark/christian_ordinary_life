@@ -130,7 +130,7 @@ class _FontSizePickerDialogState extends State<FontSizePickerDialog> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text(
             Translations.of(context).trans('cancel'),
             style: TextStyle(color: Colors.grey[700]),
@@ -139,7 +139,7 @@ class _FontSizePickerDialogState extends State<FontSizePickerDialog> {
             Navigator.pop(context, "cancel");
           },
         ),
-        FlatButton(
+        TextButton(
           child: Text(
             Translations.of(context).trans('confirm'),
             style: TextStyle(color: Colors.grey[700]),

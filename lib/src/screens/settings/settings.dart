@@ -33,7 +33,7 @@ class SettingsState extends State<Settings> {
   bool _isLoading = false;
   CommonSettings commonSettings = new CommonSettings();
   String _selectedLanguage;
-  List<String> languageOption = new List<String>();
+  List<String> languageOption = [];
   CustomPicker _languagePicker;
   bool _first = true;
   Alarm qtAlarm = new Alarm();
@@ -59,10 +59,10 @@ class SettingsState extends State<Settings> {
           });
 
           if (result.result == 'success') {
-            showToast(_scaffoldKey,
-                Translations.of(context).trans('reset_goal_success'));
+            showToast(
+                context, Translations.of(context).trans('reset_goal_success'));
           } else if (result.errorCode == '02') {
-            showToast(_scaffoldKey, Translations.of(context).trans('no_goal'));
+            showToast(context, Translations.of(context).trans('no_goal'));
           } else {
             errorMessage(context, result.errorMessage);
           }
@@ -147,7 +147,7 @@ class SettingsState extends State<Settings> {
   }
 
   void _makeLanguageOption() {
-    List<Widget> pickerList = new List<Widget>();
+    List<Widget> pickerList = [];
     for (int i = 0; i < languageOption.length; i++) {
       pickerList.add(Container(
           padding: EdgeInsets.all(10),

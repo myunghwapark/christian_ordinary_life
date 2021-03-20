@@ -34,7 +34,7 @@ class SearchBox extends StatefulWidget {
 
 class SearchBoxState extends State<SearchBox> {
   ComponentStyle componentStyle = new ComponentStyle();
-  List<ThankCategory> thankCategoryList = new List<ThankCategory>();
+  List<ThankCategory> thankCategoryList = [];
   DateTime searchStartDay;
   DateTime searchEndDay;
   String searchStartDayForm = '';
@@ -89,8 +89,7 @@ class SearchBoxState extends State<SearchBox> {
 
     final differenceInDays = searchStartDay.difference(searchEndDay).inDays;
     if (!_dateSearch && differenceInDays > 0) {
-      showToast(widget.scaffoldKey,
-          Translations.of(context).trans('query_date_wrong'));
+      showToast(context, Translations.of(context).trans('query_date_wrong'));
       return false;
     }
     return true;

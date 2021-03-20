@@ -25,7 +25,7 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
   _getBibleGoal() {
     if (GoalInfo.goal.biblePlanId == 'custom') {
       bibleVolme = '';
-      List<dynamic> tempList = List<dynamic>();
+      List<dynamic> tempList = [];
       tempList = json.decode(GoalInfo.goal.customBible);
       setState(() {
         for (int i = 0; i < tempList.length; i++) {
@@ -114,7 +114,7 @@ class ReadingBibleCompleteState extends State<ReadingBibleComplete> {
       elevation: 0,
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           onPressed: () => Navigator.pushReplacementNamed(context, '/'),
           child: Text(
             Translations.of(context).trans('confirm'),

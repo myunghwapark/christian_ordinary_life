@@ -64,7 +64,7 @@ class API {
 
   static String biblePhrase = serverURL + 'bible_phrase/bible_phrase.php';
 
-  static Future<dynamic> transaction(BuildContext context, String url,
+  static Future<dynamic> transaction(BuildContext context, var url,
       {Map param}) async {
     final prefs = await SharedPreferences.getInstance();
     String jwt = prefs.getString("jwt");
@@ -73,7 +73,7 @@ class API {
 
     //print('param: $param');
     final response = await http
-        .post(url,
+        .post(Uri.parse(url),
             headers: <String, String>{
               'Content-Type': "application/json; charset=UTF-8"
             },
