@@ -1,4 +1,5 @@
 import 'package:christian_ordinary_life/src/model/Alarm.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonSettings {
@@ -10,11 +11,17 @@ class CommonSettings {
   static double tempFontSize;
   static String language;
   static String firstUser;
+  static bool firstOpenToday = true;
   static bool keepLogin;
   static int qtAlarmId = 0;
-  static int prayingAlarmId = 1;
+  static int readingBibleAlarmId = 1;
+  static int prayingAlarmId = 2;
+  static int thankDiaryAlarmId = 3;
 
   static String donationAccount = '404601-01-168180\n국민은행 예금주: 박명화';
+
+  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   Future<double> getFontSize() async {
     prefs = await SharedPreferences.getInstance();

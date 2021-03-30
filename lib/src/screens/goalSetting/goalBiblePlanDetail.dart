@@ -113,7 +113,7 @@ class GoalBiblePlanDetailState extends State<GoalBiblePlanDetail> {
             style: TextStyle(fontSize: 15)));
 
     final _titleBox = Container(
-      height: 90,
+      height: 105,
       width: _contentSpace,
       padding: EdgeInsets.all(_containerPadding),
       margin: EdgeInsets.only(

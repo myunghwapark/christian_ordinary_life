@@ -55,7 +55,7 @@ class GoalSettingQTState extends State<GoalSettingQT> {
     setState(() {
       _setHour = makeTimeFormat(dateTime.hour);
       _setMinute = makeTimeFormat(dateTime.minute);
-      goal.qtTime = dataFormatTimeSecond(dateTime);
+      goal.qtTime = '$_setHour:$_setMinute';
     });
   }
 
@@ -68,21 +68,8 @@ class GoalSettingQTState extends State<GoalSettingQT> {
         AppColors.blueSky,
         () => {
               // Time picker
-
               openTimePicker(context, _onTimepickerChanged,
                   initTime: _setInitTime())
-              /*  showModalBottomSheet(
-                  context: context,
-                  builder: (BuildContext builder) {
-                    return Container(
-                        height:
-                            MediaQuery.of(context).copyWith().size.height / 2.5,
-                        child: TimePickerWidget(
-                            initDateTime: _setInitTime(),
-                            dateFormat: 'HH:mm',
-                            onConfirm: (time, timeArray) =>
-                                {_onTimepickerChanged(timeArray)}));
-                  }) */
             });
 
     final _preposition =

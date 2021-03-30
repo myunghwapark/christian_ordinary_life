@@ -1,11 +1,13 @@
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 
 import 'package:christian_ordinary_life/src/model/TodayBible.dart';
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingBible.dart';
+import 'src/common/commonSettings.dart';
 import 'src/navigation/appDrawer.dart';
 import 'src/common/translations.dart';
 import 'src/common/colors.dart';
@@ -149,6 +151,24 @@ class Main extends StatefulWidget {
 }
 
 class MainState extends State<Main> {
+  @override
+  void initState() {
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = IOSInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true);
+
+    var initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+
+    CommonSettings.flutterLocalNotificationsPlugin
+        .initialize(initializationSettings);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

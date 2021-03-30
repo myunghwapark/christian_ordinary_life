@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:share/share.dart';
@@ -50,11 +52,12 @@ class QtRecordDetailState extends State<QtRecordDetail> {
           setState(() {
             detailQt = tempList[0];
 
-            _subject = '[' +
+            _subject = '' +
                 getDateOfWeek(DateTime.parse(detailQt.qtDate)) +
-                '/' +
+                ' [' +
                 detailQt.bible +
-                '] ' +
+                ']' +
+                '\n\n' +
                 detailQt.title;
 
             _text = detailQt.content;
@@ -108,9 +111,15 @@ class QtRecordDetailState extends State<QtRecordDetail> {
   void _share(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
 
-    await Share.share(_text,
-        subject: _subject,
-        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    if (Platform.isAndroid) {
+      await Share.share(_text,
+          subject: _subject,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    } else {
+      String message = _subject + '\n\n' + _text;
+      await Share.share(message,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    }
   }
 
   @override

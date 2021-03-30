@@ -91,14 +91,9 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
       _title = detailDiary.categoryTitle;
     }
 
-    // Set share items
-    /*  if (detailDiary.imageURL != null) {
-      _imageURL = API.diaryImageURL + detailDiary.imageURL;
-    } */
-
     _subject = '[' +
         getDateOfWeek(DateTime.parse(detailDiary.diaryDate)) +
-        '] ' +
+        ']\n' +
         detailDiary.title;
 
     _text = detailDiary.content;
@@ -135,10 +130,7 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
     try {
       RenderRepaintBoundary boundary =
           previewContainer.currentContext.findRenderObject();
-      /*  if (boundary.debugNeedsPaint) {
-        Timer(Duration(seconds: 1), () => _screenShotAndShare());
-        return null;
-      } */
+
       ui.Image image = await boundary.toImage();
 
       setState(() {
@@ -167,31 +159,15 @@ class ThankDiaryDetailState extends State<ThankDiaryDetail> {
 
   void _share(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
-/* 
-    if (detailDiary.imageURL != null && detailDiary.imageURL != '') {
-      setState(() {
-        _isLoading = true;
-      });
-      var response = await get(_imageURL);
-      final documentDirectory = (await getExternalStorageDirectory()).path;
-      File imgFile = new File('$documentDirectory/${detailDiary.imageURL}');
-      imgFile.writeAsBytesSync(response.bodyBytes);
-      List<String> imageLocalPath = [
-        '$documentDirectory/${detailDiary.imageURL}'
-      ];
-      setState(() {
-        _isLoading = false;
-      });
+    String message = '';
+    if (Platform.isAndroid)
+      message = _text;
+    else
+      message = _subject + '\n\n' + _text;
 
-      await Share.shareFiles(imageLocalPath,
-          text: _text,
-          subject: _subject,
-          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    } else { */
-    await Share.share(_text,
+    await Share.share(message,
         subject: _subject,
         sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    //  }
   }
 
   @override

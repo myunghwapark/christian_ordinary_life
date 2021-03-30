@@ -1,9 +1,19 @@
-import 'package:christian_ordinary_life/src/component/timePicker.dart';
+import 'package:christian_ordinary_life/src/model/Alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+import 'package:christian_ordinary_life/src/component/timePicker.dart';
 import 'package:christian_ordinary_life/src/component/calendar.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
+
+import 'commonSettings.dart';
+import 'userInfo.dart';
 
 String wrongImage() {
   return 'assets/images/temp_image.png';
@@ -125,11 +135,6 @@ String makeTimeFormat(int time) {
   }
 
   return timeStr;
-}
-
-String dataFormatTimeSecond(DateTime date) {
-  final template = DateFormat('hh:mm');
-  return template.format(date);
 }
 
 Future<void> openTimePicker(BuildContext context, Function method,
@@ -345,4 +350,165 @@ Size getSizes(GlobalKey key) {
 
 void hideKeyboard(BuildContext context) {
   FocusScope.of(context).requestFocus(new FocusNode());
+}
+
+Future<void> dailyQtTimeNotification(
+    BuildContext context, Time alarmTime) async {
+  await CommonSettings.flutterLocalNotificationsPlugin.zonedSchedule(
+      CommonSettings.qtAlarmId,
+      '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('qt_time')}',
+      Translations.of(context)
+          .trans('qt_time_alarm_message', param1: UserInfo.loginUser.name),
+      scheduledDaily(alarmTime),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'qt',
+          'colQt',
+          'Time for QT',
+          priority: Priority.high,
+          importance: Importance.high,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time);
+}
+
+Future<void> dailyPrayingTimeNotification(
+    BuildContext context, Time alarmTime) async {
+  await CommonSettings.flutterLocalNotificationsPlugin.zonedSchedule(
+      CommonSettings.prayingAlarmId,
+      '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('praying_time')}',
+      Translations.of(context)
+          .trans('praying_time_alarm_message', param1: UserInfo.loginUser.name),
+      scheduledDaily(alarmTime),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'praying',
+          'colPraying',
+          'Time to pray',
+          priority: Priority.high,
+          importance: Importance.high,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time);
+}
+
+Future<void> dailyThankDiaryTimeNotification(
+    BuildContext context, Time alarmTime) async {
+  await CommonSettings.flutterLocalNotificationsPlugin.zonedSchedule(
+      CommonSettings.thankDiaryAlarmId,
+      '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('thankdiary_time')}',
+      Translations.of(context).trans('thankdiary_time_alarm_message',
+          param1: UserInfo.loginUser.name),
+      scheduledDaily(alarmTime),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'thankDiary',
+          'colThankDiary',
+          'Time for Thank Diary',
+          priority: Priority.high,
+          importance: Importance.high,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time);
+}
+
+Future<void> dailyReadingBibleTimeNotification(
+    BuildContext context, Time alarmTime) async {
+  await CommonSettings.flutterLocalNotificationsPlugin.zonedSchedule(
+      CommonSettings.readingBibleAlarmId,
+      '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('readingbible_time')}',
+      Translations.of(context).trans('readingbible_time_alarm_message',
+          param1: UserInfo.loginUser.name),
+      scheduledDaily(alarmTime),
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'readingBible',
+          'colReadingBible',
+          'Time for Reading Bible',
+          priority: Priority.high,
+          importance: Importance.high,
+        ),
+      ),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time);
+}
+
+tz.TZDateTime scheduledDaily(Time alarmTime) {
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local, now.year, now.month, now.day, alarmTime.hour, alarmTime.minute);
+  scheduledDate = scheduledDate.add(const Duration(days: 1));
+  return scheduledDate;
+}
+
+void requestPermissions() {
+  CommonSettings.flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>()
+      ?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+}
+
+Future<void> configureLocalTimeZone() async {
+  String timezone;
+  tz.initializeTimeZones();
+  try {
+    timezone = await FlutterNativeTimezone.getLocalTimezone();
+  } on PlatformException {
+    print('Failed to get the timezone.');
+  }
+  final String timeZoneName = timezone;
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
+}
+
+Future<void> cancelAllNotifications() async {
+  await CommonSettings.flutterLocalNotificationsPlugin.cancelAll();
+}
+
+Future<void> setAlarms(
+    BuildContext context, String target, String alarmTime) async {
+  CommonSettings commonSettings = new CommonSettings();
+
+  await commonSettings.getAlarm(target).then((value) async {
+    Alarm alarm = value;
+    if (value == null || alarm.time == null || alarm.allow == false) {
+      List<String> time = alarmTime.split(':');
+      Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
+      alarm.time = alarmTime;
+      alarm.allow = true;
+      alarm.title = target;
+
+      switch (target) {
+        case 'qt':
+          await dailyQtTimeNotification(context, alramTime);
+          break;
+        case 'praying':
+          await dailyPrayingTimeNotification(context, alramTime);
+          break;
+        case 'thankDiary':
+          await dailyThankDiaryTimeNotification(context, alramTime);
+          break;
+        case 'readingBible':
+          await dailyReadingBibleTimeNotification(context, alramTime);
+          break;
+        default:
+      }
+
+      await commonSettings.setAlarm(alarm);
+    }
+  });
 }

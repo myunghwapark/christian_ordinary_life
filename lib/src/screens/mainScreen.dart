@@ -1,10 +1,10 @@
-import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
+import 'package:christian_ordinary_life/src/screens/qtRecord/qtRecordList.dart';
 import 'package:christian_ordinary_life/src/screens/settings/howToUse.dart';
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/commonSettings.dart';
@@ -65,10 +65,27 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
       if (value == null || value != 'n') {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => HowToUse()));
-
         commonSettings.setFirstUser();
       }
     });
+  }
+
+  Future<void> _setAlarm() async {
+    if (GoalInfo.goal.qtAlarm == true) {
+      await setAlarms(context, 'qt', GoalInfo.goal.qtTime);
+    }
+
+    if (GoalInfo.goal.prayingAlarm == true) {
+      await setAlarms(context, 'praying', GoalInfo.goal.prayingTime);
+    }
+
+    if (GoalInfo.goal.thankDiaryAlarm == true) {
+      await setAlarms(context, 'thankDiary', GoalInfo.goal.thankDiaryTime);
+    }
+
+    if (GoalInfo.goal.readingBibleAlarm == true) {
+      await setAlarms(context, 'readingBible', GoalInfo.goal.readingBibleTime);
+    }
   }
 
   Future<void> getBiblePhrase() async {
@@ -357,6 +374,14 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    if (CommonSettings.firstOpenToday &&
+        userInfo.loginCheck() &&
+        GoalInfo.goal != null) {
+      cancelAllNotifications();
+      _setAlarm();
+      CommonSettings.firstOpenToday = false;
+    }
+
     final _dateForm = Flexible(
       fit: FlexFit.tight,
       child: GestureDetector(
@@ -487,6 +512,11 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
           _isLoading = true;
         });
       }
+
+      requestPermissions();
+      // alarm function setting
+      configureLocalTimeZone();
+
       getUserInfo().then((value) => goalInfo.getUserGoal(context).then((value) {
             setState(() {
               GoalInfo.goal = value;

@@ -1,10 +1,6 @@
 import 'package:christian_ordinary_life/src/screens/goalSetting/goalSettingThankDiary.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:christian_ordinary_life/src/model/Alarm.dart';
@@ -36,21 +32,9 @@ class GoalSettingState extends State<GoalSetting> {
   GoalInfo goalInfo = new GoalInfo();
   BibleUserPlan bibleUserPlan = new BibleUserPlan();
   bool _isLoading = false;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-  String timezone;
+  //final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  //String timezone;
   CommonSettings commonSettings = new CommonSettings();
-
-  Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-    try {
-      timezone = await FlutterNativeTimezone.getLocalTimezone();
-    } on PlatformException {
-      print('Failed to get the timezone.');
-    }
-    final String timeZoneName = timezone;
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
-  }
 
   Future<void> setUserGoal() async {
     bool saveAvailable = true;
@@ -76,7 +60,7 @@ class GoalSettingState extends State<GoalSetting> {
         _isLoading = true;
       });
 
-      _cancelAllNotifications();
+      cancelAllNotifications();
 
       if (GoalInfo.goal.qtRecord && GoalInfo.goal.qtAlarm) {
         await _setAlarm('qt');
@@ -175,22 +159,22 @@ class GoalSettingState extends State<GoalSetting> {
       String prayingTime = GoalInfo.goal.prayingTime;
       List<String> time = prayingTime.split(':');
       Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
-      await _dailyPrayingTimeNotification(alramTime);
+      await dailyPrayingTimeNotification(context, alramTime);
     } else if (target == 'qt') {
       String qtTime = GoalInfo.goal.qtTime;
       List<String> time = qtTime.split(':');
       Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
-      await _dailyQtTimeNotification(alramTime);
+      await dailyQtTimeNotification(context, alramTime);
     } else if (target == 'thankDiary') {
       String thankDiaryTime = GoalInfo.goal.thankDiaryTime;
       List<String> time = thankDiaryTime.split(':');
       Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
-      await _dailyThankDiaryTimeNotification(alramTime);
+      await dailyThankDiaryTimeNotification(context, alramTime);
     } else if (target == 'readingBible') {
       String readingBibleTime = GoalInfo.goal.readingBibleTime;
       List<String> time = readingBibleTime.split(':');
       Time alramTime = new Time(int.parse(time[0]), int.parse(time[1]), 00);
-      await _dailyReadingBibleTimeNotification(alramTime);
+      await dailyReadingBibleTimeNotification(context, alramTime);
     }
   }
 
@@ -311,7 +295,7 @@ class GoalSettingState extends State<GoalSetting> {
   _goToMain() {
     Navigator.pushReplacementNamed(context, '/');
   }
-
+/* 
   Future<void> _dailyQtTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
         CommonSettings.qtAlarmId,
@@ -358,7 +342,7 @@ class GoalSettingState extends State<GoalSetting> {
 
   Future<void> _dailyThankDiaryTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        CommonSettings.prayingAlarmId,
+        CommonSettings.thankDiaryAlarmId,
         '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('thankdiary_time')}',
         Translations.of(context).trans('thankdiary_time_alarm_message',
             param1: UserInfo.loginUser.name),
@@ -380,7 +364,7 @@ class GoalSettingState extends State<GoalSetting> {
 
   Future<void> _dailyReadingBibleTimeNotification(Time alarmTime) async {
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-        CommonSettings.prayingAlarmId,
+        CommonSettings.readingBibleAlarmId,
         '[${Translations.of(context).trans('app_title')}] ${Translations.of(context).trans('readingbible_time')}',
         Translations.of(context).trans('readingbible_time_alarm_message',
             param1: UserInfo.loginUser.name),
@@ -404,15 +388,13 @@ class GoalSettingState extends State<GoalSetting> {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
     tz.TZDateTime scheduledDate = tz.TZDateTime(tz.local, now.year, now.month,
         now.day, alarmTime.hour, alarmTime.minute);
-    //if (scheduledDate.isBefore(now)) {
     scheduledDate = scheduledDate.add(const Duration(days: 1));
-    // }
     return scheduledDate;
   }
 
   Future<void> _cancelAllNotifications() async {
     await _flutterLocalNotificationsPlugin.cancelAll();
-  }
+  } */
 
   @override
   void initState() {
@@ -439,9 +421,10 @@ class GoalSettingState extends State<GoalSetting> {
       }
     });
 
+    requestPermissions();
     // alarm function setting
-    _configureLocalTimeZone();
-
+    configureLocalTimeZone();
+/* 
     var initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
@@ -452,7 +435,8 @@ class GoalSettingState extends State<GoalSetting> {
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
-    _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    CommonSettings.flutterLocalNotificationsPlugin
+        .initialize(initializationSettings); */
 
     super.initState();
   }

@@ -188,7 +188,7 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
     setState(() {
       _setHour = makeTimeFormat(dateTime.hour);
       _setMinute = makeTimeFormat(dateTime.minute);
-      GoalInfo.goal.readingBibleTime = dataFormatTimeSecond(dateTime);
+      GoalInfo.goal.readingBibleTime = '$_setHour:$_setMinute';
     });
   }
 
@@ -254,21 +254,6 @@ class GoalSettingBibleState extends State<GoalSettingBible> {
                         // Time picker
                         openTimePicker(context, _onTimepickerChanged,
                             initTime: _setInitTime())
-                        /*   showModalBottomSheet(
-                            context: context,
-                            builder: (BuildContext builder) {
-                              return Container(
-                                  height: MediaQuery.of(context)
-                                          .copyWith()
-                                          .size
-                                          .height /
-                                      2.5,
-                                  child: TimePickerWidget(
-                                      initDateTime: _setInitTime(),
-                                      dateFormat: 'HH:mm',
-                                      onConfirm: (time, timeArray) =>
-                                          {_onTimepickerChanged(timeArray)}));
-                            }) */
                       })
             ])));
 
