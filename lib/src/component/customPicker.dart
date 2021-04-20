@@ -20,6 +20,7 @@ class CustomPickerState extends State<CustomPicker> {
 
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: Text(
             Translations.of(context).trans('setting'),
             textAlign: TextAlign.justify,

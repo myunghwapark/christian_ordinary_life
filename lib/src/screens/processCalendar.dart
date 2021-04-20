@@ -1,6 +1,8 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
@@ -27,35 +29,45 @@ class ProcessCalendar extends StatefulWidget {
 
 class ProcessCalendarState extends State<ProcessCalendar>
     with TickerProviderStateMixin {
-  Map<DateTime, List> _events = {};
-  List _selectedEvents;
+  LinkedHashMap<String, List> _events = new LinkedHashMap<String, List>();
+  //List _selectedEvents;
+  ValueNotifier<List<GoalDailyProgress>> _selectedEvents;
   AnimationController _animationController;
-  CalendarController _calendarController;
+  //CalendarController _calendarController;
   List<GoalProgress> _goalProgress = [];
   String _yearMonth;
   bool _isLoading = false;
+  DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay;
 
-  void _onDaySelected(DateTime day, List events, List holidays) {
+  final kNow = DateTime.now();
+  DateTime kFirstDay;
+  DateTime kLastDay;
+
+  List<GoalDailyProgress> _getEventsForDay(DateTime day) {
+    return _events[getCalDateFormat(day)] ?? [];
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+      });
+
+      _selectedEvents.value = _getEventsForDay(selectedDay);
+    }
+  }
+
+  void _onVisibleDaysChanged(DateTime focusDate) {
     setState(() {
-      _selectedEvents = events;
+      _selectedEvents.removeListener(() {});
     });
+    _yearMonth = getTodayYearMonth(focusDate);
+    _getProgress();
   }
 
-  void _onCalendarCreated(
-      DateTime first, DateTime last, CalendarFormat format) {
-    Future.delayed(const Duration(milliseconds: 10), getProgress);
-  }
-
-  void _onVisibleDaysChanged(
-      DateTime first, DateTime last, CalendarFormat format) {
-    setState(() {
-      _selectedEvents = [];
-    });
-    _yearMonth = getTodayYearMonth(first);
-    getProgress();
-  }
-
-  Future<void> getProgress() async {
+  Future<void> _getProgress() async {
     try {
       setState(() {
         _isLoading = true;
@@ -72,11 +84,10 @@ class ProcessCalendarState extends State<ProcessCalendar>
               .toList();
 
           setState(() {
-            _events = {};
+            if (_events != null) _events.clear();
             List<GoalDailyProgress> goalDailyProgress;
             for (int i = 0; i < _goalProgress.length; i++) {
-              DateTime createTime =
-                  convertDateFromString(_goalProgress[i].goalDate);
+              String createTime = _goalProgress[i].goalDate;
               goalDailyProgress = [];
 
               if (_goalProgress[i].qtRecord != '-')
@@ -118,7 +129,8 @@ class ProcessCalendarState extends State<ProcessCalendar>
               }
             }
             _isLoading = false;
-            //_selectedEvents = goalDailyProgress; // 오늘자 선택
+            // 오늘자 선택
+            _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
           });
         }
       });
@@ -156,14 +168,14 @@ class ProcessCalendarState extends State<ProcessCalendar>
       return Translations.of(context).trans('incomplete');
   }
 
-  // More advanced TableCalendar configuration (using Builders & Styles)
   Widget _buildTableCalendarWithBuilders() {
-    return TableCalendar(
-      calendarController: _calendarController,
-      events: _events,
-      //holidays: _holidays,
-      initialCalendarFormat: CalendarFormat.month,
-      formatAnimation: FormatAnimation.slide,
+    return TableCalendar<GoalDailyProgress>(
+      firstDay: kFirstDay,
+      lastDay: kLastDay,
+      focusedDay: _focusedDay,
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      eventLoader: _getEventsForDay,
+      calendarFormat: CalendarFormat.month,
       startingDayOfWeek: StartingDayOfWeek.sunday,
       availableGestures: AvailableGestures.all,
       availableCalendarFormats: const {
@@ -172,31 +184,46 @@ class ProcessCalendarState extends State<ProcessCalendar>
       },
       calendarStyle: CalendarStyle(
         outsideDaysVisible: false,
-        weekendStyle: TextStyle().copyWith(color: Colors.blue[800]),
-        holidayStyle: TextStyle().copyWith(color: Colors.blue[800]),
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
         weekendStyle: TextStyle().copyWith(color: Colors.blue[600]),
       ),
       headerStyle: HeaderStyle(
-        centerHeaderTitle: true,
+        titleCentered: true,
         formatButtonVisible: false,
       ),
-      builders: CalendarBuilders(
-        dayBuilder: (context, date, _) {
-          return Container(
-            margin: const EdgeInsets.all(4.0),
-            padding: const EdgeInsets.only(top: 5.0, left: 14.0),
-            //color: Colors.white,
-            width: 100,
-            height: 100,
-            child: Text(
-              '${date.day}',
-              style: TextStyle().copyWith(fontSize: 16.0),
-            ),
-          );
+      calendarBuilders: CalendarBuilders(
+        dowBuilder: (context, date) {
+          if (date.weekday == DateTime.sunday) {
+            final text = DateFormat.E().format(date);
+
+            return Center(
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.red),
+              ),
+            );
+          } else if (date.weekday == DateTime.saturday) {
+            final text = DateFormat.E().format(date);
+
+            return Center(
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.blue),
+              ),
+            );
+          } else {
+            final text = DateFormat.E().format(date);
+
+            return Center(
+              child: Text(
+                text,
+                style: TextStyle(color: Colors.black87),
+              ),
+            );
+          }
         },
-        selectedDayBuilder: (context, date, _) {
+        selectedBuilder: (context, date, _) {
           return FadeTransition(
             opacity: Tween(begin: 0.0, end: 1.0).animate(_animationController),
             child: Container(
@@ -212,24 +239,20 @@ class ProcessCalendarState extends State<ProcessCalendar>
             ),
           );
         },
-        todayDayBuilder: (context, date, _) {
+        todayBuilder: (context, date, _) {
           return Container(
             margin: const EdgeInsets.all(4.0),
             padding: const EdgeInsets.only(top: 5.0, left: 18.0),
             decoration: BoxDecoration(
-              color: Colors.blue[50],
-              //borderRadius: BorderRadius.all(Radius.circular(50))
+              color: Colors.blue[100],
             ),
             width: 100,
             height: 100,
-            child: Text(
-              '${date.day}',
-              style: TextStyle()
-                  .copyWith(fontSize: 16.0, color: AppColors.greenPoint),
-            ),
+            child: Text('${date.day}',
+                style: TextStyle(fontSize: 16.0, color: AppColors.greenPoint)),
           );
         },
-        markersBuilder: (context, date, events, holidays) {
+        markerBuilder: (context, date, events) {
           int count = 0;
           for (int i = 0; i < events.length; i++) {
             GoalDailyProgress dailyProgress = events[i];
@@ -258,15 +281,18 @@ class ProcessCalendarState extends State<ProcessCalendar>
             );
           }
 
-          return children;
+          return Stack(
+            children: children,
+          );
         },
       ),
-      onDaySelected: (date, events, holidays) {
-        _onDaySelected(date, events, holidays);
-        _animationController.forward(from: 0.0);
+      onDaySelected: (selectedDay, focusedDay) {
+        _onDaySelected(selectedDay, focusedDay);
       },
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      onCalendarCreated: _onCalendarCreated,
+      onPageChanged: (focusedDay) {
+        _focusedDay = focusedDay;
+        _onVisibleDaysChanged(focusedDay);
+      },
     );
   }
 
@@ -275,11 +301,7 @@ class ProcessCalendarState extends State<ProcessCalendar>
         duration: const Duration(milliseconds: 300),
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
-          color: _calendarController.isSelected(date)
-              ? Colors.brown[500]
-              : _calendarController.isToday(date)
-                  ? Colors.brown[300]
-                  : Colors.blue[400],
+          color: _focusedDay == date ? Colors.brown[500] : Colors.blue[400],
         ),
         width: 16.0,
         height: 16.0,
@@ -295,56 +317,65 @@ class ProcessCalendarState extends State<ProcessCalendar>
   }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents.map((event) {
-        GoalDailyProgress dailyProgress = event;
-        return Container(
-            height: 23,
-            margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
-            child: GestureDetector(
-              child: Row(
-                children: [
-                  Container(
-                      width: 50,
-                      child: Icon(
-                        dailyProgress.targetIcon,
-                        color: dailyProgress.progress == 'y'
-                            ? AppColors.mint
-                            : Colors.grey,
-                      )),
-                  Text(
-                    dailyProgress.title,
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ],
-              ),
-              onTap: () {
-                if (dailyProgress.progress == 'y') {
-                  switch (dailyProgress.target) {
-                    case 'thank_diary':
-                      Diary diary = new Diary();
-                      diary.diaryDate = dailyProgress.goalDate;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ThankDiaryDetail(diary: diary)));
-                      break;
-                    case 'qt':
-                      QT qt = new QT();
-                      qt.qtDate = dailyProgress.goalDate;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => QtRecordDetail(qt: qt)));
-                      break;
-                    default:
-                  }
-                }
-              },
-            ));
-      }).toList(),
-    );
+    return _selectedEvents != null
+        ? ValueListenableBuilder<List<GoalDailyProgress>>(
+            valueListenable: _selectedEvents,
+            builder: (context, value, _) {
+              return ListView.builder(
+                  itemCount: value.length,
+                  itemBuilder: (context, index) {
+                    GoalDailyProgress dailyProgress = value[index];
+
+                    return Container(
+                        height: 23,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 10.0),
+                        child: GestureDetector(
+                          child: Row(
+                            children: [
+                              Container(
+                                  width: 50,
+                                  child: Icon(
+                                    dailyProgress.targetIcon,
+                                    color: dailyProgress.progress == 'y'
+                                        ? AppColors.mint
+                                        : Colors.grey,
+                                  )),
+                              Text(
+                                dailyProgress.title,
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            if (dailyProgress.progress == 'y') {
+                              switch (dailyProgress.target) {
+                                case 'thank_diary':
+                                  Diary diary = new Diary();
+                                  diary.diaryDate = dailyProgress.goalDate;
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ThankDiaryDetail(diary: diary)));
+                                  break;
+                                case 'qt':
+                                  QT qt = new QT();
+                                  qt.qtDate = dailyProgress.goalDate;
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              QtRecordDetail(qt: qt)));
+                                  break;
+                                default:
+                              }
+                            }
+                          },
+                        ));
+                  });
+            })
+        : Container();
   }
 
   @override
@@ -377,8 +408,10 @@ class ProcessCalendarState extends State<ProcessCalendar>
   @override
   void initState() {
     _yearMonth = getTodayYearMonth(new DateTime.now());
-    _selectedEvents = [];
-    _calendarController = CalendarController();
+    _getProgress();
+    kFirstDay = DateTime(kNow.year - 10, kNow.month, kNow.day);
+    kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
+    _selectedDay = _focusedDay;
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -392,7 +425,22 @@ class ProcessCalendarState extends State<ProcessCalendar>
   @override
   void dispose() {
     _animationController.dispose();
-    _calendarController.dispose();
+    //_calendarController.dispose();
     super.dispose();
+  }
+
+  /* 
+
+  int getHashCode(DateTime key) {
+    return key.day * 1000000 + key.month * 10000 + key.year;
+  }
+*/
+  /// Returns a list of [DateTime] objects from [first] to [last], inclusive.
+  List<DateTime> daysInRange(DateTime first, DateTime last) {
+    final dayCount = last.difference(first).inDays + 1;
+    return List.generate(
+      dayCount,
+      (index) => DateTime.utc(first.year, first.month, first.day + index),
+    );
   }
 }

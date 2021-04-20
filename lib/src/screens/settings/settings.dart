@@ -1,12 +1,8 @@
 import 'dart:convert';
-import 'package:christian_ordinary_life/src/common/commonSettings.dart';
-import 'package:christian_ordinary_life/src/component/customPicker.dart';
-import 'package:christian_ordinary_life/src/model/Alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:settings_ui/settings_ui.dart';
 
 import 'package:christian_ordinary_life/src/common/api.dart';
 import 'package:christian_ordinary_life/src/common/userInfo.dart';
@@ -20,6 +16,9 @@ import 'package:christian_ordinary_life/src/navigation/appDrawer.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/common/colors.dart';
+import 'package:christian_ordinary_life/src/common/commonSettings.dart';
+import 'package:christian_ordinary_life/src/component/customPicker.dart';
+import 'package:christian_ordinary_life/src/model/Alarm.dart';
 
 class Settings extends StatefulWidget {
   static const routeName = '/settings';
@@ -172,113 +171,135 @@ class SettingsState extends State<Settings> {
       _makeLanguageOption();
       _first = false;
     }
-    final _userSettings = SettingsSection(
-      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
-      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-      title: Translations.of(context).trans('user'),
-      tiles: [
-        SettingsTile(
-            title: Translations.of(context).trans('change_password'),
+
+    final _userSettingTitle = Container(
+      padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      child: Text(
+        Translations.of(context).trans('user'),
+        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+      ),
+    );
+
+    final _userSettings = Container(
+        color: Colors.white,
+        child: ListTile(
+            title: Text(Translations.of(context).trans('change_password')),
             leading: Icon(
               Icons.lock,
               color: AppColors.yellowishGreenDarker,
             ),
-            onPressed: (BuildContext context) {
+            onTap: () {
               _goChangePassword();
             },
             trailing: Icon(
               Icons.arrow_forward_ios,
               color: Colors.grey[350],
-            )),
-      ],
+            )));
+
+    final _commonSettingTitle = Container(
+      padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      child: Text(
+        Translations.of(context).trans('common'),
+        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+      ),
     );
 
-    final _commonSettings = SettingsSection(
-      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
-      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-      title: Translations.of(context).trans('common'),
-      tiles: [
-        SettingsTile(
-          title: Translations.of(context).trans('usage_guide'),
+    final _commonSettingUsageGuide = Container(
+        color: Colors.white,
+        child: ListTile(
+          title: Text(Translations.of(context).trans('usage_guide')),
           //subtitle: 'English',
           leading: Icon(
             Icons.description,
             color: AppColors.yellowishGreenDarker,
           ),
-          onPressed: (BuildContext context) {
+          onTap: () {
             _goHowToUse();
           },
           trailing: Icon(
             Icons.arrow_forward_ios,
             color: Colors.grey[350],
           ),
-        ),
-        SettingsTile(
-          title: Translations.of(context).trans('privacy_policy'),
+        ));
+
+    final _commonSettingPrivacyPolicy = Container(
+        color: Colors.white,
+        child: ListTile(
+          title: Text(Translations.of(context).trans('privacy_policy')),
           leading: Icon(Icons.security, color: AppColors.yellowishGreenDarker),
-          onPressed: (BuildContext context) {
+          onTap: () {
             _goPrivacyPolicy();
           },
           trailing: Icon(
             Icons.arrow_forward_ios,
             color: Colors.grey[350],
           ),
-        ),
-        SettingsTile(
-          title: Translations.of(context).trans('contact_developer'),
+        ));
+
+    final _commonSettingContractDeveloper = Container(
+        color: Colors.white,
+        child: ListTile(
+          title: Text(Translations.of(context).trans('contact_developer')),
           leading: Icon(Icons.send, color: AppColors.yellowishGreenDarker),
-          onPressed: (BuildContext context) {
+          onTap: () {
             _goContactDeveloper();
           },
           trailing: Icon(
             Icons.arrow_forward_ios,
             color: Colors.grey[350],
           ),
-        ),
-        SettingsTile(
-          title: Translations.of(context).trans('donation'),
-          leading: Icon(FontAwesomeIcons.donate,
-              color: AppColors.yellowishGreenDarker),
-          onPressed: (BuildContext context) {
-            _goDonation();
-          },
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.grey[350],
-          ),
-        ),
-      ],
+        ));
+
+    final _commonSettingDonation = Container(
+        color: Colors.white,
+        child: ListTile(
+            title: Text(Translations.of(context).trans('donation')),
+            leading: Icon(FontAwesomeIcons.donate,
+                color: AppColors.yellowishGreenDarker),
+            onTap: () {
+              _goDonation();
+            },
+            trailing: Icon(
+              Icons.arrow_forward_ios,
+              color: Colors.grey[350],
+            )));
+
+    final _appSettingTitle = Container(
+      padding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
+      child: Text(
+        Translations.of(context).trans('setting'),
+        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+      ),
     );
 
-    final _appSettings = SettingsSection(
-      titlePadding: EdgeInsets.only(top: 15, left: 15, bottom: 5),
-      titleTextStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-      title: Translations.of(context).trans('setting'),
-      tiles: [
-        SettingsTile(
-          title: Translations.of(context).trans('goal_reset'),
+    final _appSettingGoalReset = Container(
+        color: Colors.white,
+        child: ListTile(
+          title: Text(Translations.of(context).trans('goal_reset')),
           leading:
               Icon(Icons.gps_not_fixed, color: AppColors.yellowishGreenDarker),
-          onPressed: (BuildContext context) {
+          onTap: () {
             _goalReset();
           },
           trailing: Container(
             width: 20,
           ),
+        ));
+
+    final _appSettingLanguage = Container(
+      color: Colors.white,
+      child: ListTile(
+        title: Text(Translations.of(context).trans('language')),
+        subtitle: Text(Translations.of(context).trans(_selectedLanguage)),
+        leading: Icon(Icons.language, color: AppColors.yellowishGreenDarker),
+        onTap: () {
+          _showLanguagePicker();
+        },
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.grey[350],
         ),
-        SettingsTile(
-          title: Translations.of(context).trans('language'),
-          subtitle: Translations.of(context).trans(_selectedLanguage),
-          leading: Icon(Icons.language, color: AppColors.yellowishGreenDarker),
-          onPressed: (BuildContext context) {
-            _showLanguagePicker();
-          },
-          trailing: Icon(
-            Icons.arrow_forward_ios,
-            color: Colors.grey[350],
-          ),
-        ),
-      ],
+      ),
     );
 
     return Scaffold(
@@ -292,11 +313,18 @@ class SettingsState extends State<Settings> {
             opacity: 0.5,
             progressIndicator: CircularProgressIndicator(),
             color: Colors.black,
-            child: SettingsList(
-              sections: [
+            child: ListView(
+              children: [
+                _userSettingTitle,
                 _userSettings,
-                _commonSettings,
-                _appSettings,
+                _commonSettingTitle,
+                _commonSettingUsageGuide,
+                _commonSettingPrivacyPolicy,
+                _commonSettingContractDeveloper,
+                _commonSettingDonation,
+                _appSettingTitle,
+                _appSettingGoalReset,
+                _appSettingLanguage
               ],
             )));
   }

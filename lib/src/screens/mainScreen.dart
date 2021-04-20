@@ -372,15 +372,29 @@ class MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> getAlarmSetting() async {
+    /*  await commonSettings.getAlarmSetting().then((value) async {
+      if (value == null || value == '') { */
+    if (CommonSettings.firstOpenToday) {
+      if (userInfo.loginCheck() &&
+          GoalInfo.goal != null &&
+          (GoalInfo.goal.qtAlarm == true ||
+              GoalInfo.goal.prayingAlarm == true ||
+              GoalInfo.goal.thankDiaryAlarm == true ||
+              GoalInfo.goal.readingBibleAlarm == true)) {
+        cancelAllNotifications();
+        _setAlarm();
+        await commonSettings.setAlarmSetting();
+        CommonSettings.firstOpenToday = false;
+      }
+    }
+    /*  }
+    }); */
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (CommonSettings.firstOpenToday &&
-        userInfo.loginCheck() &&
-        GoalInfo.goal != null) {
-      cancelAllNotifications();
-      _setAlarm();
-      CommonSettings.firstOpenToday = false;
-    }
+    if (CommonSettings.firstOpenToday) getAlarmSetting();
 
     final _dateForm = Flexible(
       fit: FlexFit.tight,

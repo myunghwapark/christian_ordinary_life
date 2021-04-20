@@ -76,4 +76,17 @@ class CommonSettings {
     prefs.setString('${alarm.title}_time', alarm.time);
     prefs.setBool('${alarm.title}_allow', alarm.allow);
   }
+
+  Future<String> getAlarmSetting() async {
+    prefs = await SharedPreferences.getInstance();
+
+    firstUser = prefs.getString("alarmSetting");
+
+    return firstUser;
+  }
+
+  Future<void> setAlarmSetting() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.setString('alarmSetting', 'y');
+  }
 }

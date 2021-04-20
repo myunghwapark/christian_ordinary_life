@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
+
 import 'package:christian_ordinary_life/src/common/colors.dart';
 import 'package:christian_ordinary_life/src/common/translations.dart';
 import 'package:christian_ordinary_life/src/component/appBarComponent.dart';
-import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 class Calendar extends StatefulWidget {
   final DateTime selectedDate;
@@ -13,18 +14,22 @@ class Calendar extends StatefulWidget {
 }
 
 class CalendarState extends State<Calendar> {
-  CalendarController _calendarController;
   DateTime returnDate;
+
+  final kNow = DateTime.now();
+  DateTime kFirstDay;
+  DateTime kLastDay;
 
   @override
   void initState() {
+    kFirstDay = DateTime(kNow.year - 10, kNow.month, kNow.day);
+    kLastDay = DateTime(kNow.year, kNow.month + 3, kNow.day);
+    returnDate = widget.selectedDate;
     super.initState();
-    _calendarController = CalendarController();
   }
 
   @override
   void dispose() {
-    _calendarController.dispose();
     super.dispose();
   }
 
@@ -40,14 +45,14 @@ class CalendarState extends State<Calendar> {
     );
   }
 
-  void _onDaySelected(DateTime day, List events, List holidays) {
-    returnDate = day;
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    setState(() {
+      returnDate = selectedDay;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    returnDate = widget.selectedDate;
-
     return Scaffold(
       appBar: appBarComponent(
           context, Translations.of(context).trans('select_date'),
@@ -64,33 +69,32 @@ class CalendarState extends State<Calendar> {
   // Simple TableCalendar configuration (using Styles)
   Widget _buildTableCalendar() {
     return TableCalendar(
-      initialSelectedDay: widget.selectedDate,
-      calendarController: _calendarController,
-      //events: _events,
-      //holidays: _holidays,
-      startingDayOfWeek: StartingDayOfWeek.sunday,
-      calendarStyle: CalendarStyle(
-        selectedColor: Colors.deepOrange[400],
-        //todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
-        outsideDaysVisible: false,
-      ),
-      headerStyle: HeaderStyle(
-        formatButtonVisible: false,
-        centerHeaderTitle: true,
-        formatButtonTextStyle:
-            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
+        firstDay: kFirstDay,
+        lastDay: kLastDay,
+        focusedDay: returnDate,
+        selectedDayPredicate: (day) => isSameDay(returnDate, day),
+        //    initialSelectedDay: widget.selectedDate,
+        //    calendarController: _calendarController,
+        startingDayOfWeek: StartingDayOfWeek.sunday,
+        calendarStyle: CalendarStyle(
+          selectedDecoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.deepOrange[400],
+          ),
+          outsideDaysVisible: false,
         ),
-      ),
-
-      onDaySelected: (date, events, holidays) {
-        _onDaySelected(date, events, holidays);
-      },
-      //onVisibleDaysChanged: _onVisibleDaysChanged,
-      //onCalendarCreated: _onCalendarCreated,
-    );
+        headerStyle: HeaderStyle(
+          formatButtonVisible: false,
+          titleCentered: true,
+          formatButtonTextStyle:
+              TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+          formatButtonDecoration: BoxDecoration(
+            color: Colors.deepOrange[400],
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+        ),
+        onDaySelected: (selectedDay, focusedDay) {
+          _onDaySelected(selectedDay, focusedDay);
+        });
   }
 }
